@@ -17,4 +17,5 @@
     <dimen name="dialog_button_width">75dp</dimen>
     <dimen name="text_size_title">16sp</dimen>
     <integer name="duration_animation">500</integer>
+    <dimen name="menu_elevation">9dp</dimen>
 </resources>

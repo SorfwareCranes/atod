@@ -1,20 +1,21 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="software.cranes.com.dota.fragment.MMR_ScreenSlidePagerFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context="software.cranes.com.dota.fragment.MMR_ScreenSlidePagerFragment">
+
+    <software.cranes.com.dota.custom.SlidingTabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/menu_elevation"/>
 
     <android.support.v4.view.ViewPager
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:id="@+id/pagerMMR">
-
-        <android.support.v4.view.PagerTitleStrip
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:layout_gravity="top"
-                style="@style/PagerTabStripText"/>
     </android.support.v4.view.ViewPager>
 
-</FrameLayout>
+</LinearLayout>
