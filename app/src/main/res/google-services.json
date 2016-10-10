@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "119496129266",
+    "firebase_url": "https://fir-dota.firebaseio.com",
+    "project_id": "fir-dota",
+    "storage_bucket": "fir-dota.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:119496129266:android:9ba351e640619c06",
+        "android_client_info": {
+          "package_name": "software.cranes.com.dota"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "119496129266-67ugvp4vt1a8ssofkqv4ei6k3i7ljvku.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "software.cranes.com.dota",
+            "certificate_hash": "7DD49901D3F20FC3FA2204D182A190978F7F3E84"
+          }
+        },
+        {
+          "client_id": "119496129266-si2pgj2e43t1mfn3265s5e33oac5ks07.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-2J8Rwoe5ppVp6FemxwwqSuEn3ZxDofE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "119496129266-si2pgj2e43t1mfn3265s5e33oac5ks07.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

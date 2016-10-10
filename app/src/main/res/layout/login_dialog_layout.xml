@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:elevation="@dimen/dialog_elevation">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/dialog_padding"
+            android:paddingRight="@dimen/dialog_padding"
+            android:paddingTop="@dimen/dialog_padding"
+            android:text="@string/app_name"
+            android:textColor="#85000000"
+            android:textSize="@dimen/text_size_big"/>
+
+    <Button
+            android:layout_marginTop="@dimen/nav_header_vertical_spacing"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_google_button"
+            android:id="@+id/btnGoogleLogin"
+            android:text="google Login"/>
+
+    <Button
+            android:layout_marginTop="@dimen/nav_header_vertical_spacing"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnFacebookLogin"
+            android:text="Facebook Login"/>
+
+    <Button
+            android:layout_marginTop="@dimen/nav_header_vertical_spacing"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnTwitter"
+            android:text="Twitter Login"/>
+
+    <TextView
+            android:id="@+id/btnWarning"
+            android:layout_width="@dimen/dialog_button_width"
+            android:layout_height="@dimen/dialog_action_height"
+            android:layout_gravity="right"
+            android:layout_marginTop="@dimen/dialog_padding"
+            android:gravity="center"
+            android:padding="@dimen/padding_around_button"
+            android:text="BACK"
+            android:textColor="@color/holo_blue_light"
+            android:textSize="@dimen/text_size_big"/>
+</LinearLayout>
