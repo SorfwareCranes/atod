@@ -3,6 +3,7 @@ package software.cranes.com.dota.adapter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import software.cranes.com.dota.fragment.MMR_PlayerFragment;
@@ -12,7 +13,7 @@ import software.cranes.com.dota.interfa.Constant;
  * Created by GiangNT - PC on 10/10/2016.
  */
 
-public class PagerMMR_Adapter extends FragmentStatePagerAdapter {
+public class PagerMMR_Adapter extends FragmentPagerAdapter {
     private int number_pager;
 
     public PagerMMR_Adapter(FragmentManager fm, int number_pager) {

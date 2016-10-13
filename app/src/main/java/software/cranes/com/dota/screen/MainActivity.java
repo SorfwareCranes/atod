@@ -17,6 +17,7 @@ import software.cranes.com.dota.R;
 import software.cranes.com.dota.fragment.BaseFragment;
 import software.cranes.com.dota.fragment.GosugamersJsoupFragment;
 import software.cranes.com.dota.fragment.MMR_ScreenSlidePagerFragment;
+import software.cranes.com.dota.fragment.RankTeam_ScreenSlidePagerFragment;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -115,8 +116,9 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_top_mmr) {
-            replaceFragment(new MMR_ScreenSlidePagerFragment(), R.id.containerActivity);
+            replaceFragment(new MMR_ScreenSlidePagerFragment(), R.id.containerActivity, true);
         } else if (id == R.id.nav_top_team) {
+            replaceFragment(new RankTeam_ScreenSlidePagerFragment(), R.id.containerActivity, true);
 
         } else if (id == R.id.nav_legend) {
 

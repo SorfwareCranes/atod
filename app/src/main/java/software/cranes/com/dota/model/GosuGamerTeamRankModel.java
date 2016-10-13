@@ -1,12 +1,13 @@
 package software.cranes.com.dota.model;
 
-import java.util.Map;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by GiangNT - PC on 02/10/2016.
  */
 
-public class GosuGamerTeamRankModel {
+public class GosuGamerTeamRankModel implements Parcelable{
     private int data_id;
     private int ranking;
     private String country;
@@ -15,9 +16,19 @@ public class GosuGamerTeamRankModel {
     private int local_ranking;
     private String id_photo;
     private String earnedMoney;
-    private Map<String, String> teamPlayer;
 
     public GosuGamerTeamRankModel() {
+    }
+
+    public GosuGamerTeamRankModel(Parcel in) {
+        data_id = in.readInt();
+        ranking = in.readInt();
+        country = in.readString();
+        teamName = in.readString();
+        typeLocal = in.readInt();
+        local_ranking = in.readInt();
+        id_photo = in.readString();
+        earnedMoney = in.readString();
     }
 
     public GosuGamerTeamRankModel(int data_id, int ranking, String country, String teamName) {
@@ -91,11 +102,51 @@ public class GosuGamerTeamRankModel {
         this.earnedMoney = earnedMoney;
     }
 
-    public Map<String, String> getTeamPlayer() {
-        return teamPlayer;
+    /**
+     * Describe the kinds of special objects contained in this Parcelable instance's marshaled
+     * representation. For example, if the object will include a file descriptor in the output of
+     * {@link #writeToParcel(Parcel, int)}, the return value of this method must include the {@link
+     * #CONTENTS_FILE_DESCRIPTOR} bit.
+     *
+     * @return a bitmask indicating the set of special object types marshaled by this Parcelable
+     * object instance.
+     * @see #CONTENTS_FILE_DESCRIPTOR
+     */
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setTeamPlayer(Map<String, String> teamPlayer) {
-        this.teamPlayer = teamPlayer;
+    /**
+     * Flatten this object in to a Parcel.
+     *
+     * @param dest  The Parcel in which the object should be written.
+     * @param flags Additional flags about how the object should be written. May be 0 or {@link
+     *              #PARCELABLE_WRITE_RETURN_VALUE}.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(data_id);
+        dest.writeInt(ranking);
+        dest.writeString(country);
+        dest.writeString(teamName);
+        dest.writeInt(typeLocal);
+        dest.writeInt(local_ranking);
+        dest.writeString(id_photo);
+        dest.writeString(earnedMoney);
     }
+
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<GosuGamerTeamRankModel> CREATOR = new Parcelable.Creator<GosuGamerTeamRankModel>() {
+        @Override
+        public GosuGamerTeamRankModel createFromParcel(Parcel in) {
+            return new GosuGamerTeamRankModel(in);
+        }
+
+        @Override
+        public GosuGamerTeamRankModel[] newArray(int size) {
+            return new GosuGamerTeamRankModel[size];
+        }
+    };
 }

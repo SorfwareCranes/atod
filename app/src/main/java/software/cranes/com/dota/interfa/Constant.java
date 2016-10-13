@@ -12,6 +12,7 @@ public interface Constant {
     String TAG = "dota";
     int TYPE_RESPONSE_OBJECT = 0;
     int TYPE_RESPONSE_ARRAY = 1;
+    int WORLD_RANK = 1;
     int SEA_RANK = 2;
     int EUROPE_RANK = 3;
     int CHINA_RANK = 4;

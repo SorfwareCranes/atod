@@ -140,10 +140,12 @@ public class BaseActivity extends AppCompatActivity {
         return photoUri;
     }
 
-    public void replaceFragment(BaseFragment baseFragment, int container) {
+    public void replaceFragment(BaseFragment baseFragment, int container, boolean isAddBackStack) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(container, baseFragment);
-        fragmentTransaction.addToBackStack(null);
+        if (isAddBackStack) {
+            fragmentTransaction.addToBackStack(null);
+        }
         fragmentTransaction.commit();
     }
 }

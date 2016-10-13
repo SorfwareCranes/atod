@@ -47,7 +47,7 @@ public class MMR_ScreenSlidePagerFragment extends BaseFragment {
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return ContextCompat.getColor(getContext(), R.color.tabsScrollColor);
+                return ContextCompat.getColor(getContext(), R.color.holo_blue_light);
             }
         });
         tabs.setViewPager(pagerMMR);

@@ -37,11 +37,12 @@ import software.cranes.com.dota.model.GosuGamerTeamRankModel;
  */
 public class GosugamersJsoupFragment extends BaseFragment implements View.OnClickListener {
 
-    private Button btnGetData, btnGetPlayer, btnSaveTeam, btnSavePlayer;
+    private Button btnGetData, btnGetPlayer, btnSaveTeam, btnSavePlayer, btnSaveTeamSuggest;
     private String url;
-    private Map<String, GosuGamerTeamRankModel> mapTeamRankWord;
+    private Map<String, GosuGamerTeamRankModel> teamRankWorldMap;
     //    private List<PlayerModel> listPlayer;
-    private Map<String, String> mapPlayer;
+    private Map<String, String> playerMap;
+    private Map<String, Map<String, String>> teamPlayerMap;
     private int defaultNumberPageWord = 5;
     private String urlWord = "http://www.gosugamers.net/dota2/rankings?type=team";
     private String urlPlayer = "http://www.gosugamers.net/rankings/show/team/";
@@ -82,13 +83,16 @@ public class GosugamersJsoupFragment extends BaseFragment implements View.OnClic
         btnGetPlayer = (Button) view.findViewById(R.id.btnGetPlayer);
         btnSaveTeam = (Button) view.findViewById(R.id.btnSaveTeam);
         btnSavePlayer = (Button) view.findViewById(R.id.btnSavePlayer);
+        btnSaveTeamSuggest = (Button) view.findViewById(R.id.btnSaveTeamSuggest);
+        btnSaveTeamSuggest.setOnClickListener(this);
         btnGetPlayer.setOnClickListener(this);
         btnGetData.setOnClickListener(this);
         btnSaveTeam.setOnClickListener(this);
         btnSavePlayer.setOnClickListener(this);
-        mapTeamRankWord = new HashMap<>();
+        teamRankWorldMap = new HashMap<>();
 //        listPlayer = new ArrayList<>();
-        mapPlayer = new HashMap<>();
+        playerMap = new HashMap<>();
+        teamPlayerMap = new HashMap<>();
     }
 
     /**
@@ -113,6 +117,9 @@ public class GosugamersJsoupFragment extends BaseFragment implements View.OnClic
             case R.id.btnSaveTeam:
                 // save to gosu/team
                 saveTeam();
+                break;
+            case R.id.btnSaveTeamSuggest:
+                saveSuggest();
                 break;
             case R.id.btnSavePlayer:
                 // save to gosu/player
@@ -188,7 +195,7 @@ public class GosugamersJsoupFragment extends BaseFragment implements View.OnClic
                             country = elementSpans.get(1).attr("title");
                             teamName = elementSpans.get(2).text();
                             model = new GosuGamerTeamRankModel(data_id, ranking, country, teamName);
-                            mapTeamRankWord.put(String.valueOf(ranking), model);
+                            teamRankWorldMap.put(String.valueOf(ranking), model);
                         }
                     }
                     hideCircleDialogOnly();
@@ -206,19 +213,19 @@ public class GosugamersJsoupFragment extends BaseFragment implements View.OnClic
 
     // get link image team and player name
     private void getDataForTeam() {
-        if (mapTeamRankWord == null || mapTeamRankWord.size() == 0) {
+        if (teamRankWorldMap == null || teamRankWorldMap.size() == 0) {
             return;
         }
-        Iterator<String> iterator = mapTeamRankWord.keySet().iterator();
+        Iterator<String> iterator = teamRankWorldMap.keySet().iterator();
         String furl;
         while (iterator.hasNext()) {
             final String key = iterator.next();
-            furl = urlPlayer + mapTeamRankWord.get(key).getData_id();
+            furl = urlPlayer + teamRankWorldMap.get(key).getData_id();
             showCircleDialogOnly();
             SendRequest.requestGetJsoup(getContext(), furl, new SendRequest.StringResponse() {
                 @Override
                 public void onSuccess(String data) {
-                    GosuGamerTeamRankModel model = mapTeamRankWord.get(key);
+                    GosuGamerTeamRankModel model = teamRankWorldMap.get(key);
                     Document document = Jsoup.parse(data);
                     Elements elementBases = document.select("div.rank-box > div.base");
                     if (elementBases != null && elementBases.size() > 0) {
@@ -262,20 +269,20 @@ public class GosugamersJsoupFragment extends BaseFragment implements View.OnClic
                         Elements elementAs = elementRoster.getElementsByTag("a");
                         if (elementAs != null && elementAs.size() > 0) {
                             String name, id_photo;
-                            int i = 1;
-                            Map<String, String> teamPlayer = new HashMap<String, String>();
+                            Map<String, String> map = new HashMap<String, String>();
                             for (Element elementA : elementAs) {
                                 name = elementA.attr("title");
                                 id_photo = getId_Photo(elementA.attr("style"));
                                 if (id_photo == null) {
-                                    mapPlayer.put(CommonUtils.escapeKey(name), Constant.NO_IMAGE);
+                                    playerMap.put(CommonUtils.escapeKey(name), Constant.NO_IMAGE);
+                                    map.put(CommonUtils.escapeKey(name), Constant.NO_IMAGE);
                                 } else {
-                                    mapPlayer.put(CommonUtils.escapeKey(name), id_photo);
+                                    playerMap.put(CommonUtils.escapeKey(name), id_photo);
+                                    map.put(CommonUtils.escapeKey(name), id_photo);
                                 }
-                                teamPlayer.put(String.valueOf(i), name);
-                                i++;
                             }
-                            model.setTeamPlayer(teamPlayer);
+//                            model.setTeamPlayer(teamPlayer);
+                            teamPlayerMap.put(CommonUtils.escapeKey(model.getTeamName()), map);
                         }
                     }
                     hideCircleDialogOnly();
@@ -291,14 +298,14 @@ public class GosugamersJsoupFragment extends BaseFragment implements View.OnClic
     }
 
     private void saveTeam() {
-        if (mapTeamRankWord == null || mapTeamRankWord.size() == 0) {
+        if (teamRankWorldMap == null || teamRankWorldMap.size() == 0) {
             Toast.makeText(getContext(), "no data save", Toast.LENGTH_SHORT).show();
             return;
         }
         showCircleDialog();
         FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference reference = mFirebaseDatabase.getReference("gosu/team");
-        reference.setValue(mapTeamRankWord).addOnCompleteListener(new OnCompleteListener<Void>() {
+        reference.setValue(teamRankWorldMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 hideCircleDialog();
@@ -312,15 +319,36 @@ public class GosugamersJsoupFragment extends BaseFragment implements View.OnClic
 
     }
 
+    private void saveSuggest() {
+        if (teamPlayerMap == null || teamPlayerMap.size() == 0) {
+            Toast.makeText(getContext(), "no data save", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        showCircleDialog();
+        FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference reference = mFirebaseDatabase.getReference("gosu/suggest");
+        reference.setValue(teamPlayerMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                hideCircleDialog();
+                if (!task.isSuccessful()) {
+                    showWarningDialog(task.getException().getMessage());
+                } else {
+                    Toast.makeText(getContext(), "data saved", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
     private void savePlayer() {
-        if (mapPlayer == null || mapPlayer.size() == 0) {
+        if (playerMap == null || playerMap.size() == 0) {
             Toast.makeText(getContext(), "no data save", Toast.LENGTH_SHORT).show();
             return;
         }
         showCircleDialog();
         FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference reference = mFirebaseDatabase.getReference("gosu/player");
-        reference.setValue(mapPlayer).addOnCompleteListener(new OnCompleteListener<Void>() {
+        reference.setValue(playerMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 hideCircleDialog();

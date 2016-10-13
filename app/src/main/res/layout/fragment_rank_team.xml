@@ -6,15 +6,9 @@
         android:orientation="vertical"
         tools:context="software.cranes.com.dota.fragment.MMR_PlayerFragment">
 
-    <TextView
-            android:textStyle="italic"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvTimeUpdate"/>
-
-    <ListView
+    <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:dividerHeight="2dp"
-            android:id="@+id/lv"/>
+            android:scrollbars="vertical"
+            android:id="@+id/recyclerView"/>
 </LinearLayout>

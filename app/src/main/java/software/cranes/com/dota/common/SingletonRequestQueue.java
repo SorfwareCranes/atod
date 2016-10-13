@@ -64,7 +64,14 @@ public class SingletonRequestQueue {
         request.setTag(Constant.TAG);
         getRequestQueue().add(request);
     }
-
+    public <T> void addToRequestImageQueue(Request<T> request, String tag) {
+        request.setRetryPolicy(mDefaultRetryPolicy);
+        request.setTag(tag);
+        getRequestQueue().add(request);
+    }
+    public void removeRequestImage(String tag) {
+        getRequestQueue().cancelAll(tag);
+    }
     public ImageLoader getmImageLoader() {
         return mImageLoader;
     }

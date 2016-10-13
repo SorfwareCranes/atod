@@ -3,6 +3,9 @@ package software.cranes.com.dota.common;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -25,6 +28,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import software.cranes.com.dota.R;
+
+import static android.R.attr.x;
 
 
 /**
@@ -374,5 +381,21 @@ public class CommonUtils {
                 .replace("%5B", "[")
                 .replace("%5D", "]")
                 .replace("%2F", "/");
+    }
+
+    public static Bitmap decodeBitmap(Bitmap tmp, int reqWidth, int reqHeight) {
+        int rawWidth = tmp.getWidth();
+        int rawHeight = tmp.getHeight();
+        if (rawWidth <= reqWidth && rawHeight <= reqWidth) {
+            return tmp;
+        }
+        Bitmap result;
+        if ((rawWidth / reqWidth) >= (rawHeight / reqHeight)) {
+            result = Bitmap.createScaledBitmap(tmp, reqWidth, (int)((reqWidth/rawWidth)*rawHeight),false );
+        } else {
+            result = Bitmap.createScaledBitmap(tmp, (int)((reqHeight/rawHeight)*rawWidth), reqHeight,false );
+        }
+        tmp.recycle();
+        return result;
     }
 }

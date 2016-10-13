@@ -1,16 +1,21 @@
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context="software.cranes.com.dota.fragment.MMR_ScreenSlidePagerFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:context="software.cranes.com.dota.fragment.MMR_ScreenSlidePagerFragment">
 
-    <software.cranes.com.dota.custom.SlidingTabLayout
-            android:id="@+id/tabs"
+    <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="@dimen/menu_elevation"/>
+            android:layout_height="wrap_content">
+
+        <software.cranes.com.dota.custom.SlidingTabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="@dimen/menu_elevation"/>
+    </android.support.v7.widget.CardView>
 
     <android.support.v4.view.ViewPager
             android:layout_width="match_parent"

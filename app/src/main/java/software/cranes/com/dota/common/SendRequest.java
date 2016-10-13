@@ -1,10 +1,13 @@
 package software.cranes.com.dota.common;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.widget.ImageView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 
 import java.util.Map;
@@ -173,4 +176,18 @@ public class SendRequest {
         SingletonRequestQueue.getInstance(context).addToRequestQueue(mRequest);
     }
 
+    public static void requestImageNetwork(Context context, final ImageView imageView, String url, int reqWidth, int reqHeight, final int resId) {
+        ImageRequest request = new ImageRequest(url, new Response.Listener<Bitmap>() {
+            @Override
+            public void onResponse(Bitmap response) {
+                imageView.setImageBitmap(response);
+            }
+        }, reqWidth, reqHeight, ImageView.ScaleType.CENTER_INSIDE, null, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                imageView.setImageResource(resId);
+            }
+        });
+        SingletonRequestQueue.getInstance(context).addToRequestImageQueue(request, url);
+    }
 }

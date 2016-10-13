@@ -11,9 +11,9 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RankerMMRmodel {
     @JsonProperty(value = "time_posted")
-    private int time_posted;
+    private long time_posted;
     @JsonProperty(value = "next_scheduled_post_time")
-    private int next_scheduled_post_time;
+    private long next_scheduled_post_time;
     @JsonProperty(value = "sever_time")
     private int sever_time;
     @JsonProperty(value = "leaderboard")
@@ -22,19 +22,19 @@ public class RankerMMRmodel {
     public RankerMMRmodel() {
     }
 
-    public int getTime_posted() {
+    public long getTime_posted() {
         return time_posted;
     }
 
-    public void setTime_posted(int time_posted) {
+    public void setTime_posted(long time_posted) {
         this.time_posted = time_posted;
     }
 
-    public int getNext_scheduled_post_time() {
+    public long getNext_scheduled_post_time() {
         return next_scheduled_post_time;
     }
 
-    public void setNext_scheduled_post_time(int next_scheduled_post_time) {
+    public void setNext_scheduled_post_time(long next_scheduled_post_time) {
         this.next_scheduled_post_time = next_scheduled_post_time;
     }
 

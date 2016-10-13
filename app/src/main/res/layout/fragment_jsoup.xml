@@ -27,6 +27,11 @@
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/btnSaveTeamSuggest"
+            android:text="Save Suggest"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/btnSavePlayer"
             android:visibility="invisible"
             android:text="Save Player"/>
