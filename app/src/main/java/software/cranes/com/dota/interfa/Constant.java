@@ -19,4 +19,8 @@ public interface Constant {
     int AMERICAS_RANK = 5;
     String NO_IMAGE = "";
     String DATA = "data";
+    String TITLE_EURO_RANK = "Europe & CIS Rank";
+    String TITLE_AMERICAS_RANK = "Americas Rank";
+    String TITLE_SEA_RANK = "SEA & Oceania Rank";
+    String TITLE_CHINA_RANK = "China Rank";
 }

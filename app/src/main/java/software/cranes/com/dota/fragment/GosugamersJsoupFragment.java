@@ -51,10 +51,10 @@ public class GosugamersJsoupFragment extends BaseFragment implements View.OnClic
     // size 180x133 px
     private String urlPhotoPlayer = "http://www.gosugamers.net/uploads/images/players/";
     private String page = "&page=";
-    private String sea_local = "SEA & Oceania";
-    private String euro_local = "Europe & CIS";
-    private String china_local = "China";
-    private String americas_local = "Americas";
+    private String sea_local = "S";
+    private String euro_local = "E";
+    private String china_local = "C";
+    private String americas_local = "A";
 
 
     public GosugamersJsoupFragment() {
@@ -245,13 +245,13 @@ public class GosugamersJsoupFragment extends BaseFragment implements View.OnClic
                                 model.setLocal_ranking(Integer.valueOf(elementSpans.get(0).text()));
                                 String local = elementSpans.get(1).text();
                                 if (local != null) {
-                                    if (local.equals(sea_local)) {
+                                    if (local.startsWith(sea_local)) {
                                         model.setTypeLocal(Constant.SEA_RANK);
-                                    } else if (local.equals(euro_local)) {
+                                    } else if (local.startsWith(euro_local)) {
                                         model.setTypeLocal(Constant.EUROPE_RANK);
-                                    } else if (local.equals(china_local)) {
+                                    } else if (local.startsWith(china_local)) {
                                         model.setTypeLocal(Constant.CHINA_RANK);
-                                    } else if (local.equals(americas_local)) {
+                                    } else if (local.startsWith(americas_local)) {
                                         model.setTypeLocal(Constant.AMERICAS_RANK);
                                     }
                                 }

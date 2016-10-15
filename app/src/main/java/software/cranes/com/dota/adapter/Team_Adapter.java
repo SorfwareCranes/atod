@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,6 @@ import static software.cranes.com.dota.R.id.imageView;
 
 public class Team_Adapter extends RecyclerView.Adapter<Team_Adapter.ViewHolder> {
     private ArrayList<GosuGamerTeamRankModel> listData;
-    private String local;
     private Context context;
     private String baseURL = "http://www.gosugamers.net/uploads/images/teams/";
     private String endURL = ".jpeg";
@@ -55,7 +55,7 @@ public class Team_Adapter extends RecyclerView.Adapter<Team_Adapter.ViewHolder> 
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.team_rank_layout, null, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.team_rank_layout, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }
@@ -71,30 +71,40 @@ public class Team_Adapter extends RecyclerView.Adapter<Team_Adapter.ViewHolder> 
         } else {
             holder.tvMoney.setText(model.getEarnedMoney());
         }
+        String local;
         switch (model.getTypeLocal()) {
             case Constant.EUROPE_RANK:
-                local = "Europe & CIS Rank";
+                local = Constant.TITLE_EURO_RANK;
                 break;
             case Constant.AMERICAS_RANK:
-                local = "Americas Rank";
+                local = Constant.TITLE_AMERICAS_RANK;
                 break;
             case Constant.SEA_RANK:
-                local = "SEA & Oceania Rank";
+                local = Constant.TITLE_SEA_RANK;
                 break;
             case Constant.CHINA_RANK:
-                local = "China Rank";
+                local = Constant.TITLE_CHINA_RANK;
                 break;
             default:
-                local = "Unknow Rank";
+                local = Constant.NO_IMAGE;
                 break;
         }
         holder.tvTypeLocal.setText(local);
         holder.tvWorldRank.setText(String.valueOf(model.getRanking()));
-        holder.tvLocalRank.setText(String.valueOf(model.getLocal_ranking()));
+        if (!local.equals(Constant.NO_IMAGE)) {
+            holder.tvLocalRank.setText(String.valueOf(model.getLocal_ranking()));
+        } else {
+            holder.tvLocalRank.setText(Constant.NO_IMAGE);
+        }
+        if (local.equals(Constant.TITLE_EURO_RANK) && model.getRanking() == 93) {
+            Log.d("test", "test");
+        }
         if (model.getId_photo() != null && !model.getId_photo().equals(Constant.NO_IMAGE)) {
             String url = new StringBuilder(baseURL).append(model.getId_photo()).append(endURL).toString();
             new ImageRequestCustom(context, holder.imgTeam, url, sizeImage, sizeImage, R.drawable.no_image_team, bitmapRes).execute(holder.imgTeam);
 
+        } else {
+            holder.imgTeam.setImageResource(R.drawable.no_image_team);
         }
 
     }

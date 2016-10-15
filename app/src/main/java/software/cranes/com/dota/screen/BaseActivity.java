@@ -59,17 +59,15 @@ public class BaseActivity extends AppCompatActivity {
                     // is sign in
                     for (UserInfo userInfo : mFirebaseUser.getProviderData()) {
                         if (userInfo != null && userInfo.getProviderId() != null) {
-                            name = userInfo.getDisplayName();
                             email = userInfo.getEmail();
                             uid = userInfo.getUid();
-                            photoUri = userInfo.getPhotoUrl();
-                            if (userInfo.getProviderId().equals(Constant.google)) {
-                                statusLogin = Constant.google;
-                            } else if (userInfo.getProviderId().equals(Constant.facebook)) {
-                                statusLogin = Constant.facebook;
-                            } else if (userInfo.getProviderId().equals(Constant.twitter)) {
-                                statusLogin = Constant.twitter;
+                            if (userInfo.getDisplayName() == null) {
+                                name = email.substring(0, email.length()-9);
+                            } else {
+                                name = userInfo.getDisplayName();
                             }
+                            photoUri = userInfo.getPhotoUrl();
+                            statusLogin = userInfo.getProviderId();
                         }
                     }
                 } else {
@@ -147,5 +145,13 @@ public class BaseActivity extends AppCompatActivity {
             fragmentTransaction.addToBackStack(null);
         }
         fragmentTransaction.commit();
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setStatusLogin(String statusLogin) {
+        this.statusLogin = statusLogin;
     }
 }

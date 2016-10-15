@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import software.cranes.com.dota.R;
+import software.cranes.com.dota.fragment.AboutUsFragment;
 import software.cranes.com.dota.fragment.BaseFragment;
 import software.cranes.com.dota.fragment.GosugamersJsoupFragment;
 import software.cranes.com.dota.fragment.MMR_ScreenSlidePagerFragment;
@@ -21,6 +22,7 @@ import software.cranes.com.dota.fragment.RankTeam_ScreenSlidePagerFragment;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private boolean isAdmin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,25 +116,39 @@ public class MainActivity extends BaseActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        switch (item.getItemId()) {
+            case R.id.nav_top_mmr:
+                replaceFragment(new MMR_ScreenSlidePagerFragment(), R.id.containerActivity, true);
+                break;
+            case R.id.nav_top_team:
+                replaceFragment(new RankTeam_ScreenSlidePagerFragment(), R.id.containerActivity, true);
+                break;
+            case R.id.nav_legend:
 
-        if (id == R.id.nav_top_mmr) {
-            replaceFragment(new MMR_ScreenSlidePagerFragment(), R.id.containerActivity, true);
-        } else if (id == R.id.nav_top_team) {
-            replaceFragment(new RankTeam_ScreenSlidePagerFragment(), R.id.containerActivity, true);
+                break;
+            case R.id.nav_manage:
 
-        } else if (id == R.id.nav_legend) {
+                break;
+            case R.id.nav_share:
 
-        } else if (id == R.id.nav_manage) {
+                break;
+            case R.id.nav_send:
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+                break;
+            case R.id.nav_about:
+                replaceFragment(new AboutUsFragment(), R.id.containerActivity, true);
+                break;
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
 }

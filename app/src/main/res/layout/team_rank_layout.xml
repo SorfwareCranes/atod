@@ -3,8 +3,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="3dp"
-        android:layout_marginTop="3dp">
+        android:layout_margin="3dp">
 
     <LinearLayout
             android:orientation="horizontal"
@@ -13,6 +12,7 @@
 
         <TextView
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:id="@+id/tvShowRank"
                 android:layout_width="30dp"
                 android:layout_height="wrap_content"/>
@@ -36,12 +36,15 @@
                     android:orientation="horizontal">
 
                 <TextView
+                        android:textSize="@dimen/normal_text"
+                        android:textStyle="bold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:id="@+id/tvTeamName"/>
 
                 <TextView
+                        android:textSize="@dimen/medium_text"
                         android:gravity="right"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -55,12 +58,14 @@
                     android:orientation="horizontal">
 
                 <TextView
+                        android:textSize="@dimen/medium_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/money_earning"/>
 
                 <TextView
+                        android:textSize="@dimen/medium_text"
                         android:gravity="right"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -91,13 +96,16 @@
                     android:orientation="horizontal">
 
                 <TextView
-
+                        android:textSize="@dimen/large_text"
+                        android:textStyle="bold"
                         android:id="@+id/tvWorldRank"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"/>
 
                 <TextView
+                        android:textSize="@dimen/large_text"
+                        android:textStyle="bold"
                         android:id="@+id/tvLocalRank"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"

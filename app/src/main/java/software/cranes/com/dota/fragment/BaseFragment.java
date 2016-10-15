@@ -132,6 +132,7 @@ public class BaseFragment extends Fragment implements ConfirmDialog.HandleConfir
             circleDialog = CircleDialog.getInstance();
             if (circleDialog.getDialog() != null && circleDialog.getDialog().isShowing()) {
                 circleDialog.dismiss();
+                circleDialog = null;
             }
             CircleDialog.z = 0;
         }
