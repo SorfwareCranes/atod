@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import software.cranes.com.dota.dialog.CircleDialog;
 import software.cranes.com.dota.dialog.ConfirmDialog;
 import software.cranes.com.dota.dialog.WarningDialog;
 import software.cranes.com.dota.screen.MainActivity;
+
+import static com.google.android.gms.internal.zznu.is;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -115,7 +118,7 @@ public class BaseFragment extends Fragment implements ConfirmDialog.HandleConfir
     // use when have a many request get data.
     public synchronized void showCircleDialogOnly() {
         if (CircleDialog.z >= 1) {
-            CircleDialog.z ++;
+            CircleDialog.z++;
             return;
         }
         circleDialog = CircleDialog.getInstance();
@@ -136,5 +139,14 @@ public class BaseFragment extends Fragment implements ConfirmDialog.HandleConfir
             }
             CircleDialog.z = 0;
         }
+    }
+
+    public void replaceFragment(int layoutId, BaseFragment fragment, boolean isAddBackTrack) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(layoutId, fragment, null);
+        if (isAddBackTrack) {
+            transaction.addToBackStack(null);
+        }
+        transaction.commit();
     }
 }

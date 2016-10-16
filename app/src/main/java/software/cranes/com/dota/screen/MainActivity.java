@@ -15,6 +15,7 @@ import android.view.MenuItem;
 
 import software.cranes.com.dota.R;
 import software.cranes.com.dota.fragment.AboutUsFragment;
+import software.cranes.com.dota.fragment.InfomationUsFragment;
 import software.cranes.com.dota.fragment.BaseFragment;
 import software.cranes.com.dota.fragment.GosugamersJsoupFragment;
 import software.cranes.com.dota.fragment.MMR_ScreenSlidePagerFragment;

@@ -24,21 +24,13 @@
             android:id="@+id/btnGoogleLogin"
             android:text="Google Login"/>
 
-    <Button
+    <com.facebook.login.widget.LoginButton
             android:layout_marginTop="@dimen/nav_header_vertical_spacing"
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnFacebookLogin"
-            android:text="Facebook Login"/>
-
-    <Button
-            android:layout_marginTop="@dimen/nav_header_vertical_spacing"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnTwitter"
-            android:text="Twitter Login"/>
+            />
 
     <TextView
             android:id="@+id/btnBack"

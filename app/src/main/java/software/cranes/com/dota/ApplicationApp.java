@@ -3,6 +3,7 @@ package software.cranes.com.dota;
 import android.app.Application;
 
 import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.firebase.client.Firebase;
 
 /**
@@ -16,5 +17,6 @@ public class ApplicationApp extends Application {
         super.onCreate();
         Firebase.setAndroidContext(this);
         FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
     }
 }

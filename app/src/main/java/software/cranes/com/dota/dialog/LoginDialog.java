@@ -7,10 +7,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -32,6 +32,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+
 import java.util.ArrayList;
 
 import software.cranes.com.dota.R;
@@ -40,6 +47,8 @@ import software.cranes.com.dota.model.SingleStringModel;
 import software.cranes.com.dota.model.UserModel;
 import software.cranes.com.dota.screen.MainActivity;
 
+import static android.R.id.list;
+
 /**
  * Created by GiangNT - PC on 19/09/2016.
  */
@@ -47,13 +56,12 @@ import software.cranes.com.dota.screen.MainActivity;
 public class LoginDialog extends BaseDialogFragment implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
     private static LoginDialog mInstance;
     private Button btnGoogleLogin;
-    private Button btnFacebookLogin;
-    private Button btnTwitter;
+    private LoginButton btnFacebookLogin;
     private TextView btnBack;
     private final int GOOGLE_SIGNIN_REQUEST = 1;
     private GoogleApiClient mGoogleApiClient;
+    private CallbackManager mCallbackManager;
     private LoginListener mListener;
-
     public interface LoginListener {
         void onLoginSuccess();
     }
@@ -78,7 +86,6 @@ public class LoginDialog extends BaseDialogFragment implements View.OnClickListe
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
         View view = getActivity().getLayoutInflater().inflate(R.layout.login_dialog_layout, null, false);
         setupView(view);
-
         mBuilder.setView(view);
         Dialog mDialog = mBuilder.create();
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -87,14 +94,32 @@ public class LoginDialog extends BaseDialogFragment implements View.OnClickListe
     }
 
     private void setupView(View view) {
+        // google
         btnGoogleLogin = (Button) view.findViewById(R.id.btnGoogleLogin);
-        btnFacebookLogin = (Button) view.findViewById(R.id.btnFacebookLogin);
-        btnTwitter = (Button) view.findViewById(R.id.btnTwitter);
-        btnBack = (TextView) view.findViewById(R.id.btnBack);
-
         btnGoogleLogin.setOnClickListener(this);
-        btnFacebookLogin.setOnClickListener(this);
-        btnTwitter.setOnClickListener(this);
+
+        // facebook
+        mCallbackManager = CallbackManager.Factory.create();
+        btnFacebookLogin = (LoginButton) view.findViewById(R.id.btnFacebookLogin);
+        btnFacebookLogin.setReadPermissions("email", "public_profile");
+        btnFacebookLogin.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnBack = (TextView) view.findViewById(R.id.btnBack);
         btnBack.setOnClickListener(this);
     }
 
@@ -108,12 +133,6 @@ public class LoginDialog extends BaseDialogFragment implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btnGoogleLogin:
                 handleGoogleSignIn();
-                break;
-            case R.id.btnFacebookLogin:
-
-                break;
-            case R.id.btnTwitter:
-
                 break;
             case R.id.btnBack:
                 this.dismiss();
@@ -135,6 +154,7 @@ public class LoginDialog extends BaseDialogFragment implements View.OnClickListe
         Intent intent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(intent, GOOGLE_SIGNIN_REQUEST);
     }
+
     // handle SignIn with Google
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -146,10 +166,13 @@ public class LoginDialog extends BaseDialogFragment implements View.OnClickListe
                 firebaseAuthWithGoogle(mGoogleSignInAccount);
             } else {
                 LoginDialog.this.dismiss();
-                Toast.makeText(getActivity(), "Google Sign In failed.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Google SignIn failed.", Toast.LENGTH_SHORT).show();
             }
+        } else {
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
+
     // handle authendicate with google acount
     private void firebaseAuthWithGoogle(GoogleSignInAccount mGoogleSignInAccount) {
         showCircleDialog();
@@ -157,13 +180,15 @@ public class LoginDialog extends BaseDialogFragment implements View.OnClickListe
         FirebaseAuth.getInstance().signInWithCredential(mAuthCredential).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                hideCircleDialog();
+
                 if (task.isSuccessful()) {
                     FirebaseUser firebaseUser = task.getResult().getUser();
                     writeUserToFireBase(firebaseUser, Constant.google);
+                    hideCircleDialog();
                     checkAdmin(firebaseUser.getEmail());
                 } else {
-                    Toast.makeText(getActivity(), "Authenticate Google Acount failed.", Toast.LENGTH_SHORT).show();
+                    hideCircleDialog();
+                    Toast.makeText(getActivity(), "Authenticate Google failed.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -175,7 +200,9 @@ public class LoginDialog extends BaseDialogFragment implements View.OnClickListe
         final String email = mFirebaseUser.getEmail();
         String userId = mFirebaseUser.getUid();
         if (name == null || name.equals(Constant.NO_IMAGE)) {
-            name = email.substring(0, email.length() - 9);
+            if (email != null && email.length() > 9) {
+                name = email.substring(0, email.length() - 9);
+            }
         }
         if (getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).setName(name);
@@ -184,11 +211,8 @@ public class LoginDialog extends BaseDialogFragment implements View.OnClickListe
         FirebaseDatabase.getInstance().getReference("users/" + userId).setValue(new UserModel(name, email, type)).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    // do nothing
-                } else {
-//                    LoginDialog.this.dismiss();
-                    Toast.makeText(getActivity(), "Save User have fail", Toast.LENGTH_SHORT).show();
+                if (!task.isSuccessful()) {
+                    Toast.makeText(getActivity(), "Save user  fail", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -200,6 +224,29 @@ public class LoginDialog extends BaseDialogFragment implements View.OnClickListe
         Toast.makeText(getActivity(), "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
+    private void handleFacebookAccessToken(AccessToken mAccessToken) {
+        showCircleDialog();
+        AuthCredential mAuthCredential = FacebookAuthProvider.getCredential(mAccessToken.getToken());
+        FirebaseAuth.getInstance().signInWithCredential(mAuthCredential).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                hideCircleDialog();
+                if (task.isSuccessful()) {
+                    FirebaseUser mFirebaseUser = task.getResult().getUser();
+                    writeUserToFireBase(mFirebaseUser, Constant.facebook);
+                    LoginDialog.this.dismiss();
+                    if (mListener != null) {
+                        mListener.onLoginSuccess();
+                    }
+
+                } else {
+                    Toast.makeText(getActivity(), "Login with Facebook failed", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+    }
+
     private void checkAdmin(final String email) {
         showCircleDialog();
         FirebaseDatabase.getInstance().getReference("admin").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -207,17 +254,14 @@ public class LoginDialog extends BaseDialogFragment implements View.OnClickListe
             public void onDataChange(DataSnapshot dataSnapshot) {
                 hideCircleDialog();
                 if (dataSnapshot != null) {
-                    GenericTypeIndicator<ArrayList<SingleStringModel>> genericTypeIndicator = new GenericTypeIndicator<ArrayList<SingleStringModel>>() {
-                    };
+                    GenericTypeIndicator<ArrayList<SingleStringModel>> genericTypeIndicator = new GenericTypeIndicator<ArrayList<SingleStringModel>>() {};
                     ArrayList<SingleStringModel> list = dataSnapshot.getValue(genericTypeIndicator);
                     if (list != null && list.size() != 0) {
                         for (SingleStringModel model : list) {
-                            if (model.getName().equals(email)) {
+                            if (model != null && model.getName().equals(email)) {
                                 if (getActivity() instanceof MainActivity) {
                                     ((MainActivity) getActivity()).setAdmin(true);
                                 }
-                            } else {
-                                continue;
                             }
                         }
                     }
