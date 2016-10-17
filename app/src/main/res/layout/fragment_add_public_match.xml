@@ -1,0 +1,164 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="software.cranes.com.dota.fragment.AddPublicMatchFragment">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <TextView
+                    android:layout_marginRight="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Load Game"/>
+
+            <EditText
+                    android:layout_marginRight="5dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/edtLoadGame"
+                    android:hint="id game"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnLoadGame"
+                    android:text="Load"/>
+        </LinearLayout>
+
+        <Button
+                android:text="Time"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/btnAddTime"/>
+
+        <TextView
+                android:padding="3dp"
+                android:textSize="@dimen/normal_text"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Player Name"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <AutoCompleteTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/actPlayer"
+                    android:layout_weight="3"/>
+
+            <Button
+                    android:text="Player"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/btnChoicePlayer"/>
+        </LinearLayout>
+
+        <TextView
+                android:padding="3dp"
+                android:textSize="@dimen/normal_text"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Heroes"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <AutoCompleteTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/actHeroes"/>
+
+        </LinearLayout>
+
+        <TextView
+                android:padding="3dp"
+                android:textSize="@dimen/normal_text"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Title"/>
+
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edtTitleGame"/>
+
+        <TextView
+                android:padding="3dp"
+                android:textSize="@dimen/normal_text"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Link HighLight"/>
+
+        <EditText
+                android:hint="link highlight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edtLinkHighlight"/>
+
+        <TextView
+                android:padding="3dp"
+                android:textSize="@dimen/normal_text"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Link Full"/>
+
+        <EditText
+                android:hint="link highlight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edtLinkFull"/>
+
+        <LinearLayout
+                android:layout_margin="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnBack"
+                    android:layout_weight="1"
+                    android:layout_margin="5dp"
+                    android:text="BACK"/>
+
+            <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnDelete"
+                    android:layout_weight="1"
+                    android:layout_margin="5dp"
+                    android:text="DELETE"/>
+
+            <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnSave"
+                    android:layout_weight="1"
+                    android:layout_margin="5dp"
+                    android:text="SAVE"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

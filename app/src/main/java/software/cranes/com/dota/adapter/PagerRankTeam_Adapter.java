@@ -11,6 +11,7 @@ import software.cranes.com.dota.fragment.Rank_TeamFragment;
 import software.cranes.com.dota.interfa.Constant;
 import software.cranes.com.dota.model.GosuGamerTeamRankModel;
 
+import static android.R.attr.configChanges;
 import static android.R.attr.type;
 
 /**
@@ -71,42 +72,55 @@ public class PagerRankTeam_Adapter extends FragmentPagerAdapter {
         switch (position) {
             case 0:
             default:
-                for (int i = 1; i < data.size(); i++) {
-                    if (data.get(i).getRanking() != 0) {
-                        list.add(data.get(i));
+                for (GosuGamerTeamRankModel model : data) {
+                    if (model == null) {
+                        continue;
+                    }
+                    if (model.getRanking() != 0) {
+                        list.add(model);
                     }
                 }
                 return list;
             case 1:
-                for (int i = 1; i < data.size(); i++) {
-                    if (data.get(i).getTypeLocal() == Constant.EUROPE_RANK) {
-                        list.add(data.get(i));
+                for (GosuGamerTeamRankModel model : data) {
+                    if (model == null) {
+                        continue;
+                    }
+                    if (model.getTypeLocal() == Constant.EUROPE_RANK) {
+                        list.add(model);
                     }
                 }
                 return list;
             case 2:
-                for (int i = 1; i < data.size(); i++) {
-                    if (data.get(i).getTypeLocal() == Constant.AMERICAS_RANK) {
-                        list.add(data.get(i));
+                for (GosuGamerTeamRankModel model : data) {
+                    if (model == null) {
+                        continue;
+                    }
+                    if (model.getTypeLocal() == Constant.AMERICAS_RANK) {
+                        list.add(model);
                     }
                 }
                 return list;
             case 3:
-                for (int i = 1; i < data.size(); i++) {
-                    if (data.get(i).getTypeLocal() == Constant.SEA_RANK) {
-                        list.add(data.get(i));
+                for (GosuGamerTeamRankModel model : data) {
+                    if (model == null) {
+                        continue;
+                    }
+                    if (model.getTypeLocal() == Constant.SEA_RANK) {
+                        list.add(model);
                     }
                 }
                 return list;
             case 4:
-                for (int i = 1; i < data.size(); i++) {
-                    if (data.get(i).getTypeLocal() == Constant.CHINA_RANK) {
-                        list.add(data.get(i));
+                for (GosuGamerTeamRankModel model : data) {
+                    if (model == null) {
+                        continue;
+                    }
+                    if (model.getTypeLocal() == Constant.CHINA_RANK) {
+                        list.add(model);
                     }
                 }
                 return list;
-
-
         }
     }
 }

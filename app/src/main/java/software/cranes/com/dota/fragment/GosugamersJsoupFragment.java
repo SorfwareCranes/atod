@@ -172,11 +172,12 @@ public class GosugamersJsoupFragment extends BaseFragment implements View.OnClic
 
     // get data rank for team
     private void getMapTeamRank() {
-        showCircleDialogOnly();
+
         String furl = urlWord + page;
         String urlLoad;
         for (int j = 1; j <= defaultNumberPageWord; j++) {
             urlLoad = furl + j;
+            showCircleDialogOnly();
             SendRequest.requestGetJsoup(getContext(), urlLoad, new SendRequest.StringResponse() {
                 @Override
                 public void onSuccess(String data) {
