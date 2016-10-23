@@ -312,11 +312,13 @@ public class CommonUtils {
 
     public static String extractVideoIdFromUrl(String url) {
         String vId = null;
-        Pattern pattern = Pattern.compile("^https?://.*(?:youtu.be/|v/|u/\\w/|embed/|watch?v=)([^#&?]*).*$",
-                Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(url);
-        if (matcher.matches()) {
-            vId = matcher.group(1);
+        if (url != null) {
+            Pattern pattern = Pattern.compile("(?<=watch\\?v=|/videos/|embed\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|embed%\u200C\u200B2F|youtu.be%2F|%2Fv%2F)[^#\\&\\?\\n]*", Pattern.CASE_INSENSITIVE);
+//            Pattern pattern = Pattern.compile("^https?://.*(?:youtu.be/|v/|u/\\w/|embed/|watch?v=)([^#&?]*).*$", Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(url);
+            if (matcher.find()){
+                vId = matcher.group();
+            }
         }
         return vId;
     }
@@ -391,11 +393,36 @@ public class CommonUtils {
         }
         Bitmap result;
         if ((rawWidth / reqWidth) >= (rawHeight / reqHeight)) {
-            result = Bitmap.createScaledBitmap(tmp, reqWidth, (int)((reqWidth/rawWidth)*rawHeight),false );
+            result = Bitmap.createScaledBitmap(tmp, reqWidth, (int) ((reqWidth / rawWidth) * rawHeight), false);
         } else {
-            result = Bitmap.createScaledBitmap(tmp, (int)((reqHeight/rawHeight)*rawWidth), reqHeight,false );
+            result = Bitmap.createScaledBitmap(tmp, (int) ((reqHeight / rawHeight) * rawWidth), reqHeight, false);
         }
         tmp.recycle();
         return result;
+    }
+
+    public static int[] convertLongToDate(long time) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time * 1000);
+        return new int[]{calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)};
+    }
+
+    public static long convertDateToLong(int year, int monthOfYear, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, monthOfYear, dayOfMonth);
+        return ((long) calendar.getTimeInMillis() / 1000);
+    }
+
+    public static String convertLongDateToString(long time) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time * 1000);
+        return new StringBuilder().append(convertToTwoLetter(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)))).append(".").append(convertToTwoLetter(String.valueOf(calendar.get(Calendar.MONTH) + 1))).append(".").append(calendar.get(Calendar.YEAR)).toString();
+    }
+
+    private static String convertToTwoLetter(String time) {
+        if (time.length() == 1) {
+            time = "0" + time;
+        }
+        return time;
     }
 }

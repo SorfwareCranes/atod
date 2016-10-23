@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
@@ -13,6 +14,7 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.Map;
 
 import software.cranes.com.dota.interfa.Constant;
+import software.cranes.com.dota.model.Items;
 
 /**
  * Created by GiangNT - PC on 23/09/2016.
@@ -27,6 +29,12 @@ public class SendRequest {
 
     public interface StringResponse {
         public void onSuccess(String data);
+
+        public void onFail(String err);
+    }
+
+    public interface HandleYoutubeVideoId {
+        public void onSuccess(String title, String url);
 
         public void onFail(String err);
     }
@@ -140,7 +148,6 @@ public class SendRequest {
         StringRequest mRequest = new StringRequest(typeParseJsoup, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Object data = null;
                 if (response != null && handle != null) {
                     handle.onSuccess(response);
                 }
@@ -160,7 +167,6 @@ public class SendRequest {
         StringRequest mRequest = new StringRequest(StringRequest.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Object data = null;
                 if (response != null && handle != null) {
                     handle.onSuccess(response);
                 }
@@ -189,5 +195,26 @@ public class SendRequest {
             }
         });
         SingletonRequestQueue.getInstance(context).addToRequestImageQueue(request, url);
+    }
+
+    public static void requestYoutubeTitleAndUrlImage(Context context, String videoId, final HandleYoutubeVideoId handle) {
+        StringRequest mRequest = new StringRequest(StringRequest.Method.GET, new StringBuilder("https://www.googleapis.com/youtube/v3/videos?id=").append(videoId).append("&key=AIzaSyC-2J8Rwoe5ppVp6FemxwwqSuEn3ZxDofE&part=snippet&fields=items/snippet(title,thumbnails/default/url)").toString(), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response != null && handle != null) {
+                    Items items = JsonUtil.convertObjectFromJsonString(response, Items.class);
+                    if (items != null) {
+                        handle.onSuccess(items.getTitle(), items.getUrl());
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (handle != null) {
+                    handle.onFail(VolleyErrorHandling.getMessage(error));
+                }
+            }
+        });
     }
 }

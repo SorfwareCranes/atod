@@ -3,6 +3,7 @@ package software.cranes.com.dota.dialog;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -26,7 +27,7 @@ public class BaseDialogFragment extends DialogFragment {
     protected void showCircleDialog() {
         circleDialog = CircleDialog.getInstance();
         if (circleDialog.getDialog() == null || (circleDialog.getDialog() != null && !circleDialog.getDialog().isShowing())) {
-            circleDialog.show(getFragmentManager(), null);
+            circleDialog.show(getFragmentManager(), "base dialog");
             CircleDialog.z = 1;
         }
     }

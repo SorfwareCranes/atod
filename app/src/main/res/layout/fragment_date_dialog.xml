@@ -1,0 +1,53 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:elevation="@dimen/dialog_elevation"
+              tools:context="software.cranes.com.dota.dialog.DateDialogFragment">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/dialog_padding"
+            android:paddingRight="@dimen/dialog_padding"
+            android:paddingTop="5dp"
+            android:text="Set Date"
+            android:textColor="#85000000"
+            android:textSize="@dimen/text_size_big"/>
+
+    <DatePicker
+            android:id="@+id/datePickerPub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:datePickerMode="spinner"
+            android:spinnersShown="false"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <TextView
+                android:padding="10dp"
+                android:gravity="center"
+                android:textSize="@dimen/large_text"
+                android:text="Cancel"
+                android:id="@+id/tvCancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginRight="5dp"/>
+
+        <TextView
+                android:padding="10dp"
+                android:gravity="center"
+                android:textSize="@dimen/large_text"
+                android:text="Set"
+                android:id="@+id/tvSet"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="5dp"/>
+    </LinearLayout>
+</LinearLayout>

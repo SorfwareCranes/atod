@@ -72,4 +72,13 @@ public class JsonUtil {
         }
         return ret;
     }
+    public static String convertObjectToString(Object object) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(object);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

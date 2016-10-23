@@ -100,7 +100,7 @@ public class JoinDotaFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void getMapTeamRank() {
-        int defaultLoadTeamPage = 4;
+        int defaultLoadTeamPage = 6;
         String urlData;
         for (int page = 1; page <= defaultLoadTeamPage; page++) {
             urlData = urlTeam + String.valueOf(page);
@@ -123,7 +123,7 @@ public class JoinDotaFragment extends BaseFragment implements View.OnClickListen
                             if (elementSpans != null && elementSpans.size() > 1) {
                                 rank = elementSpans.get(0).text();
                                 if (rank != null) {
-                                    model.setRank(Integer.valueOf(rank.substring(0, rank.length() - 1)));
+//                                    model.setRank(Integer.valueOf(rank.substring(0, rank.length() - 1)));
                                 }
                                 model.setName(elementSpans.get(1).text());
                                 elementImgs = elementSpans.get(1).getElementsByTag("img");
@@ -134,7 +134,7 @@ public class JoinDotaFragment extends BaseFragment implements View.OnClickListen
                                     }
                                 }
                             }
-                            mapTeamRankWord.put(String.valueOf(model.getRank()), model);
+//                            mapTeamRankWord.put(String.valueOf(model.getRank()), model);
                         }
                     }
                     hideCircleDialogOnly();

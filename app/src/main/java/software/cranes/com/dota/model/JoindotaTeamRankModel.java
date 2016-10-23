@@ -8,7 +8,6 @@ import java.util.Map;
 
 public class JoindotaTeamRankModel {
     private String data_id;
-    private int rank;
     private String id_photo;
     private String name;
     private Map<String, String> teamPlayer;
@@ -22,14 +21,6 @@ public class JoindotaTeamRankModel {
 
     public void setData_id(String data_id) {
         this.data_id = data_id;
-    }
-
-    public int getRank() {
-        return rank;
-    }
-
-    public void setRank(int rank) {
-        this.rank = rank;
     }
 
     public String getId_photo() {

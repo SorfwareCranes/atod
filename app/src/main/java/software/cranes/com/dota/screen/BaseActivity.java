@@ -92,7 +92,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void showCircleDialog() {
         circleDialog = CircleDialog.getInstance();
         if (circleDialog.getDialog() == null || (circleDialog.getDialog() != null && !circleDialog.getDialog().isShowing())) {
-            circleDialog.show(getSupportFragmentManager(), null);
+            circleDialog.show(getSupportFragmentManager(), "base activity");
         }
     }
 

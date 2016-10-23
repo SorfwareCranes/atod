@@ -14,7 +14,7 @@ import software.cranes.com.dota.R;
  */
 
 public class CircleDialog extends DialogFragment {
-    private static CircleDialog mInstance;
+    private static  CircleDialog mInstance;
     public static int z = 0;
 
     public CircleDialog() {

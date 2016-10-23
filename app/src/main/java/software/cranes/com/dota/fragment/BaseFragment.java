@@ -4,20 +4,18 @@ package software.cranes.com.dota.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import software.cranes.com.dota.R;
 import software.cranes.com.dota.dialog.CircleDialog;
 import software.cranes.com.dota.dialog.ConfirmDialog;
 import software.cranes.com.dota.dialog.WarningDialog;
 import software.cranes.com.dota.screen.MainActivity;
-
-import static com.google.android.gms.internal.zznu.is;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -62,23 +60,7 @@ public class BaseFragment extends Fragment implements ConfirmDialog.HandleConfir
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    // show CircleDialog
-    protected void showCircleDialog() {
-        circleDialog = CircleDialog.getInstance();
-        if (circleDialog.getDialog() == null || (circleDialog.getDialog() != null && !circleDialog.getDialog().isShowing())) {
-            circleDialog.show(getFragmentManager(), null);
-            CircleDialog.z = 1;
-        }
-    }
 
-    protected void hideCircleDialog() {
-        circleDialog = CircleDialog.getInstance();
-        if (circleDialog.getDialog() != null && circleDialog.getDialog().isShowing()) {
-            circleDialog.dismiss();
-            CircleDialog.z = 0;
-        }
-        circleDialog = null;
-    }
 
     // show WarningDialog
     protected void showWarningDialog(String message) {
@@ -119,24 +101,45 @@ public class BaseFragment extends Fragment implements ConfirmDialog.HandleConfir
     public synchronized void showCircleDialogOnly() {
         if (CircleDialog.z >= 1) {
             CircleDialog.z++;
+            Log.d("z", " add z: " + CircleDialog.z);
             return;
+        } else if (CircleDialog.z == 0) {
+            if (circleDialog == null) {
+                circleDialog = CircleDialog.getInstance();
+            }
+            if (circleDialog.getDialog() == null || (!circleDialog.getDialog().isShowing())) {
+                CircleDialog.z = 1;
+                circleDialog.show(getFragmentManager(), null);
+                Log.d("z", "show z: " + CircleDialog.z);
+
+            }
         }
+    }
+
+    public synchronized void hideCircleDialogOnly() {
+        if (CircleDialog.z > 1) {
+            CircleDialog.z--;
+            Log.d("z", "tru z: " + CircleDialog.z);
+        } else if (CircleDialog.z == 1) {
+            if (circleDialog != null) {
+                circleDialog.dismiss();
+                CircleDialog.z = 0;
+            }
+        }
+    }
+
+    // show CircleDialog
+    protected void showCircleDialog() {
         circleDialog = CircleDialog.getInstance();
-        if (circleDialog.getDialog() == null || (!circleDialog.getDialog().isShowing())) {
+        if (circleDialog.getDialog() == null || (circleDialog.getDialog() != null && !circleDialog.getDialog().isShowing())) {
             circleDialog.show(getFragmentManager(), null);
             CircleDialog.z = 1;
         }
     }
 
-    public void hideCircleDialogOnly() {
-        if (CircleDialog.z > 1) {
-            CircleDialog.z--;
-        } else if (CircleDialog.z == 1) {
-            circleDialog = CircleDialog.getInstance();
-            if (circleDialog.getDialog() != null && circleDialog.getDialog().isShowing()) {
-                circleDialog.dismiss();
-                circleDialog = null;
-            }
+    protected void hideCircleDialog() {
+        if (circleDialog != null) {
+            circleDialog.dismiss();
             CircleDialog.z = 0;
         }
     }

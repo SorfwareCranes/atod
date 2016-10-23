@@ -96,9 +96,6 @@ public class Team_Adapter extends RecyclerView.Adapter<Team_Adapter.ViewHolder> 
         } else {
             holder.tvLocalRank.setText(Constant.NO_IMAGE);
         }
-        if (local.equals(Constant.TITLE_EURO_RANK) && model.getRanking() == 93) {
-            Log.d("test", "test");
-        }
         if (model.getId_photo() != null && !model.getId_photo().equals(Constant.NO_IMAGE)) {
             String url = new StringBuilder(baseURL).append(model.getId_photo()).append(endURL).toString();
             new ImageRequestCustom(context, holder.imgTeam, url, sizeImage, sizeImage, R.drawable.no_image_team, bitmapRes).execute(holder.imgTeam);

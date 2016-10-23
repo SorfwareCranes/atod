@@ -47,24 +47,44 @@
                     android:text="Save Data"/>
         </LinearLayout>
 
+        <TextView
+                android:padding="5dp"
+                android:textSize="@dimen/large_text"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Load Data Suggest"/>
+
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-            <TextView
+            <Button
+                    android:id="@+id/btnGetTeamSuggest"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:text="Team"
                     android:layout_height="wrap_content"
-                    android:text="Add Profession Match :"/>
+                    android:layout_weight="1"/>
 
             <Button
-                    android:text="Profession Match"
+                    android:visibility="invisible"
+                    android:id="@+id/btnGetPlayerSuggest"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:text="Player"
                     android:layout_height="wrap_content"
-                    android:id="@+id/btnAddProfessionMatch"/>
+                    android:layout_weight="1"/>
+
+            <Button
+                    android:visibility="invisible"
+                    android:id="@+id/btnSaveDataSuggest"
+                    android:layout_width="0dp"
+                    android:text="Save Data"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
         </LinearLayout>
+
+
 
         <LinearLayout
                 android:layout_width="match_parent"
@@ -85,6 +105,31 @@
                     android:id="@+id/btnAddAmateurMatch"/>
         </LinearLayout>
 
+        <TextView
+                android:padding="5dp"
+                android:textSize="@dimen/large_text"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Profession Match :"/>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            <Button
+                    android:text="Match"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnAddProfessionMatch"/>
+            <Button
+                    android:layout_marginLeft="10dp"
+                    android:text="Game"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnAddProfessionGame"/>
+        </LinearLayout>
         <TextView
                 android:padding="5dp"
                 android:textSize="@dimen/large_text"

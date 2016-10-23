@@ -41,13 +41,10 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filtera
     @Nullable
     @Override
     public String getItem(int position) {
+        if (resultList == null) {
+            return null;
+        }
         return resultList.get(position);
-    }
-
-    @NonNull
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        return super.getView(position, convertView, parent);
     }
 
     @NonNull

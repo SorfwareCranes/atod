@@ -5,39 +5,39 @@ package software.cranes.com.dota.model;
  */
 
 public class PubGameModel {
-    private String playerName;
-    private String heroName;
+    private String id;
+    private String player;
+    private String hero;
     private String title;
-    private String full;
-    private String highlight;
-    private int time;
+    private long time;
 
     public PubGameModel() {
     }
 
-    public PubGameModel(String playerName, String heroName, String title, String full, String highlight, int time) {
-        this.playerName = playerName;
-        this.heroName = heroName;
+    public PubGameModel(String id, String playerName, String heroName, String title, long time) {
+        this.id = id;
+        this.player = playerName;
+        this.hero = heroName;
         this.title = title;
-        this.full = full;
-        this.highlight = highlight;
         this.time = time;
     }
 
-    public String getPlayerName() {
-        return playerName;
+
+
+    public String getPlayer() {
+        return player;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+    public void setPlayer(String player) {
+        this.player = player;
     }
 
-    public String getHeroName() {
-        return heroName;
+    public String getHero() {
+        return hero;
     }
 
-    public void setHeroName(String heroName) {
-        this.heroName = heroName;
+    public void setHero(String hero) {
+        this.hero = hero;
     }
 
     public String getTitle() {
@@ -48,27 +48,19 @@ public class PubGameModel {
         this.title = title;
     }
 
-    public String getFull() {
-        return full;
-    }
-
-    public void setFull(String full) {
-        this.full = full;
-    }
-
-    public String getHighlight() {
-        return highlight;
-    }
-
-    public void setHighlight(String highlight) {
-        this.highlight = highlight;
-    }
-
-    public int getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(long time) {
         this.time = time;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

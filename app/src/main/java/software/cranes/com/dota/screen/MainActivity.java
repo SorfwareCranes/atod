@@ -15,11 +15,13 @@ import android.view.MenuItem;
 
 import software.cranes.com.dota.R;
 import software.cranes.com.dota.fragment.AboutUsFragment;
+import software.cranes.com.dota.fragment.AddProfessionFragment;
 import software.cranes.com.dota.fragment.AddPublicMatchFragment;
 import software.cranes.com.dota.fragment.AdminFragment;
 import software.cranes.com.dota.fragment.InfomationUsFragment;
 import software.cranes.com.dota.fragment.BaseFragment;
 import software.cranes.com.dota.fragment.GosugamersJsoupFragment;
+import software.cranes.com.dota.fragment.JoinDotaFragment;
 import software.cranes.com.dota.fragment.MMR_ScreenSlidePagerFragment;
 import software.cranes.com.dota.fragment.RankTeam_ScreenSlidePagerFragment;
 
@@ -96,7 +98,7 @@ public class MainActivity extends BaseActivity
     }
 
     private void setupView() {
-        BaseFragment fragmentTest = new AddPublicMatchFragment();
+        BaseFragment fragmentTest = new AdminFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.containerActivity, fragmentTest);
         fragmentTransaction.commit();

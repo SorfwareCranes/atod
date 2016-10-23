@@ -37,7 +37,7 @@
 
         <Button
                 android:text="Time"
-                android:layout_width="70dp"
+                android:layout_width="200dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 android:id="@+id/btnAddTime"/>
@@ -108,27 +108,13 @@
                 android:textStyle="bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Link HighLight"/>
+                android:text="Link"/>
 
         <EditText
-                android:hint="link highlight"
+                android:hint="link"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/edtLinkHighlight"/>
-
-        <TextView
-                android:padding="3dp"
-                android:textSize="@dimen/normal_text"
-                android:textStyle="bold"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Link Full"/>
-
-        <EditText
-                android:hint="link highlight"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/edtLinkFull"/>
+                android:id="@+id/edtLink"/>
 
         <LinearLayout
                 android:layout_margin="5dp"

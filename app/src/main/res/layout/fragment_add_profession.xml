@@ -1,13 +1,273 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="software.cranes.com.dota.fragment.AddProfessionFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment"/>
+            tools:context="software.cranes.com.dota.fragment.AddProfessionFragment">
 
-</FrameLayout>
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Match"
+                    android:layout_marginRight="10dp"/>
+
+            <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Match Id"
+                    android:layout_weight="1"
+                    android:id="@+id/edtMatchId"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnLoadGame"
+                    android:text="LOAD"
+                    android:padding="5dp"/>
+        </LinearLayout>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Team Name"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <AutoCompleteTextView
+                    android:hint="teamA"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:id="@+id/actTeamA"/>
+
+            <Button
+                    android:id="@+id/btnSuggestTeamA"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="ListA"/>
+
+            <AutoCompleteTextView
+                    android:hint="teamB"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:id="@+id/actTeamB"/>
+
+            <Button
+                    android:id="@+id/btnSuggestTeamB"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="ListB"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <AutoCompleteTextView
+                    android:hint="Tournament"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/actTournament"/>
+
+            <AutoCompleteTextView
+                    android:hint="Quarterfinal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/actRound"/>
+
+        </LinearLayout>
+
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bets"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <EditText
+                    android:inputType="number"
+                    android:hint="teamA"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/edtOddsTeamA"/>
+
+            <EditText
+                    android:inputType="number"
+                    android:hint="teamB"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/edtOddsTeamB"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Number Game(BO)"/>
+
+            <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="BO3"
+                    android:id="@+id/edtBo"
+                    android:inputType="number"/>
+        </LinearLayout>
+
+        <Button
+                android:layout_gravity="center"
+                android:text="Time"
+                android:id="@+id/btnAddTime"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:padding="3dp"/>
+
+        <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <RadioButton
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/rbEnd"
+                    android:text="End"/>
+
+            <RadioButton
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/rbLive"
+                    android:text="Live"/>
+
+            <RadioButton
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/rbUpcoming"
+                    android:text="Upcoming"/>
+        </RadioGroup>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Number Chanel Live"/>
+
+            <EditText
+                    android:hint="number"
+                    android:id="@+id/edtNumberChanel"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberSigned"/>
+
+            <Button
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnGenerateChanel"
+                    android:text="Generate"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/llChanel"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <TextView
+                    android:text="Game No"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+            <EditText
+                    android:inputType="number"
+                    android:hint="Game No"
+                    android:id="@+id/edtGameData"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+            <Button
+                    android:text="InputData"
+                    android:id="@+id/btnInputData"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/llData"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <Button
+                    android:id="@+id/btnBack"
+                    android:text="BACK"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+            <Button
+                    android:id="@+id/btnDelete"
+                    android:text="DELETE"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+            <Button
+                    android:id="@+id/btnSave"
+                    android:text="SAVE"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
