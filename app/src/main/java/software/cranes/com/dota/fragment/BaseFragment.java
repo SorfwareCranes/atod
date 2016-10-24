@@ -12,6 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import software.cranes.com.dota.common.CommonUtils;
 import software.cranes.com.dota.dialog.CircleDialog;
 import software.cranes.com.dota.dialog.ConfirmDialog;
 import software.cranes.com.dota.dialog.WarningDialog;
@@ -124,6 +128,7 @@ public class BaseFragment extends Fragment implements ConfirmDialog.HandleConfir
             if (circleDialog != null) {
                 circleDialog.dismiss();
                 CircleDialog.z = 0;
+                Log.d("z", "hide " + CircleDialog.z);
             }
         }
     }
@@ -151,5 +156,15 @@ public class BaseFragment extends Fragment implements ConfirmDialog.HandleConfir
             transaction.addToBackStack(null);
         }
         transaction.commit();
+    }
+
+    public ArrayList<String> unEscapeList(List<String> list) {
+        ArrayList<String> result = new ArrayList<>();
+        if (list != null) {
+            for (String str : list) {
+                result.add(CommonUtils.unescapeKey(str));
+            }
+        }
+        return result;
     }
 }

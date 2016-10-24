@@ -198,6 +198,8 @@ public class SendRequest {
     }
 
     public static void requestYoutubeTitleAndUrlImage(Context context, String videoId, final HandleYoutubeVideoId handle) {
+        // if get duration add the end :  &part=snippet,contentDetails&fields=items/snippet(title,thumbnails/default/url),items/contentDetails/duration
+        // time : PT1H41M22S
         StringRequest mRequest = new StringRequest(StringRequest.Method.GET, new StringBuilder("https://www.googleapis.com/youtube/v3/videos?id=").append(videoId).append("&key=AIzaSyC-2J8Rwoe5ppVp6FemxwwqSuEn3ZxDofE&part=snippet&fields=items/snippet(title,thumbnails/default/url)").toString(), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

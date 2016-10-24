@@ -24,11 +24,12 @@ public interface Constant {
     String TITLE_SEA_RANK = "SEA & Oceania Rank";
     String TITLE_CHINA_RANK = "China Rank";
     int TYPE_PLAYER = 1;
+    int TYPE_TEAM = 2;
     String REQUIRED = "required";
     int CREATE_DATA = 0;
     int LOAD_DATA = 1;
     int END = 1;
     int LIVE = 2;
     int UPCOMING = 3;
-
+    String TBD = "TBD";
 }

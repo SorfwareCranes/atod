@@ -33,11 +33,6 @@ import software.cranes.com.dota.interfa.Constant;
 import software.cranes.com.dota.model.GosuGamerTeamRankModel;
 import software.cranes.com.dota.model.JoindotaTeamRankModel;
 
-import static android.R.attr.id;
-import static android.R.attr.key;
-import static android.R.id.list;
-import static android.os.Build.VERSION_CODES.M;
-
 
 public class AdminFragment extends BaseFragment implements View.OnClickListener {
     private Button btnGetTeamRank;
@@ -155,7 +150,7 @@ public class AdminFragment extends BaseFragment implements View.OnClickListener 
                 saveHeroes();
                 break;
             case R.id.btnAddProfessionMatch:
-                replaceFragment(R.id.aboutFrame, new AddProfessionFragment(), true);
+                replaceFragment(R.id.aboutFrame, new AddProfessionMatchFragment(), true);
                 break;
             case R.id.btnAddAmateurMatch:
                 replaceFragment(R.id.aboutFrame, new AddPublicMatchFragment(), true);

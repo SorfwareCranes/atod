@@ -85,4 +85,8 @@ public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filtera
         }
         return list;
     }
+
+    public List<String> getListData() {
+        return listData;
+    }
 }

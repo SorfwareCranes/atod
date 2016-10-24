@@ -31,6 +31,8 @@ import software.cranes.com.dota.adapter.AutoCompleteAdapter;
 import software.cranes.com.dota.adapter.Suggest_Adapter;
 import software.cranes.com.dota.interfa.Constant;
 
+import static android.R.attr.handle;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -42,6 +44,7 @@ public class SuggestDialogFragment extends BaseDialogFragment implements View.On
     private Button btnBack;
     private Button btnSave;
     private HanldeName mHanldeName;
+    private List<String> list;
 
     public interface HanldeName {
         void handleChoice(String str);
@@ -58,6 +61,13 @@ public class SuggestDialogFragment extends BaseDialogFragment implements View.On
         mFirebaseDatabase = FirebaseDatabase.getInstance();
     }
 
+    @SuppressLint("ValidFragment")
+    public SuggestDialogFragment(List<String> list, HanldeName mHanldeName) {
+        this.type = 0;
+        this.list = list;
+        this.mHanldeName = mHanldeName;
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(getActivity());
@@ -71,7 +81,6 @@ public class SuggestDialogFragment extends BaseDialogFragment implements View.On
     }
 
     private void findViews(View view) {
-        showCircleDialogOnly();
         TextView tvTitle = (TextView) view.findViewById(R.id.tvTitle);
         actSuggest = (AutoCompleteTextView) view.findViewById(R.id.actSuggest);
         lvSuggest = (ListView) view.findViewById(R.id.lvSuggest);
@@ -80,16 +89,27 @@ public class SuggestDialogFragment extends BaseDialogFragment implements View.On
 
         btnBack.setOnClickListener(this);
         btnSave.setOnClickListener(this);
-        String url = Constant.NO_IMAGE;
         switch (type) {
             case Constant.TYPE_PLAYER:
                 tvTitle.setText("Player Suggest");
-                url = "joindota/suggest_player";
+                loadData("joindota/suggest_player");
                 break;
-
+            case Constant.TYPE_TEAM:
+                tvTitle.setText("Team Suggest");
+                loadData("joindota/suggest_team");
+                break;
             default:
+                if (list != null) {
+                    handleListData(list);
+                }
                 break;
         }
+
+    }
+
+    // load data from firebase
+    private void loadData(String url) {
+        showCircleDialogOnly();
         mFirebaseDatabase.getReference(url).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -115,6 +135,22 @@ public class SuggestDialogFragment extends BaseDialogFragment implements View.On
         });
     }
 
+    // use data have from Constructor
+    private void handleListData(List<String> data) {
+        Suggest_Adapter adapter = new Suggest_Adapter(data);
+        lvSuggest.setAdapter(adapter);
+        lvSuggest.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                actSuggest.setText((String) lvSuggest.getAdapter().getItem(position));
+            }
+        });
+        AutoCompleteAdapter autoAdapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, data);
+        actSuggest.setAdapter(autoAdapter);
+
+    }
+
+    // hande when click save or back
     @Override
     public void onClick(View v) {
         switch (v.getId()) {

@@ -61,11 +61,11 @@ public class DateDialogFragment extends BaseDialogFragment implements View.OnCli
         tvCancel = (TextView) view.findViewById(R.id.tvCancel);
         tvSet = (TextView) view.findViewById(R.id.tvSet);
         if (time != 0) {
-            int[] dayTime = CommonUtils.convertLongToDate(time);
+            int[] dayTime = CommonUtils.convertIntToDate(time);
             datePicker.init(dayTime[0], dayTime[1], dayTime[2], new DatePicker.OnDateChangedListener() {
                 @Override
                 public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                    DateDialogFragment.this.time = CommonUtils.convertDateToLong(year, monthOfYear, dayOfMonth);
+                    DateDialogFragment.this.time = CommonUtils.convertDateToInt(year, monthOfYear, dayOfMonth);
                 }
             });
         }
@@ -81,7 +81,7 @@ public class DateDialogFragment extends BaseDialogFragment implements View.OnCli
                 break;
             case R.id.tvSet:
                 if (mHandleSetTime != null) {
-                    this.time = CommonUtils.convertDateToLong(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+                    this.time = CommonUtils.convertDateToInt(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
                     mHandleSetTime.handleTime(time);
                 }
                 this.dismiss();

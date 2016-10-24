@@ -29,6 +29,7 @@ import software.cranes.com.dota.adapter.AutoCompleteAdapter;
 import software.cranes.com.dota.common.CommonUtils;
 import software.cranes.com.dota.common.JsonUtil;
 import software.cranes.com.dota.common.SendRequest;
+import software.cranes.com.dota.dialog.CircleDialog;
 import software.cranes.com.dota.dialog.DateDialogFragment;
 import software.cranes.com.dota.dialog.LoginDialog;
 import software.cranes.com.dota.dialog.SuggestDialogFragment;
@@ -39,6 +40,8 @@ import software.cranes.com.dota.model.PubGameModel;
 import software.cranes.com.dota.model.Snippet;
 import software.cranes.com.dota.model.SnitppetModel;
 import software.cranes.com.dota.model.Thumbnails;
+
+import static android.R.attr.type;
 
 
 /**
@@ -61,8 +64,8 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
     private List<String> suggestHeroes;
     private long time;
     private PubGameModel model;
-    private int type;
-    private String id;
+    private int TYPE;
+    private String gameId;
 
     public AddPublicMatchFragment() {
         // Required empty public constructor
@@ -74,15 +77,9 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         suggestPlayer = new ArrayList<>();
         suggestHeroes = new ArrayList<>();
-        if (savedInstanceState != null) {
-            id = savedInstanceState.getString(Constant.DATA);
-            if (id == null || id.equals(Constant.NO_IMAGE)) {
-                // create NEW GAME
-                type = Constant.CREATE_DATA;
-            } else {
-                // load Game
-                type = Constant.LOAD_DATA;
-            }
+        if (getArguments() != null && getArguments().get(Constant.DATA) != null) {
+            gameId = (String) getArguments().get(Constant.DATA);
+            TYPE = Constant.LOAD_DATA;
         }
     }
 
@@ -124,8 +121,8 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
 
         loadPlayerName();
         loadHeroes();
-        if (type == Constant.LOAD_DATA) {
-            loadGameFollowId(id);
+        if (TYPE == Constant.LOAD_DATA) {
+            loadGameFollowId(gameId);
         }
 
     }
@@ -165,7 +162,7 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
         mFirebaseDatabase.getReference("pub/suggest").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                suggestPlayer = unEscapeList((ArrayList<String>) dataSnapshot.getValue());
+                suggestPlayer = (ArrayList<String>) dataSnapshot.getValue();
                 if (suggestPlayer != null && suggestPlayer.size() > 0) {
                         AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, suggestPlayer);
                         actPlayer.setAdapter(adapter);
@@ -201,22 +198,14 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
         });
     }
 
-    private ArrayList<String> unEscapeList(List<String> list) {
-        ArrayList<String> result = new ArrayList<>();
-        if (list != null) {
-            for (String str : list) {
-                result.add(CommonUtils.unescapeKey(str));
-            }
-        }
-        return result;
-    }
+
 
     private void setTime() {
         DateDialogFragment date = new DateDialogFragment(time, new DateDialogFragment.HandleSetTime() {
             @Override
             public void handleTime(long time) {
                 AddPublicMatchFragment.this.time = time;
-                btnAddTime.setText(CommonUtils.convertLongDateToString(time));
+                btnAddTime.setText(CommonUtils.convertIntDateToString(time));
             }
         });
         if (date.getDialog() == null || !date.getDialog().isShowing()) {
@@ -253,8 +242,6 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
 
         if (type == Constant.CREATE_DATA || (type == Constant.LOAD_DATA && model == null)) {
             // type create new
-            DatabaseReference reference = mFirebaseDatabase.getReference("pub/game");
-
             model = new PubGameModel(CommonUtils.extractVideoIdFromUrl(edtLink.getText().toString()), actPlayer.getText().toString(), actHeroes.getText().toString(), getTitle(), time);
             // save data
             saveDataToFirebase(model);
@@ -305,9 +292,9 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
                 if (dataSnapshot != null) {
                     model = dataSnapshot.getValue(PubGameModel.class);
                     if (model != null) {
-                        type = Constant.LOAD_DATA;
+                        TYPE = Constant.LOAD_DATA;
                         time = model.getTime();
-                        btnAddTime.setText(CommonUtils.convertLongDateToString(time));
+                        btnAddTime.setText(CommonUtils.convertIntDateToString(time));
                         actPlayer.setText(model.getPlayer());
                         actHeroes.setText(model.getHero());
                         edtTitleGame.setText(model.getTitle());
@@ -366,7 +353,7 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
                         Toast.makeText(getContext(), "pub/suggest/ failed", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getContext(), "Save completed", Toast.LENGTH_SHORT).show();
-                        getFragmentManager().popBackStack();
+//                        getFragmentManager().popBackStack();
                     }
                 }
             });

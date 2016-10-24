@@ -38,19 +38,17 @@ public class DateTimeDialog extends DialogFragment implements View.OnClickListen
     private TextView btnPickerCancel;
     private TextView btnPickerOk;
     private HandleClickOnDialog mHandleClickOnDialog;
-    private String year, month, day, hour, minute;
-    private String time_start;
+    private long time_start;
     private String TAG = "DateTimeDialog";
+
     public DateTimeDialog() {
     }
 
     public interface HandleClickOnDialog {
-        public void handlePickerOk(String year, String month, String day, String hour, String minute);
-
-        public void handlePickerCancel();
+        public void handlePickerOk(long time);
     }
 
-    public DateTimeDialog(HandleClickOnDialog mHandleClickOnDialog, String time_start) {
+    public DateTimeDialog(long time_start, HandleClickOnDialog mHandleClickOnDialog) {
         this.mHandleClickOnDialog = mHandleClickOnDialog;
         this.time_start = time_start;
     }
@@ -119,26 +117,26 @@ public class DateTimeDialog extends DialogFragment implements View.OnClickListen
         btnSetTime.setOnClickListener(this);
         btnPickerCancel.setOnClickListener(this);
         btnPickerOk.setOnClickListener(this);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-            // > 20
 
-        } else {
-            // < 21
-        }
         timePicker.setIs24HourView(true);
-        timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
-            @Override
-            public void onTimeChanged(TimePicker view, int hourOfDay, int minutes) {
-                hour = convertToTwoLetter(String.valueOf(hourOfDay));
-                minute = convertToTwoLetter(String.valueOf(minutes));
+        if (time_start > 0) {
+            int[] arrTime = CommonUtils.convertIntToDateTime(time_start);
+            datePicker.init(arrTime[0], arrTime[1], arrTime[2], new DatePicker.OnDateChangedListener() {
+                @Override
+                public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+                }
+            });
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // >= 23
+                timePicker.setHour(arrTime[3]);
+                timePicker.setMinute(arrTime[4]);
+            } else {
+                // < 23
+                timePicker.setCurrentHour(arrTime[3]);
+                timePicker.setCurrentMinute(arrTime[4]);
             }
-        });
-        if (time_start == null) {
-            String[] day_time = CommonUtils.getCurrentDate();
-            datePicker.init(Integer.parseInt(day_time[0]), Integer.parseInt(day_time[1]) - 1, Integer.parseInt(day_time[2]), this);
-        } else {
-            Calendar calendar = CommonUtils.getDateTimeFromString(time_start);
-            datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), this);
+
         }
 
     }
@@ -167,7 +165,7 @@ public class DateTimeDialog extends DialogFragment implements View.OnClickListen
                 }
                 break;
             case R.id.btnPickerCancel:
-                mHandleClickOnDialog.handlePickerCancel();
+                this.dismiss();
                 break;
             case R.id.btnPickerOk:
                 executeOkOnDialog();
@@ -181,17 +179,17 @@ public class DateTimeDialog extends DialogFragment implements View.OnClickListen
       * time end : 23-59
       */
     private void executeOkOnDialog() {
-        year = String.valueOf(datePicker.getYear());
-        month = convertToTwoLetter(String.valueOf(datePicker.getMonth() + 1));
-        day = convertToTwoLetter(String.valueOf(datePicker.getDayOfMonth()));
+        int hour, minute;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            hour = convertToTwoLetter(String.valueOf(timePicker.getHour()));
-            minute = convertToTwoLetter(String.valueOf(timePicker.getMinute()));
+            hour = timePicker.getHour();
+            minute = timePicker.getMinute();
         } else {
-            hour = convertToTwoLetter(String.valueOf(timePicker.getCurrentHour()));
-            minute = convertToTwoLetter(String.valueOf(timePicker.getCurrentMinute()));
+            hour = timePicker.getCurrentHour();
+            minute = timePicker.getCurrentMinute();
         }
-        mHandleClickOnDialog.handlePickerOk(year, month, day, hour, minute);
+        time_start = CommonUtils.convertDateTimeToInt(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), hour, minute);
+        mHandleClickOnDialog.handlePickerOk(time_start);
+        this.dismiss();
     }
 
     /**
@@ -199,15 +197,12 @@ public class DateTimeDialog extends DialogFragment implements View.OnClickListen
      *
      * @param view        The view associated with this listener.
      * @param year        The year that was set.
-     * @param monthOfYear The month that was set (0-11) for compatibility
-     *                    with {@link Calendar}.
+     * @param monthOfYear The month that was set (0-11) for compatibility with {@link Calendar}.
      * @param dayOfMonth  The day of the month that was set.
      */
     @Override
     public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        this.year = String.valueOf(year);
-        this.month = convertToTwoLetter(String.valueOf(monthOfYear));
-        this.day = convertToTwoLetter(String.valueOf(dayOfMonth));
+
     }
 
     private String convertToTwoLetter(String time) {

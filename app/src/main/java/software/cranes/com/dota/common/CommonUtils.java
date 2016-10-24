@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import software.cranes.com.dota.R;
 
 import static android.R.attr.x;
+import static com.google.android.gms.internal.zznu.it;
 
 
 /**
@@ -316,7 +317,7 @@ public class CommonUtils {
             Pattern pattern = Pattern.compile("(?<=watch\\?v=|/videos/|embed\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?feature=player_embedded&v=|%2Fvideos%2F|embed%\u200C\u200B2F|youtu.be%2F|%2Fv%2F)[^#\\&\\?\\n]*", Pattern.CASE_INSENSITIVE);
 //            Pattern pattern = Pattern.compile("^https?://.*(?:youtu.be/|v/|u/\\w/|embed/|watch?v=)([^#&?]*).*$", Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(url);
-            if (matcher.find()){
+            if (matcher.find()) {
                 vId = matcher.group();
             }
         }
@@ -401,22 +402,40 @@ public class CommonUtils {
         return result;
     }
 
-    public static int[] convertLongToDate(long time) {
+    public static int[] convertIntToDate(long time) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time * 1000);
         return new int[]{calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)};
     }
 
-    public static long convertDateToLong(int year, int monthOfYear, int dayOfMonth) {
+    public static int[] convertIntToDateTime(long time) {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, monthOfYear, dayOfMonth);
-        return ((long) calendar.getTimeInMillis() / 1000);
+        calendar.setTimeInMillis(time * 1000);
+        return new int[]{calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE)};
     }
 
-    public static String convertLongDateToString(long time) {
+    public static long convertDateTimeToInt(int year, int monthOfYear, int dayOfMonth, int hour, int minute) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, monthOfYear, dayOfMonth, hour, minute);
+        return  calendar.getTimeInMillis()/1000;
+    }
+
+    public static long convertDateToInt(int year, int monthOfYear, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, monthOfYear, dayOfMonth);
+        return calendar.getTimeInMillis() / 1000;
+    }
+
+    public static String convertIntDateToString(long time) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time * 1000);
         return new StringBuilder().append(convertToTwoLetter(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)))).append(".").append(convertToTwoLetter(String.valueOf(calendar.get(Calendar.MONTH) + 1))).append(".").append(calendar.get(Calendar.YEAR)).toString();
+    }
+
+    public static String convertintDateTimeToString(long time) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time * 1000);
+        return new StringBuilder().append(convertToTwoLetter(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)))).append(".").append(convertToTwoLetter(String.valueOf(calendar.get(Calendar.MONTH) + 1))).append(".").append(calendar.get(Calendar.YEAR)).append(", ").append(convertToTwoLetter(String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)))).append(":").append(convertToTwoLetter(String.valueOf(calendar.get(Calendar.MINUTE)))).toString();
     }
 
     private static String convertToTwoLetter(String time) {
