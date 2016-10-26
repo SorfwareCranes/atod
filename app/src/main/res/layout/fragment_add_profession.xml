@@ -21,6 +21,7 @@
                     android:layout_marginRight="10dp"/>
 
             <EditText
+                    android:enabled="false"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:hint="Match Id"
@@ -51,6 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:id="@+id/actTeamA"/>
+
             <Button
                     android:id="@+id/btnSuggestTeamA"
                     android:layout_width="0dp"
@@ -78,7 +80,6 @@
                     android:layout_weight="1"
                     android:text="List Team"/>
 
-
         </LinearLayout>
 
         <LinearLayout
@@ -89,15 +90,71 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="3dp"
-                    android:text="Player In Team"/>
+                    android:text="RESULT:"
+                    android:padding="10dp"/>
 
-            <Button
+            <EditText
+                    android:gravity="right"
+                    android:text="0"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="SuggestPlayer"
-                    android:id="@+id/btnSuggestPlayer"/>
+                    android:id="@+id/edtResultA"
+                    android:inputType="number"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+
+            <EditText
+                    android:text="0"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/edtResultB"
+                    android:inputType="number"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BETS : "
+                    android:padding="10dp"/>
+
+            <EditText
+                    android:inputType="number"
+                    android:hint="teamA"
+                    android:text="0"
+                    android:gravity="right"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/edtOddsTeamA"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+
+            <EditText
+                    android:inputType="number"
+                    android:hint="teamB"
+                    android:text="0"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/edtOddsTeamB"/>
         </LinearLayout>
 
         <LinearLayout
@@ -105,159 +162,28 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-            <AutoCompleteTextView
+            <EditText
+                    android:text="Photo Id"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:id="@+id/edtPhotoA"/>
+
+            <EditText
+                    android:text="Photo Id"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/edtPhotoB"/>
+
+            <Button
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="player 1 A"
-                    android:id="@+id/actPlayer1A"/>
-
-            <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ListPlayer"
-                    android:id="@+id/btnListPlayer1A"/>
-
-            <AutoCompleteTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="player 1 B"
-                    android:id="@+id/actPlayer1B"/>
-
-            <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ListPlayer"
-                    android:id="@+id/btnListPlayer1B"/>
-        </LinearLayout>
-
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-            <AutoCompleteTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="player 2 A"
-                    android:id="@+id/actPlayer2A"/>
-
-            <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ListPlayer"
-                    android:id="@+id/btnListPlayer2A"/>
-
-            <AutoCompleteTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="player 2 B"
-                    android:id="@+id/actPlayer2B"/>
-
-            <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ListPlayer"
-                    android:id="@+id/btnListPlayer2B"/>
-        </LinearLayout>
-
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-            <AutoCompleteTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="player 3 A"
-                    android:id="@+id/actPlayer3A"/>
-
-            <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ListPlayer"
-                    android:id="@+id/btnListPlayer3A"/>
-
-            <AutoCompleteTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="player 3 B"
-                    android:id="@+id/actPlayer3B"/>
-
-            <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ListPlayer"
-                    android:id="@+id/btnListPlayer3B"/>
-        </LinearLayout>
-
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-            <AutoCompleteTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="player 4 A"
-                    android:id="@+id/actPlayer4A"/>
-
-            <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ListPlayer"
-                    android:id="@+id/btnListPlayer4A"/>
-
-            <AutoCompleteTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="player 4 B"
-                    android:id="@+id/actPlayer4B"/>
-
-            <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ListPlayer"
-                    android:id="@+id/btnListPlayer4B"/>
-        </LinearLayout>
-
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-            <AutoCompleteTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="player 5 A"
-                    android:id="@+id/actPlayer5A"/>
-
-            <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ListPlayer"
-                    android:id="@+id/btnListPlayer5A"/>
-
-            <AutoCompleteTextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="player 5 B"
-                    android:id="@+id/actPlayer5B"/>
-
-            <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ListPlayer"
-                    android:id="@+id/btnListPlayer5B"/>
+                    android:text="loadPhoto"
+                    android:id="@+id/btnLoadPhoto"
+                    />
         </LinearLayout>
 
         <LinearLayout
@@ -281,33 +207,6 @@
 
         </LinearLayout>
 
-
-        <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Bets"/>
-
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-            <EditText
-                    android:inputType="number"
-                    android:hint="teamA"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:id="@+id/edtOddsTeamA"/>
-
-            <EditText
-                    android:inputType="number"
-                    android:hint="teamB"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:id="@+id/edtOddsTeamB"/>
-        </LinearLayout>
 
         <LinearLayout
                 android:layout_width="match_parent"
@@ -355,6 +254,7 @@
                     android:text="Live"/>
 
             <RadioButton
+                    android:checked="true"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -393,7 +293,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:id="@+id/llChanel"/>
+                android:id="@+id/llChanelLive"/>
 
         <LinearLayout
                 android:layout_width="match_parent"
@@ -415,7 +315,7 @@
                     android:layout_weight="1"/>
 
             <Button
-                    android:text="InputData"
+                    android:text="InputGame"
                     android:id="@+id/btnInputData"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -423,32 +323,13 @@
         </LinearLayout>
 
         <LinearLayout
+                android:id="@+id/llListGames"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/llData"/>
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvPhotoA"/>
-            <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvPhotoB"/>
-            <Button
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="loadPhoto"
-                    android:id="@+id/btnLoadPhoto"
-                />
+                android:orientation="vertical">
+
         </LinearLayout>
+
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

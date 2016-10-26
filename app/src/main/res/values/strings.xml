@@ -12,4 +12,6 @@
     <string name="app_secret">ae2481560e48e6171d6dd7b0d1cb2589</string>
     <string name="facebook_app_id">1624417511184520</string>
     <string name="fb_login_protocol_scheme">fb1624417511184520</string>
+    <string name="name">Name</string>
+    <string name="hero">Hero</string>
 </resources>

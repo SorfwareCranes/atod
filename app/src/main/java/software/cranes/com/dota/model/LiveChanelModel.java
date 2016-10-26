@@ -6,14 +6,14 @@ package software.cranes.com.dota.model;
 
 public class LiveChanelModel {
     private String videoId;
-    private String language;
+    private String lang;
 
     public LiveChanelModel() {
     }
 
     public LiveChanelModel(String videoId, String language) {
         this.videoId = videoId;
-        this.language = language;
+        this.lang = language;
     }
 
     public String getVideoId() {
@@ -25,10 +25,10 @@ public class LiveChanelModel {
     }
 
     public String getLanguage() {
-        return language;
+        return lang;
     }
 
     public void setLanguage(String language) {
-        this.language = language;
+        this.lang = language;
     }
 }

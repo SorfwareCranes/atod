@@ -13,25 +13,30 @@ public class MatchModel {
     private int bo;
     private int status;
     private long time;
-    private MatchTeamModel teamA;
-    private MatchTeamModel teamB;
+    private int beta, betb, ra, rb;
+    private TeamModel teamA;
+    private TeamModel teamB;
     private List<LiveChanelModel> liveList;
     private List<String> games;
 
-    public MatchModel() {
-    }
-
-    public MatchModel(String tour, String round, String matchId, int bo, int status, long time, MatchTeamModel teamA, MatchTeamModel teamB, List<LiveChanelModel> liveList, List<String> games) {
+    public MatchModel(String tour, String round, String matchId, int bo, int status, long time, int beta, int betb, int ra, int rb, TeamModel teamA, TeamModel teamB, List<LiveChanelModel> liveList, List<String> games) {
         this.tour = tour;
         this.round = round;
         this.matchId = matchId;
         this.bo = bo;
         this.status = status;
         this.time = time;
+        this.beta = beta;
+        this.betb = betb;
+        this.ra = ra;
+        this.rb = rb;
         this.teamA = teamA;
         this.teamB = teamB;
         this.liveList = liveList;
         this.games = games;
+    }
+
+    public MatchModel() {
     }
 
     public String getTour() {
@@ -82,19 +87,51 @@ public class MatchModel {
         this.time = time;
     }
 
-    public MatchTeamModel getTeamA() {
+    public int getBeta() {
+        return beta;
+    }
+
+    public void setBeta(int beta) {
+        this.beta = beta;
+    }
+
+    public int getBetb() {
+        return betb;
+    }
+
+    public void setBetb(int betb) {
+        this.betb = betb;
+    }
+
+    public int getRa() {
+        return ra;
+    }
+
+    public void setRa(int ra) {
+        this.ra = ra;
+    }
+
+    public int getRb() {
+        return rb;
+    }
+
+    public void setRb(int rb) {
+        this.rb = rb;
+    }
+
+    public TeamModel getTeamA() {
         return teamA;
     }
 
-    public void setTeamA(MatchTeamModel teamA) {
+    public void setTeamA(TeamModel teamA) {
         this.teamA = teamA;
     }
 
-    public MatchTeamModel getTeamB() {
+    public TeamModel getTeamB() {
         return teamB;
     }
 
-    public void setTeamB(MatchTeamModel teamB) {
+    public void setTeamB(TeamModel teamB) {
         this.teamB = teamB;
     }
 

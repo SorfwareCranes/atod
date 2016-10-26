@@ -24,8 +24,16 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -417,7 +425,7 @@ public class CommonUtils {
     public static long convertDateTimeToInt(int year, int monthOfYear, int dayOfMonth, int hour, int minute) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, monthOfYear, dayOfMonth, hour, minute);
-        return  calendar.getTimeInMillis()/1000;
+        return calendar.getTimeInMillis() / 1000;
     }
 
     public static long convertDateToInt(int year, int monthOfYear, int dayOfMonth) {
@@ -444,4 +452,6 @@ public class CommonUtils {
         }
         return time;
     }
+
+
 }

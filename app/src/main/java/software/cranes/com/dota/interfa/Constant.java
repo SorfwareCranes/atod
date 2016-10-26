@@ -32,4 +32,7 @@ public interface Constant {
     int LIVE = 2;
     int UPCOMING = 3;
     String TBD = "TBD";
+    int A_WIN = 1;
+    int B_WIN = 2;
+    int DRAW = 0;
 }

@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,8 +29,17 @@ import software.cranes.com.dota.R;
 import software.cranes.com.dota.adapter.AutoCompleteAdapter;
 import software.cranes.com.dota.common.CommonUtils;
 import software.cranes.com.dota.dialog.DateTimeDialog;
+import software.cranes.com.dota.dialog.GameDialogFragment;
 import software.cranes.com.dota.dialog.SuggestDialogFragment;
 import software.cranes.com.dota.interfa.Constant;
+import software.cranes.com.dota.model.GameModel;
+import software.cranes.com.dota.model.LiveChanelModel;
+import software.cranes.com.dota.model.MatchModel;
+import software.cranes.com.dota.model.TeamModel;
+
+import static android.R.attr.mode;
+import static android.R.id.list;
+import static android.os.Build.VERSION_CODES.M;
 
 
 /**
@@ -44,48 +54,31 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
     private EditText edtOddsTeamA;
     private EditText edtOddsTeamB;
     private EditText edtBo;
+    private EditText edtResultA, edtResultB;
     private Button btnAddTime;
     private RadioButton rbEnd;
     private RadioButton rbLive;
     private RadioButton rbUpcoming;
     private EditText edtNumberChanel;
     private Button btnGenerateChanel;
-    private LinearLayout llChanel;
     private EditText edtGameData;
     private Button btnInputData;
-    private LinearLayout llData;
+    private LinearLayout llChanelLive, llListGames;
     private Button btnBack;
     private Button btnDelete;
     private Button btnSave;
-    private Button btnSuggestPlayer;
-    private AutoCompleteTextView actPlayer1A;
-    private Button btnListPlayer1A;
-    private AutoCompleteTextView actPlayer1B;
-    private Button btnListPlayer1B;
-    private AutoCompleteTextView actPlayer2A;
-    private Button btnListPlayer2A;
-    private AutoCompleteTextView actPlayer2B;
-    private Button btnListPlayer2B;
-    private AutoCompleteTextView actPlayer3A;
-    private Button btnListPlayer3A;
-    private AutoCompleteTextView actPlayer3B;
-    private Button btnListPlayer3B;
-    private AutoCompleteTextView actPlayer4A;
-    private Button btnListPlayer4A;
-    private AutoCompleteTextView actPlayer4B;
-    private Button btnListPlayer4B;
-    private AutoCompleteTextView actPlayer5A;
-    private Button btnListPlayer5A;
-    private AutoCompleteTextView actPlayer5B;
-    private Button btnListPlayer5B;
-    private TextView tvPhotoA, tvPhotoB;
+    private EditText edtPhotoA, edtPhotoB;
     private Button btnLoadPhoto;
     private String matchId;
     private int TYPE = Constant.CREATE_DATA;
     private FirebaseDatabase mFirebaseDatabase;
-    private List<String> suggestTeam, suggestPlayer, suggestListPlayer, suggestListTeam;
+    private List<String> suggestTeam, suggestListTeam;
     private SuggestDialogFragment suggestDialogFragment;
     private long time;
+    private HashMap<String, GameModel> gameModelMapOld, gameModelMapNew;
+    private MatchModel matchModel;
+    private TeamModel teamAModel, teamBModel;
+    private Map<String, String> imageNameHeroesMap;
 
     public AddProfessionMatchFragment() {
         // Required empty public constructor
@@ -100,8 +93,6 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         }
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         suggestTeam = new ArrayList<>();
-        suggestPlayer = new ArrayList<>();
-        suggestListPlayer = new ArrayList<>();
         suggestListTeam = new ArrayList<>();
     }
 
@@ -136,49 +127,20 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         rbUpcoming = (RadioButton) view.findViewById(R.id.rbUpcoming);
         edtNumberChanel = (EditText) view.findViewById(R.id.edtNumberChanel);
         btnGenerateChanel = (Button) view.findViewById(R.id.btnGenerateChanel);
-        llChanel = (LinearLayout) view.findViewById(R.id.llChanel);
         edtGameData = (EditText) view.findViewById(R.id.edtGameData);
         btnInputData = (Button) view.findViewById(R.id.btnInputData);
-        llData = (LinearLayout) view.findViewById(R.id.llData);
+        llChanelLive = (LinearLayout) view.findViewById(R.id.llChanelLive);
         btnBack = (Button) view.findViewById(R.id.btnBack);
         btnDelete = (Button) view.findViewById(R.id.btnDelete);
         btnSave = (Button) view.findViewById(R.id.btnSave);
-        btnSuggestPlayer = (Button) view.findViewById(R.id.btnSuggestPlayer);
-        actPlayer1A = (AutoCompleteTextView) view.findViewById(R.id.actPlayer1A);
-        btnListPlayer1A = (Button) view.findViewById(R.id.btnListPlayer1A);
-        actPlayer1B = (AutoCompleteTextView) view.findViewById(R.id.actPlayer1B);
-        btnListPlayer1B = (Button) view.findViewById(R.id.btnListPlayer1B);
-        actPlayer2A = (AutoCompleteTextView) view.findViewById(R.id.actPlayer2A);
-        btnListPlayer2A = (Button) view.findViewById(R.id.btnListPlayer2A);
-        actPlayer2B = (AutoCompleteTextView) view.findViewById(R.id.actPlayer2B);
-        btnListPlayer2B = (Button) view.findViewById(R.id.btnListPlayer2B);
-        actPlayer3A = (AutoCompleteTextView) view.findViewById(R.id.actPlayer3A);
-        btnListPlayer3A = (Button) view.findViewById(R.id.btnListPlayer3A);
-        actPlayer3B = (AutoCompleteTextView) view.findViewById(R.id.actPlayer3B);
-        btnListPlayer3B = (Button) view.findViewById(R.id.btnListPlayer3B);
-        actPlayer4A = (AutoCompleteTextView) view.findViewById(R.id.actPlayer4A);
-        btnListPlayer4A = (Button) view.findViewById(R.id.btnListPlayer4A);
-        actPlayer4B = (AutoCompleteTextView) view.findViewById(R.id.actPlayer4B);
-        btnListPlayer4B = (Button) view.findViewById(R.id.btnListPlayer4B);
-        actPlayer5A = (AutoCompleteTextView) view.findViewById(R.id.actPlayer5A);
-        btnListPlayer5A = (Button) view.findViewById(R.id.btnListPlayer5A);
-        actPlayer5B = (AutoCompleteTextView) view.findViewById(R.id.actPlayer5B);
-        btnListPlayer5B = (Button) view.findViewById(R.id.btnListPlayer5B);
-        tvPhotoA = (TextView) view.findViewById(R.id.tvPhotoA);
-        tvPhotoB = (TextView) view.findViewById(R.id.tvPhotoB);
-        btnLoadPhoto = (Button) view.findViewById(R.id.btnLoadPhoto);
+        llListGames = (LinearLayout) view.findViewById(R.id.llListGames);
 
-        btnSuggestPlayer.setOnClickListener(this);
-        btnListPlayer1A.setOnClickListener(this);
-        btnListPlayer1B.setOnClickListener(this);
-        btnListPlayer2A.setOnClickListener(this);
-        btnListPlayer2B.setOnClickListener(this);
-        btnListPlayer3A.setOnClickListener(this);
-        btnListPlayer3B.setOnClickListener(this);
-        btnListPlayer4A.setOnClickListener(this);
-        btnListPlayer4B.setOnClickListener(this);
-        btnListPlayer5A.setOnClickListener(this);
-        btnListPlayer5B.setOnClickListener(this);
+        edtPhotoA = (EditText) view.findViewById(R.id.edtPhotoA);
+        edtPhotoB = (EditText) view.findViewById(R.id.edtPhotoB);
+        btnLoadPhoto = (Button) view.findViewById(R.id.btnLoadPhoto);
+        edtResultA = (EditText) view.findViewById(R.id.edtResultA);
+        edtResultB = (EditText) view.findViewById(R.id.edtResultB);
+
         btnLoadGame.setOnClickListener(this);
         btnSuggestTeamA.setOnClickListener(this);
         btnSuggestTeamB.setOnClickListener(this);
@@ -201,7 +163,10 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
             actTournament and actRound not load
      */
     private void setupUi() {
-
+        // for actTournament
+        loadDataAutoCompleteText(actTournament, "profession/suggest/tour");
+        // for actRound
+        loadDataAutoCompleteText(actRound, "profession/suggest/round");
         if (TYPE == Constant.LOAD_DATA) {
             edtMatchId.setText(matchId);
             setupForLoadMatch();
@@ -211,31 +176,74 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
     }
 
     private void setupForCreateNew() {
-        // for actTournament
-        loadDataAutoCompleteText(actTournament, "profession/suggest/tour");
-        // for actRound
-        loadDataAutoCompleteText(actRound, "profession/suggest/round");
         // for actTeamA, actTeamB
         loadSuggestTeam();
-        // for actPlayer
-        loadSuggestPlayer();
+
     }
 
     private void setupForLoadMatch() {
-        if (actTournament.getText().toString().trim().isEmpty()) {
-            // for actTournament
-            loadDataAutoCompleteText(actTournament, "profession/suggest/tour");
-        }
-        if (actRound.getText().toString().trim().isEmpty()) {
-            // for actRound
-            loadDataAutoCompleteText(actRound, "profession/suggest/round");
-        }
-        if (actTeamA.getText().toString().trim().equals(Constant.TBD) || actTeamB.getText().toString().trim().equals(Constant.TBD)) {
+        loadModelFollowId(matchId);
+        if (actTeamA.getText().toString().isEmpty() || actTeamA.getText().toString().equals(Constant.TBD) || actTeamB.getText().toString().isEmpty() || actTeamB.getText().toString().equals(Constant.TBD)) {
+            actTeamA.setEnabled(true);
+            actTeamB.setEnabled(true);
             loadSuggestTeam();
+        } else {
+            actTeamA.setEnabled(false);
+            actTeamB.setEnabled(false);
         }
-        if (actPlayer1A.getText().toString().trim().isEmpty() || actPlayer1B.getText().toString().trim().isEmpty() || actPlayer5A.getText().toString().trim().isEmpty() || actPlayer5B.getText().toString().trim().isEmpty()) {
-            loadSuggestPlayer();
-        }
+
+        // from matchId -> load data for MatchModel
+        // from MatchModel -> load data for gameModelMapOld
+        // from gameModelMapOld -> uncapse playerName, convert photo_heroes to heroName
+    }
+
+    private void loadModelFollowId(String matchId) {
+        gameModelMapOld = new HashMap<>();
+        gameModelMapNew = new HashMap<>();
+        showCircleDialog();
+        FirebaseDatabase.getInstance().getReference("profession/match/" + matchId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot != null) {
+                    matchModel = dataSnapshot.getValue(MatchModel.class);
+                    if (matchModel != null) {
+                        setViewForUi(matchModel);
+                        if (matchModel.getGames() != null && matchModel.getGames().size() > 0) {
+                            for (final String gameId : matchModel.getGames()) {
+                                showCircleDialogOnly();
+                                FirebaseDatabase.getInstance().getReference("profession/games/" + gameId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot != null) {
+                                            GameModel model = dataSnapshot.getValue(GameModel.class);
+                                            if (model != null) {
+                                                model.setTeamA(unescapeMap(model.getTeamA()));
+                                                model.setTeamB(unescapeMap(model.getTeamB()));
+                                                gameModelMapOld.put(gameId, model);
+                                                gameModelMapNew.put(gameId, model);
+                                            }
+                                        }
+                                        hideCircleDialogOnly();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        hideCircleDialogOnly();
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+                hideCircleDialogOnly();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(getContext(), "Can't Load Data", Toast.LENGTH_SHORT).show();
+                hideCircleDialogOnly();
+            }
+        });
     }
 
     /*
@@ -248,8 +256,10 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<String> teamList = (List<String>) dataSnapshot.getValue();
-                AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, teamList);
-                actText.setAdapter(adapter);
+                if (teamList != null && getActivity() != null) {
+                    AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, teamList);
+                    actText.setAdapter(adapter);
+                }
                 hideCircleDialogOnly();
             }
 
@@ -273,51 +283,18 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
             case R.id.btnSuggestTeamB:
                 showListDataTeam(actTeamB);
                 break;
-            case R.id.btnSuggestPlayer:
-                executeLoadPlayer(actTeamA, 1);
-                executeLoadPlayer(actTeamB, 2);
-                break;
-            case R.id.btnListPlayer1A:
-                showListDataPlayer(actPlayer1A);
-                break;
-            case R.id.btnListPlayer2A:
-                showListDataPlayer(actPlayer2A);
-                break;
-            case R.id.btnListPlayer3A:
-                showListDataPlayer(actPlayer3A);
-                break;
-            case R.id.btnListPlayer4A:
-                showListDataPlayer(actPlayer4A);
-                break;
-            case R.id.btnListPlayer5A:
-                showListDataPlayer(actPlayer5A);
-                break;
-            case R.id.btnListPlayer1B:
-                showListDataPlayer(actPlayer1B);
-                break;
-            case R.id.btnListPlayer2B:
-                showListDataPlayer(actPlayer2B);
-                break;
-            case R.id.btnListPlayer3B:
-                showListDataPlayer(actPlayer3B);
-                break;
-            case R.id.btnListPlayer4B:
-                showListDataPlayer(actPlayer4B);
-                break;
-            case R.id.btnListPlayer5B:
-                showListDataPlayer(actPlayer5B);
-                break;
             case R.id.btnAddTime:
                 showDialogChoiceTime(time);
                 break;
             case R.id.btnLoadPhoto:
-
+                executeLoadPhotoId(actTeamA, Constant.A_WIN);
+                executeLoadPhotoId(actTeamB, Constant.B_WIN);
                 break;
             case R.id.btnGenerateChanel:
-
+                generateChanel();
                 break;
             case R.id.btnInputData:
-
+                handleAddAGame();
                 break;
             case R.id.btnBack:
 
@@ -376,47 +353,6 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         }
     }
 
-    /*
-    for btn ListPlayer
-    use when suggest data not have
-    load data from joindota database
-    */
-    private void showListDataPlayer(final AutoCompleteTextView act) {
-        if (suggestListPlayer != null && suggestListPlayer.size() != 0) {
-            suggestDialogFragment = new SuggestDialogFragment(suggestListPlayer, new SuggestDialogFragment.HanldeName() {
-                @Override
-                public void handleChoice(String str) {
-                    act.setText(str);
-                }
-            });
-            suggestDialogFragment.show(getFragmentManager(), null);
-        } else {
-            showCircleDialogOnly();
-            mFirebaseDatabase.getReference("joindota/suggest_player").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    suggestListPlayer = (List<String>) dataSnapshot.getValue();
-                    hideCircleDialogOnly();
-                    if (suggestListPlayer != null) {
-                        suggestDialogFragment = new SuggestDialogFragment(suggestListPlayer, new SuggestDialogFragment.HanldeName() {
-                            @Override
-                            public void handleChoice(String str) {
-                                act.setText(str);
-                            }
-                        });
-                        suggestDialogFragment.show(getFragmentManager(), null);
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    hideCircleDialogOnly();
-                    Toast.makeText(getContext(), "can't get data", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
     // for actTeamA, actTeamB
     private void loadSuggestTeam() {
         showCircleDialogOnly();
@@ -424,7 +360,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 suggestTeam = (List<String>) dataSnapshot.getValue();
-                if (suggestTeam != null) {
+                if (suggestTeam != null && getActivity() != null) {
                     AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, suggestTeam);
                     actTeamA.setAdapter(adapter);
                     actTeamB.setAdapter(adapter);
@@ -439,35 +375,6 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         });
     }
 
-    // for actPlayer
-    private void loadSuggestPlayer() {
-        showCircleDialogOnly();
-        mFirebaseDatabase.getReference("profession/suggest/player").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                suggestPlayer = (List<String>) dataSnapshot.getValue();
-                if (suggestPlayer != null) {
-                    AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, suggestPlayer);
-                    actPlayer1A.setAdapter(adapter);
-                    actPlayer2A.setAdapter(adapter);
-                    actPlayer3A.setAdapter(adapter);
-                    actPlayer4A.setAdapter(adapter);
-                    actPlayer5A.setAdapter(adapter);
-                    actPlayer1B.setAdapter(adapter);
-                    actPlayer2B.setAdapter(adapter);
-                    actPlayer3B.setAdapter(adapter);
-                    actPlayer4B.setAdapter(adapter);
-                    actPlayer5B.setAdapter(adapter);
-                }
-                hideCircleDialogOnly();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                hideCircleDialogOnly();
-            }
-        });
-    }
 
     /*
 
@@ -476,72 +383,21 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         typeTeam = 1 -> teamA
         typeTeam = 2 -> teamB
      */
-    private void executeLoadPlayer(AutoCompleteTextView act, final int typeTeam) {
+    private void executeLoadPhotoId(AutoCompleteTextView act, final int typeTeam) {
         final String teamName = act.getText().toString().trim();
         if (teamName.isEmpty() || teamName.equals(Constant.TBD)) {
             return;
         }
         showCircleDialogOnly();
-        mFirebaseDatabase.getReference("joindota/suggest_team_player/" + CommonUtils.escapeKey(teamName)).addListenerForSingleValueEvent(new ValueEventListener() {
+        mFirebaseDatabase.getReference("joindota/suggest_team_player/" + CommonUtils.escapeKey(teamName) + "/id_photo").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot != null) {
-                    Map<String, String> map = (Map<String, String>) dataSnapshot.getValue();
-                    if (map != null && map.size() != 0) {
-                        if (typeTeam == 1) {
-                            tvPhotoA.setText(map.get("id_photo"));
-                            int i = 1;
-                            for (String str : map.keySet()) {
-                                if (str.equals("id_photo")) {
-                                    continue;
-                                }
-                                switch (i) {
-                                    case 1:
-                                        actPlayer1A.setText(CommonUtils.unescapeKey(str));
-                                        break;
-                                    case 2:
-                                        actPlayer2A.setText(CommonUtils.unescapeKey(str));
-                                        break;
-                                    case 3:
-                                        actPlayer3A.setText(CommonUtils.unescapeKey(str));
-                                        break;
-                                    case 4:
-                                        actPlayer4A.setText(CommonUtils.unescapeKey(str));
-                                        break;
-                                    case 5:
-                                        actPlayer5A.setText(CommonUtils.unescapeKey(str));
-                                        break;
-                                }
-                                i++;
-                            }
-                        } else {
-                            tvPhotoB.setText(map.get("id_photo"));
-                            int i = 1;
-                            for (String str : map.keySet()) {
-                                if (str.equals("id_photo")) {
-                                    continue;
-                                }
-                                switch (i) {
-                                    case 1:
-                                        actPlayer1B.setText(CommonUtils.unescapeKey(str));
-                                        break;
-                                    case 2:
-                                        actPlayer2B.setText(CommonUtils.unescapeKey(str));
-                                        break;
-                                    case 3:
-                                        actPlayer3B.setText(CommonUtils.unescapeKey(str));
-                                        break;
-                                    case 4:
-                                        actPlayer4B.setText(CommonUtils.unescapeKey(str));
-                                        break;
-                                    case 5:
-                                        actPlayer5B.setText(CommonUtils.unescapeKey(str));
-                                        break;
-                                }
-                                i++;
-                            }
-                        }
-
+                    String value = (String) dataSnapshot.getValue();
+                    if (typeTeam == Constant.A_WIN) {
+                        edtPhotoA.setText(value);
+                    } else {
+                        edtPhotoB.setText(value);
                     }
                 }
                 hideCircleDialogOnly();
@@ -566,4 +422,220 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         }).show(getFragmentManager(), null);
 
     }
+
+    // handle check number input when generateChanel
+    private void generateChanel() {
+        int number;
+        try {
+            number = Integer.valueOf(edtNumberChanel.getText().toString().trim());
+        } catch (NumberFormatException ex) {
+            edtNumberChanel.setText(Constant.NO_IMAGE);
+            edtNumberChanel.setError("Required");
+            return;
+        }
+        if (number > 0) {
+            generateChanelLive(number, null);
+        }
+    }
+
+    // add number Chanel to Layout : if (list != null : use for load data)
+    private void generateChanelLive(int number, List<LiveChanelModel> list) {
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        Button btnDeleteChanel;
+        EditText edtLiveLink, edtLanguageLive;
+        for (int i = 0; i < number; i++) {
+            final View view = inflater.inflate(R.layout.live_chanel_layout, null, false);
+            if (list != null && list.size() > i && list.get(i) != null) {
+
+                if (list.get(i).getLanguage() != null) {
+                    edtLanguageLive = (EditText) view.findViewById(R.id.edtLanguageLive);
+                    edtLanguageLive.setText(list.get(i).getLanguage());
+                }
+                if (list.get(i).getVideoId() != null) {
+                    edtLiveLink = (EditText) view.findViewById(R.id.edtLiveLink);
+                    edtLiveLink.setText("https://www.youtube.com/watch?v=" + list.get(i).getVideoId());
+                }
+            }
+
+            btnDeleteChanel = (Button) view.findViewById(R.id.btnDeleteChanel);
+            btnDeleteChanel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    llChanelLive.removeView(view);
+                }
+            });
+            llChanelLive.addView(view);
+        }
+        edtNumberChanel.setText(Constant.NO_IMAGE);
+    }
+
+    // check number to input
+    private void handleAddAGame() {
+        String gameId = edtGameData.getText().toString().trim();
+        try {
+            Integer.valueOf(gameId);
+        } catch (NumberFormatException ex) {
+            edtGameData.setText(Constant.NO_IMAGE);
+            edtGameData.setError("Requried");
+            return;
+        }
+        if (!validateInputData()) {
+            return;
+        }
+        if (actTeamA.getText().toString().trim().equals("TBD") || actTeamB.getText().toString().trim().equals("TBD")) {
+            Toast.makeText(getContext(), "team name not validate", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if ((gameModelMapNew == null || gameModelMapNew.isEmpty()) && Integer.valueOf(gameId) != 1) {
+            Toast.makeText(getContext(), "you mut add game 1 first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (gameModelMapNew == null) {
+            gameModelMapNew = new HashMap<>();
+        }
+        if (gameModelMapOld == null) {
+            gameModelMapOld = new HashMap<>();
+        }
+        GameDialogFragment gameDialogFragment = new GameDialogFragment(TYPE, edtMatchId.getText().toString() + gameId, gameModelMapNew, actTeamA.getText().toString(), actTeamB.getText().toString(), new GameDialogFragment.HandleCreateGame() {
+            @Override
+            public void executeAddGame(int type, String id, GameModel gameModel) {
+                gameModelMapNew.put(id, gameModel);
+                // so list game to screen
+                addGamesToUi(gameModelMapNew);
+            }
+        });
+        gameDialogFragment.show(getFragmentManager(), null);
+    }
+
+    // validate value input with no data player name
+    private boolean validateInputData() {
+        String requried = "requried";
+        if (actTeamA.getText().toString().trim().isEmpty()) {
+            actTeamA.setError(requried);
+            return false;
+        }
+        if (actTeamB.getText().toString().trim().isEmpty()) {
+            actTeamB.setError(requried);
+            return false;
+        }
+        if (actTournament.getText().toString().trim().isEmpty()) {
+            actTournament.setError(requried);
+            return false;
+        }
+        if (actRound.getText().toString().trim().isEmpty()) {
+            actRound.setError(requried);
+            return false;
+        }
+        if (edtBo.getText().toString().trim().isEmpty()) {
+            edtBo.setError(requried);
+            return false;
+        }
+        if (btnAddTime.getText().toString().startsWith("T")) {
+            Toast.makeText(getContext(), "Set Time Please", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!rbEnd.isChecked() && !rbLive.isChecked() && !rbUpcoming.isChecked()) {
+            Toast.makeText(getContext(), "Set Live or End or Upcoming", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (edtPhotoA.getText().toString().trim().startsWith("P") || edtPhotoB.getText().toString().trim().startsWith("P")) {
+            Toast.makeText(getContext(), "Set Photo ID", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private void addGamesToUi(final HashMap<String, GameModel> map) {
+        while (llListGames.getChildCount() > 0) {
+            llListGames.removeAllViews();
+        }
+        if (map != null && map.size() > 0) {
+            TextView tv;
+            Button btn;
+            LayoutInflater inflater = getLayoutInflater(null);
+            for (final String key : map.keySet()) {
+                if (inflater != null) {
+                    final View view = inflater.inflate(R.layout.list_game_layout, null, false);
+                    tv = (TextView) view.findViewById(R.id.tvGameId);
+                    btn = (Button) view.findViewById(R.id.btnGameDelete);
+                    tv.setText(key);
+                    btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            map.remove(key);
+                            llListGames.removeView(view);
+                        }
+                    });
+                    llListGames.addView(view);
+                }
+            }
+        }
+    }
+
+    // set value for edittext base value of MatchModel Object
+    private void setViewForUi(MatchModel model) {
+        if (model.getTeamA() != null) {
+            if (model.getTeamA().getName() != null) {
+                actTeamA.setText(model.getTeamA().getName());
+            }
+            if (model.getTeamA().getPhotoId() != null) {
+                edtPhotoA.setText(model.getTeamA().getPhotoId());
+            }
+        }
+
+        if (model.getTeamA() != null) {
+            if (model.getTeamB().getName() != null) {
+                actTeamB.setText(model.getTeamA().getName());
+            }
+            if (model.getTeamB().getPhotoId() != null) {
+                edtPhotoB.setText(model.getTeamA().getPhotoId());
+            }
+        }
+
+        if (model.getBeta() > 0) {
+            edtOddsTeamA.setText(String.valueOf(model.getBeta()));
+        }
+        if (model.getBetb() > 0) {
+            edtOddsTeamB.setText(String.valueOf(model.getBetb()));
+        }
+        if (model.getBo() > 0) {
+            edtBo.setText(String.valueOf(model.getBo()));
+        }
+        edtResultA.setText(String.valueOf(matchModel.getRa()));
+        edtResultB.setText(String.valueOf(matchModel.getRb()));
+        if (model.getTour() != null) {
+            actTournament.setText(model.getTour());
+        }
+        if (model.getRound() != null) {
+            actRound.setText(model.getRound());
+        }
+        if (model.getTime() > 0) {
+            btnAddTime.setText(CommonUtils.convertintDateTimeToString(time));
+        }
+        if (model.getStatus() == Constant.LIVE) {
+            rbLive.setChecked(true);
+        } else if (model.getStatus() == Constant.END) {
+            rbEnd.setChecked(true);
+        } else if (model.getStatus() == Constant.UPCOMING) {
+            rbUpcoming.setChecked(true);
+        }
+        if (model.getLiveList() != null && model.getLiveList().size() > 0) {
+            generateChanelLive(model.getLiveList().size(), model.getLiveList());
+        }
+
+    }
+
+
+    // convert nameplayer and heroes image to heroes name
+    private HashMap<String, String> unescapeMap(HashMap<String, String> map) {
+        HashMap<String, String> result = new HashMap<>();
+        if (map == null && map.isEmpty()) {
+            return result;
+        }
+        for (String key : map.keySet()) {
+            result.put(CommonUtils.unescapeKey(key), imageNameHeroesMap.get(key));
+        }
+        return result;
+    }
+    // create data for imageNameHeroesMap;
 }

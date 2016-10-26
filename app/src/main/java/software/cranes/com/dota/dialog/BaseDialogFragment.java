@@ -31,19 +31,18 @@ public class BaseDialogFragment extends DialogFragment {
             CircleDialog.z = 1;
         }
     }
+
     protected void hideCircleDialog() {
-        circleDialog = CircleDialog.getInstance();
-        if (circleDialog.getDialog() != null && circleDialog.getDialog().isShowing()) {
+        if (circleDialog != null) {
             circleDialog.dismiss();
             CircleDialog.z = 0;
         }
-        circleDialog = null;
     }
 
     // use when have a many request get data.
     public synchronized void showCircleDialogOnly() {
         if (CircleDialog.z >= 1) {
-            CircleDialog.z ++;
+            CircleDialog.z++;
             return;
         }
         circleDialog = CircleDialog.getInstance();
@@ -57,12 +56,10 @@ public class BaseDialogFragment extends DialogFragment {
         if (CircleDialog.z > 1) {
             CircleDialog.z--;
         } else if (CircleDialog.z == 1) {
-            circleDialog = CircleDialog.getInstance();
-            if (circleDialog.getDialog() != null && circleDialog.getDialog().isShowing()) {
+            if (circleDialog != null) {
                 circleDialog.dismiss();
-                circleDialog = null;
+                CircleDialog.z = 0;
             }
-            CircleDialog.z = 0;
         }
     }
 
