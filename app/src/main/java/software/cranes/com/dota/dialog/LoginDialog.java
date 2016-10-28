@@ -44,7 +44,6 @@ import java.util.List;
 
 import software.cranes.com.dota.R;
 import software.cranes.com.dota.interfa.Constant;
-import software.cranes.com.dota.model.SingleStringModel;
 import software.cranes.com.dota.model.UserModel;
 import software.cranes.com.dota.screen.MainActivity;
 
@@ -255,11 +254,10 @@ public class LoginDialog extends BaseDialogFragment implements View.OnClickListe
             public void onDataChange(DataSnapshot dataSnapshot) {
                 hideCircleDialog();
                 if (dataSnapshot != null) {
-                    GenericTypeIndicator<ArrayList<SingleStringModel>> genericTypeIndicator = new GenericTypeIndicator<ArrayList<SingleStringModel>>() {};
-                    ArrayList<SingleStringModel> list = dataSnapshot.getValue(genericTypeIndicator);
+                    List<String> list = (List<String>) dataSnapshot.getValue();
                     if (list != null && list.size() != 0) {
-                        for (SingleStringModel model : list) {
-                            if (model != null && model.getName().equals(email)) {
+                        for (String str : list) {
+                            if (str != null && str.equals(email)) {
                                 if (getActivity() instanceof MainActivity) {
                                     ((MainActivity) getActivity()).setAdmin(true);
                                 }

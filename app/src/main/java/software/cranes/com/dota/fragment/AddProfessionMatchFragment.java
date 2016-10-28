@@ -218,16 +218,16 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                             for (int i = 1; i <= matchModel.getSum(); i++) {
                                 showCircleDialogOnly();
                                 final int finalI = i;
-                                FirebaseDatabase.getInstance().getReference("profession/games/" + matchModel.getMatchId() + String.valueOf(i)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                FirebaseDatabase.getInstance().getReference("profession/games/" + matchModel.getId() + String.valueOf(i)).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if (dataSnapshot != null) {
                                             GameModel model = dataSnapshot.getValue(GameModel.class);
                                             if (model != null) {
-                                                model.setTeamA(unescapeMap(model.getTeamA()));
-                                                model.setTeamB(unescapeMap(model.getTeamB()));
-                                                gameModelMapOld.put(matchModel.getMatchId() + String.valueOf(finalI), model);
-                                                gameModelMapNew.put(matchModel.getMatchId() + String.valueOf(finalI), model);
+                                                model.setTmA(unescapeMap(model.getTmA()));
+                                                model.setTmB(unescapeMap(model.getTmB()));
+                                                gameModelMapOld.put(matchModel.getId() + String.valueOf(finalI), model);
+                                                gameModelMapNew.put(matchModel.getId() + String.valueOf(finalI), model);
                                             }
                                         }
                                         hideCircleDialogOnly();
@@ -595,53 +595,53 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
 
     // set value for edittext base value of MatchModel Object
     private void setViewForUi(MatchModel model) {
-        if (model.getTeamA() != null) {
-            if (model.getTeamA().getName() != null) {
-                actTeamA.setText(model.getTeamA().getName());
+        if (model.getTa() != null) {
+            if (model.getTa().getNa() != null) {
+                actTeamA.setText(model.getTa().getNa());
             }
-            if (model.getTeamA().getPhotoId() != null) {
-                edtPhotoA.setText(model.getTeamA().getPhotoId());
-            }
-        }
-
-        if (model.getTeamA() != null) {
-            if (model.getTeamB().getName() != null) {
-                actTeamB.setText(model.getTeamA().getName());
-            }
-            if (model.getTeamB().getPhotoId() != null) {
-                edtPhotoB.setText(model.getTeamA().getPhotoId());
+            if (model.getTa().getPt() != null) {
+                edtPhotoA.setText(model.getTa().getPt());
             }
         }
 
-        if (model.getBeta() > 0) {
-            edtOddsTeamA.setText(String.valueOf(model.getBeta()));
+        if (model.getTb() != null) {
+            if (model.getTb().getNa() != null) {
+                actTeamB.setText(model.getTb().getPt());
+            }
+            if (model.getTb().getNa() != null) {
+                edtPhotoB.setText(model.getTb().getPt());
+            }
         }
-        if (model.getBetb() > 0) {
-            edtOddsTeamB.setText(String.valueOf(model.getBetb()));
+
+        if (model.getBa() > 0) {
+            edtOddsTeamA.setText(String.valueOf(model.getBa()));
+        }
+        if (model.getBb() > 0) {
+            edtOddsTeamB.setText(String.valueOf(model.getBb()));
         }
         if (model.getBo() > 0) {
             edtBo.setText(String.valueOf(model.getBo()));
         }
         edtResultA.setText(String.valueOf(matchModel.getRa()));
         edtResultB.setText(String.valueOf(matchModel.getRb()));
-        if (model.getTour() != null) {
-            actTournament.setText(model.getTour());
+        if (model.getTo() != null) {
+            actTournament.setText(model.getTo());
         }
-        if (model.getRound() != null) {
-            actRound.setText(model.getRound());
+        if (model.getRo() != null) {
+            actRound.setText(model.getRo());
         }
         if (model.getTime() > 0) {
             btnAddTime.setText(CommonUtils.convertintDateTimeToString(time));
         }
-        if (model.getStatus() == Constant.LIVE) {
+        if (model.getSt() == Constant.LIVE) {
             rbLive.setChecked(true);
-        } else if (model.getStatus() == Constant.END) {
+        } else if (model.getSt() == Constant.END) {
             rbEnd.setChecked(true);
-        } else if (model.getStatus() == Constant.UPCOMING) {
+        } else if (model.getSt() == Constant.UPCOMING) {
             rbUpcoming.setChecked(true);
         }
-        if (model.getLiveList() != null && model.getLiveList().size() > 0) {
-            generateChanelLive(model.getLiveList().size(), model.getLiveList());
+        if (model.getLl() != null && model.getLl().size() > 0) {
+            generateChanelLive(model.getLl().size(), model.getLl());
         }
         tvSumGames.setText(model.getSum());
 

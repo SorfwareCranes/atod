@@ -5,30 +5,30 @@ package software.cranes.com.dota.model;
  */
 
 public class TeamModel {
-    private String name;
-    private String photoId;
+    private String na;
+    private String pt;
 
-    public TeamModel(String name, String photoId) {
-        this.name = name;
-        this.photoId = photoId;
+    public TeamModel(String na, String pt) {
+        this.na = na;
+        this.pt = pt;
     }
 
     public TeamModel() {
     }
 
-    public String getName() {
-        return name;
+    public String getNa() {
+        return na;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNa(String na) {
+        this.na = na;
     }
 
-    public String getPhotoId() {
-        return photoId;
+    public String getPt() {
+        return pt;
     }
 
-    public void setPhotoId(String photoId) {
-        this.photoId = photoId;
+    public void setPt(String pt) {
+        this.pt = pt;
     }
 }

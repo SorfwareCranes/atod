@@ -215,85 +215,85 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
             } else if (gameModel.getRs() == Constant.B_WIN) {
                 rbBWin.setChecked(true);
             }
-            if (gameModel.getHigh() != null && !gameModel.getHigh().isEmpty()) {
-                edtHighlightLink.setText("https://www.youtube.com/watch?v=" + gameModel.getHigh());
+            if (gameModel.getLh() != null && !gameModel.getLh().isEmpty()) {
+                edtHighlightLink.setText("https://www.youtube.com/watch?v=" + gameModel.getLh());
             }
-            if (gameModel.getFull() != null && !gameModel.getFull().isEmpty()) {
-                edtFulltLink.setText("https://www.youtube.com/watch?v=" + gameModel.getFull());
+            if (gameModel.getLf() != null && !gameModel.getLf().isEmpty()) {
+                edtFulltLink.setText("https://www.youtube.com/watch?v=" + gameModel.getLf());
             }
         }
-        if (gameModel.getTeamA() != null && !gameModel.getTeamA().isEmpty()) {
-            List<String> listPlayer = getListKeyFromMap(gameModel.getTeamA());
+        if (gameModel.getTmA() != null && !gameModel.getTmA().isEmpty()) {
+            List<String> listPlayer = getListKeyFromMap(gameModel.getTmA());
             int i = 1;
             for (String str : listPlayer) {
                 switch (i) {
                     case 1:
                         edtNamePlayerA1.setText(CommonUtils.unescapeKey(str));
                         if (type == 2) {
-                            edtNameHeroA1.setText(gameModel.getTeamA().get(str));
+                            edtNameHeroA1.setText(gameModel.getTmA().get(str));
                         }
                         break;
                     case 2:
                         edtNamePlayerA2.setText(CommonUtils.unescapeKey(str));
                         if (type == 2) {
-                            edtNameHeroA2.setText(gameModel.getTeamA().get(str));
+                            edtNameHeroA2.setText(gameModel.getTmA().get(str));
                         }
                         break;
                     case 3:
                         edtNamePlayerA3.setText(CommonUtils.unescapeKey(str));
                         if (type == 2) {
-                            edtNameHeroA3.setText(gameModel.getTeamA().get(str));
+                            edtNameHeroA3.setText(gameModel.getTmA().get(str));
                         }
                         break;
                     case 4:
                         edtNamePlayerA4.setText(CommonUtils.unescapeKey(str));
                         if (type == 2) {
-                            edtNameHeroA4.setText(gameModel.getTeamA().get(str));
+                            edtNameHeroA4.setText(gameModel.getTmA().get(str));
                         }
                         break;
                     case 5:
                         edtNamePlayerA5.setText(CommonUtils.unescapeKey(str));
                         if (type == 2) {
-                            edtNameHeroA5.setText(gameModel.getTeamA().get(str));
+                            edtNameHeroA5.setText(gameModel.getTmA().get(str));
                         }
                         break;
                 }
                 i++;
             }
         }
-        if (gameModel.getTeamB() != null && !gameModel.getTeamB().isEmpty()) {
-            List<String> listPlayer = getListKeyFromMap(gameModel.getTeamB());
+        if (gameModel.getTmB() != null && !gameModel.getTmB().isEmpty()) {
+            List<String> listPlayer = getListKeyFromMap(gameModel.getTmB());
             int i = 1;
             for (String str : listPlayer) {
                 switch (i) {
                     case 1:
                         edtNamePlayerB1.setText(str);
                         if (type == 2) {
-                            edtNameHeroB1.setText(gameModel.getTeamA().get(str));
+                            edtNameHeroB1.setText(gameModel.getTmB().get(str));
                         }
                         break;
                     case 2:
                         edtNamePlayerB2.setText(str);
                         if (type == 2) {
-                            edtNameHeroB2.setText(gameModel.getTeamA().get(str));
+                            edtNameHeroB2.setText(gameModel.getTmB().get(str));
                         }
                         break;
                     case 3:
                         edtNamePlayerB3.setText(str);
                         if (type == 2) {
-                            edtNameHeroB3.setText(gameModel.getTeamA().get(str));
+                            edtNameHeroB3.setText(gameModel.getTmB().get(str));
                         }
                         break;
                     case 4:
                         edtNamePlayerB4.setText(str);
                         if (type == 2) {
-                            edtNameHeroB4.setText(gameModel.getTeamA().get(str));
+                            edtNameHeroB4.setText(gameModel.getTmB().get(str));
                         }
                         break;
                     case 5:
                         edtNamePlayerB5.setText(str);
                         if (type == 2) {
-                            edtNameHeroB5.setText(gameModel.getTeamA().get(str));
+                            edtNameHeroB5.setText(gameModel.getTmB().get(str));
                         }
                         break;
                 }
@@ -318,13 +318,13 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
         } else if (rbDraw.isChecked()) {
             gameModel.setRs(Constant.DRAW);
         }
-        gameModel.setTeamA(getPlayerHeroesMap(Constant.A_WIN));
-        gameModel.setTeamB(getPlayerHeroesMap(Constant.B_WIN));
+        gameModel.setTmA(getPlayerHeroesMap(Constant.A_WIN));
+        gameModel.setTmB(getPlayerHeroesMap(Constant.B_WIN));
         if (!edtFulltLink.getText().toString().trim().isEmpty()) {
-            gameModel.setFull(CommonUtils.extractVideoIdFromUrl(edtFulltLink.getText().toString().trim()));
+            gameModel.setLf(CommonUtils.extractVideoIdFromUrl(edtFulltLink.getText().toString().trim()));
         }
         if (!edtHighlightLink.getText().toString().trim().isEmpty()) {
-            gameModel.setHigh(CommonUtils.extractVideoIdFromUrl(edtHighlightLink.getText().toString().trim()));
+            gameModel.setLh(CommonUtils.extractVideoIdFromUrl(edtHighlightLink.getText().toString().trim()));
         }
         hideCircleDialogOnly();
         this.dismiss();

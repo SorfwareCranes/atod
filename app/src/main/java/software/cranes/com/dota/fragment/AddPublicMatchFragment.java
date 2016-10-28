@@ -5,14 +5,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,19 +25,10 @@ import java.util.List;
 import software.cranes.com.dota.R;
 import software.cranes.com.dota.adapter.AutoCompleteAdapter;
 import software.cranes.com.dota.common.CommonUtils;
-import software.cranes.com.dota.common.JsonUtil;
-import software.cranes.com.dota.common.SendRequest;
-import software.cranes.com.dota.dialog.CircleDialog;
 import software.cranes.com.dota.dialog.DateDialogFragment;
-import software.cranes.com.dota.dialog.LoginDialog;
 import software.cranes.com.dota.dialog.SuggestDialogFragment;
 import software.cranes.com.dota.interfa.Constant;
-import software.cranes.com.dota.model.DefaultUrl;
-import software.cranes.com.dota.model.Items;
 import software.cranes.com.dota.model.PubGameModel;
-import software.cranes.com.dota.model.Snippet;
-import software.cranes.com.dota.model.SnitppetModel;
-import software.cranes.com.dota.model.Thumbnails;
 
 import static android.R.attr.type;
 

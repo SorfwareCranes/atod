@@ -7,37 +7,53 @@ import java.util.HashMap;
  */
 
 public class GameModel {
-    private String full;
-    private String high;
+    private String lf;
+    private String lh;
     private int rs;
-    private HashMap<String, String> teamA;
-    private HashMap<String, String> teamB;
-
-    public GameModel(String full, String high, int rs, HashMap<String, String> teamA, HashMap<String, String> teamB) {
-        this.full = full;
-        this.high = high;
-        this.rs = rs;
-        this.teamA = teamA;
-        this.teamB = teamB;
-    }
+    private HashMap<String, String> tmA;
+    private HashMap<String, String> tmB;
 
     public GameModel() {
     }
 
-    public String getFull() {
-        return full;
+    public GameModel(String lf, String lh, int rs, HashMap<String, String> tmA, HashMap<String, String> tmB) {
+        this.lf = lf;
+        this.lh = lh;
+        this.rs = rs;
+        this.tmA = tmA;
+        this.tmB = tmB;
     }
 
-    public void setFull(String full) {
-        this.full = full;
+    public HashMap<String, String> getTmA() {
+        return tmA;
     }
 
-    public String getHigh() {
-        return high;
+    public void setTmA(HashMap<String, String> tmA) {
+        this.tmA = tmA;
     }
 
-    public void setHigh(String high) {
-        this.high = high;
+    public HashMap<String, String> getTmB() {
+        return tmB;
+    }
+
+    public void setTmB(HashMap<String, String> tmB) {
+        this.tmB = tmB;
+    }
+
+    public String getLf() {
+        return lf;
+    }
+
+    public void setLf(String lf) {
+        this.lf = lf;
+    }
+
+    public String getLh() {
+        return lh;
+    }
+
+    public void setLh(String lh) {
+        this.lh = lh;
     }
 
     public int getRs() {
@@ -48,19 +64,5 @@ public class GameModel {
         this.rs = rs;
     }
 
-    public HashMap<String, String> getTeamA() {
-        return teamA;
-    }
 
-    public void setTeamA(HashMap<String, String> teamA) {
-        this.teamA = teamA;
-    }
-
-    public HashMap<String, String> getTeamB() {
-        return teamB;
-    }
-
-    public void setTeamB(HashMap<String, String> teamB) {
-        this.teamB = teamB;
-    }
 }

@@ -7,60 +7,60 @@ import java.util.List;
  */
 
 public class MatchModel {
-    private String tour;
-    private String round;
-    private String matchId;
+    private String to;
+    private String ro;
+    private String id;
     private int bo;
-    private int status;
+    private int st;
     private long time;
-    private int beta, betb, ra, rb;
-    private TeamModel teamA;
-    private TeamModel teamB;
-    private List<LiveChanelModel> liveList;
+    private int ba, bb, ra, rb;
+    private TeamModel ta;
+    private TeamModel tb;
+    private List<LiveChanelModel> ll;
     private int sum;
-
-    public MatchModel(String tour, String round, String matchId, int bo, int status, long time, int beta, int betb, int ra, int rb, TeamModel teamA, TeamModel teamB, List<LiveChanelModel> liveList, int sum) {
-        this.tour = tour;
-        this.round = round;
-        this.matchId = matchId;
-        this.bo = bo;
-        this.status = status;
-        this.time = time;
-        this.beta = beta;
-        this.betb = betb;
-        this.ra = ra;
-        this.rb = rb;
-        this.teamA = teamA;
-        this.teamB = teamB;
-        this.liveList = liveList;
-        this.sum = sum;
-    }
 
     public MatchModel() {
     }
 
-    public String getTour() {
-        return tour;
+    public MatchModel(String to, String ro, String id, int bo, int st, long time, int ba, int bb, int ra, int rb, TeamModel ta, TeamModel tb, List<LiveChanelModel> ll, int sum) {
+        this.to = to;
+        this.ro = ro;
+        this.id = id;
+        this.bo = bo;
+        this.st = st;
+        this.time = time;
+        this.ba = ba;
+        this.bb = bb;
+        this.ra = ra;
+        this.rb = rb;
+        this.ta = ta;
+        this.tb = tb;
+        this.ll = ll;
+        this.sum = sum;
     }
 
-    public void setTour(String tour) {
-        this.tour = tour;
+    public String getTo() {
+        return to;
     }
 
-    public String getRound() {
-        return round;
+    public void setTo(String to) {
+        this.to = to;
     }
 
-    public void setRound(String round) {
-        this.round = round;
+    public String getRo() {
+        return ro;
     }
 
-    public String getMatchId() {
-        return matchId;
+    public void setRo(String ro) {
+        this.ro = ro;
     }
 
-    public void setMatchId(String matchId) {
-        this.matchId = matchId;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public int getBo() {
@@ -71,12 +71,12 @@ public class MatchModel {
         this.bo = bo;
     }
 
-    public int getStatus() {
-        return status;
+    public int getSt() {
+        return st;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setSt(int st) {
+        this.st = st;
     }
 
     public long getTime() {
@@ -87,20 +87,20 @@ public class MatchModel {
         this.time = time;
     }
 
-    public int getBeta() {
-        return beta;
+    public int getBa() {
+        return ba;
     }
 
-    public void setBeta(int beta) {
-        this.beta = beta;
+    public void setBa(int ba) {
+        this.ba = ba;
     }
 
-    public int getBetb() {
-        return betb;
+    public int getBb() {
+        return bb;
     }
 
-    public void setBetb(int betb) {
-        this.betb = betb;
+    public void setBb(int bb) {
+        this.bb = bb;
     }
 
     public int getRa() {
@@ -119,28 +119,28 @@ public class MatchModel {
         this.rb = rb;
     }
 
-    public TeamModel getTeamA() {
-        return teamA;
+    public TeamModel getTa() {
+        return ta;
     }
 
-    public void setTeamA(TeamModel teamA) {
-        this.teamA = teamA;
+    public void setTa(TeamModel ta) {
+        this.ta = ta;
     }
 
-    public TeamModel getTeamB() {
-        return teamB;
+    public TeamModel getTb() {
+        return tb;
     }
 
-    public void setTeamB(TeamModel teamB) {
-        this.teamB = teamB;
+    public void setTb(TeamModel tb) {
+        this.tb = tb;
     }
 
-    public List<LiveChanelModel> getLiveList() {
-        return liveList;
+    public List<LiveChanelModel> getLl() {
+        return ll;
     }
 
-    public void setLiveList(List<LiveChanelModel> liveList) {
-        this.liveList = liveList;
+    public void setLl(List<LiveChanelModel> ll) {
+        this.ll = ll;
     }
 
     public int getSum() {
