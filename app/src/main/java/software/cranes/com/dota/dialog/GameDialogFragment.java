@@ -23,15 +23,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import software.cranes.com.dota.R;
 import software.cranes.com.dota.adapter.AutoCompleteAdapter;
 import software.cranes.com.dota.common.CommonUtils;
 import software.cranes.com.dota.interfa.Constant;
 import software.cranes.com.dota.model.GameModel;
-
-import static android.R.attr.type;
 
 
 /**
@@ -76,6 +73,7 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
     private Button btnOK;
     private List<String> listHeroes;
     private int TYPE;
+    private HashMap<String, String> nameImageHeroesMap;
 
     public interface HandleCreateGame {
         void executeAddGame(int TYPE, String number, GameModel gameModel);
@@ -85,12 +83,13 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
     }
 
     @SuppressLint("ValidFragment")
-    public GameDialogFragment(int TYPE, String gameId, HashMap<String, GameModel> modelHashMap, String teamAName, String teamBName, HandleCreateGame mHandleGame) {
+    public GameDialogFragment(int TYPE, String gameId, HashMap<String, GameModel> modelHashMap, String teamAName, String teamBName, HashMap<String, String> nameImageHeroesMap, HandleCreateGame mHandleGame) {
         this.gameId = gameId;
         this.modelHashMap = modelHashMap;
         this.teamAName = teamAName;
         this.teamBName = teamBName;
         this.mHandleGame = mHandleGame;
+        this.nameImageHeroesMap = nameImageHeroesMap;
         this.TYPE = TYPE;
     }
 
@@ -310,7 +309,7 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
         if (!validateInput()) {
             return;
         }
-        showCircleDialog();
+        showCircleDialogOnly();
         GameModel gameModel = new GameModel();
         if (rbAWin.isChecked()) {
             gameModel.setRs(Constant.A_WIN);
@@ -327,11 +326,13 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
         if (!edtHighlightLink.getText().toString().trim().isEmpty()) {
             gameModel.setHigh(CommonUtils.extractVideoIdFromUrl(edtHighlightLink.getText().toString().trim()));
         }
+        hideCircleDialogOnly();
+        this.dismiss();
         if (mHandleGame != null) {
             mHandleGame.executeAddGame(TYPE, gameId, gameModel);
         }
-        hideCircleDialogOnly();
-        this.dismiss();
+
+
     }
 
 
@@ -377,32 +378,51 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
     // list heroes name is suggest for choice name
     private void loadSuggestHeroes() {
         showCircleDialogOnly();
-        FirebaseDatabase.getInstance().getReference("heroes_suggest").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                listHeroes = (ArrayList<String>) dataSnapshot.getValue();
-                if (listHeroes != null && getActivity() != null) {
-                    AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, listHeroes);
-                    edtNameHeroA1.setAdapter(adapter);
-                    edtNameHeroA2.setAdapter(adapter);
-                    edtNameHeroA3.setAdapter(adapter);
-                    edtNameHeroA4.setAdapter(adapter);
-                    edtNameHeroA5.setAdapter(adapter);
-                    edtNameHeroB1.setAdapter(adapter);
-                    edtNameHeroB2.setAdapter(adapter);
-                    edtNameHeroB3.setAdapter(adapter);
-                    edtNameHeroB4.setAdapter(adapter);
-                    edtNameHeroB5.setAdapter(adapter);
+        if (nameImageHeroesMap != null && !nameImageHeroesMap.isEmpty()) {
+            listHeroes = getListKeyFromMap(nameImageHeroesMap);
+            if (listHeroes.size() > 0 && getActivity() != null) {
+                AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, listHeroes);
+                edtNameHeroA1.setAdapter(adapter);
+                edtNameHeroA2.setAdapter(adapter);
+                edtNameHeroA3.setAdapter(adapter);
+                edtNameHeroA4.setAdapter(adapter);
+                edtNameHeroA5.setAdapter(adapter);
+                edtNameHeroB1.setAdapter(adapter);
+                edtNameHeroB2.setAdapter(adapter);
+                edtNameHeroB3.setAdapter(adapter);
+                edtNameHeroB4.setAdapter(adapter);
+                edtNameHeroB5.setAdapter(adapter);
+            }
+            hideCircleDialogOnly();
+        } else {
+            FirebaseDatabase.getInstance().getReference("heroes_suggest").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    listHeroes = (ArrayList<String>) dataSnapshot.getValue();
+                    if (listHeroes != null && getActivity() != null) {
+                        AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, listHeroes);
+                        edtNameHeroA1.setAdapter(adapter);
+                        edtNameHeroA2.setAdapter(adapter);
+                        edtNameHeroA3.setAdapter(adapter);
+                        edtNameHeroA4.setAdapter(adapter);
+                        edtNameHeroA5.setAdapter(adapter);
+                        edtNameHeroB1.setAdapter(adapter);
+                        edtNameHeroB2.setAdapter(adapter);
+                        edtNameHeroB3.setAdapter(adapter);
+                        edtNameHeroB4.setAdapter(adapter);
+                        edtNameHeroB5.setAdapter(adapter);
+                    }
+                    hideCircleDialogOnly();
                 }
-                hideCircleDialogOnly();
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                hideCircleDialogOnly();
-                Toast.makeText(getContext(), "No heroes load", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    hideCircleDialogOnly();
+                    Toast.makeText(getContext(), "No heroes load", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 
     /*
@@ -496,7 +516,6 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
                         edtNamePlayerB3.setAdapter(adapter);
                         edtNamePlayerB4.setAdapter(adapter);
                         edtNamePlayerB5.setAdapter(adapter);
-
                     }
                 }
             }
@@ -571,4 +590,5 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
         }
         return result;
     }
+
 }

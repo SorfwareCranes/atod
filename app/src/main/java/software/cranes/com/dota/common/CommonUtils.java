@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -452,6 +453,22 @@ public class CommonUtils {
         }
         return time;
     }
+    // abc def -> Abc Def
+    // abc.def -> Abc.Def
 
+    private String convertLowerCase(String str) {
+        int pos = 0;
+        boolean capitalize = true;
+        StringBuilder sb = new StringBuilder(str);
+        while (pos < sb.length()) {
+            if (sb.charAt(pos) == '.' || sb.charAt(pos) == ' ') {
+                capitalize = true;
+            } else if (capitalize && !Character.isWhitespace(sb.charAt(pos))){
+                sb.setCharAt(pos, Character.toUpperCase(sb.charAt(pos)));
+            }
+            pos++;
+        }
+        return sb.toString();
+    }
 
 }

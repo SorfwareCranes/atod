@@ -5,30 +5,30 @@ package software.cranes.com.dota.model;
  */
 
 public class LiveChanelModel {
-    private String videoId;
-    private String lang;
+    private String lv;
+    private String la;
 
     public LiveChanelModel() {
     }
 
-    public LiveChanelModel(String videoId, String language) {
-        this.videoId = videoId;
-        this.lang = language;
+    public LiveChanelModel(String lv, String la) {
+        this.lv = lv;
+        this.la = la;
     }
 
-    public String getVideoId() {
-        return videoId;
+    public String getLv() {
+        return lv;
     }
 
-    public void setVideoId(String videoId) {
-        this.videoId = videoId;
+    public void setLv(String lv) {
+        this.lv = lv;
     }
 
-    public String getLanguage() {
-        return lang;
+    public String getLa() {
+        return la;
     }
 
-    public void setLanguage(String language) {
-        this.lang = language;
+    public void setLa(String la) {
+        this.la = la;
     }
 }

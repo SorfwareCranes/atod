@@ -21,7 +21,6 @@
                     android:layout_marginRight="10dp"/>
 
             <EditText
-                    android:enabled="false"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:hint="Match Id"
@@ -320,6 +319,24 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="3dp">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sums of Game : "
+                    android:layout_marginRight="10dp"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvSumGames"/>
         </LinearLayout>
 
         <LinearLayout

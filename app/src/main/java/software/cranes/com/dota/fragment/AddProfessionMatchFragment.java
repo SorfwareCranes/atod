@@ -20,14 +20,20 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import software.cranes.com.dota.R;
 import software.cranes.com.dota.adapter.AutoCompleteAdapter;
 import software.cranes.com.dota.common.CommonUtils;
+import software.cranes.com.dota.common.SendRequest;
 import software.cranes.com.dota.dialog.DateTimeDialog;
 import software.cranes.com.dota.dialog.GameDialogFragment;
 import software.cranes.com.dota.dialog.SuggestDialogFragment;
@@ -37,9 +43,8 @@ import software.cranes.com.dota.model.LiveChanelModel;
 import software.cranes.com.dota.model.MatchModel;
 import software.cranes.com.dota.model.TeamModel;
 
-import static android.R.attr.mode;
-import static android.R.id.list;
-import static android.os.Build.VERSION_CODES.M;
+import static android.R.attr.type;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 
 /**
@@ -78,7 +83,8 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
     private HashMap<String, GameModel> gameModelMapOld, gameModelMapNew;
     private MatchModel matchModel;
     private TeamModel teamAModel, teamBModel;
-    private Map<String, String> imageNameHeroesMap;
+    private HashMap<String, String> nameImageHeroesMap;
+    private TextView tvSumGames;
 
     public AddProfessionMatchFragment() {
         // Required empty public constructor
@@ -94,6 +100,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         suggestTeam = new ArrayList<>();
         suggestListTeam = new ArrayList<>();
+        loadHeroesData();
     }
 
     @Override
@@ -134,6 +141,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         btnDelete = (Button) view.findViewById(R.id.btnDelete);
         btnSave = (Button) view.findViewById(R.id.btnSave);
         llListGames = (LinearLayout) view.findViewById(R.id.llListGames);
+        tvSumGames = (TextView) view.findViewById(R.id.tvSumGames);
 
         edtPhotoA = (EditText) view.findViewById(R.id.edtPhotoA);
         edtPhotoB = (EditText) view.findViewById(R.id.edtPhotoB);
@@ -145,9 +153,6 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         btnSuggestTeamA.setOnClickListener(this);
         btnSuggestTeamB.setOnClickListener(this);
         btnAddTime.setOnClickListener(this);
-        rbEnd.setOnClickListener(this);
-        rbLive.setOnClickListener(this);
-        rbUpcoming.setOnClickListener(this);
         btnGenerateChanel.setOnClickListener(this);
         btnInputData.setOnClickListener(this);
         btnBack.setOnClickListener(this);
@@ -169,6 +174,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         loadDataAutoCompleteText(actRound, "profession/suggest/round");
         if (TYPE == Constant.LOAD_DATA) {
             edtMatchId.setText(matchId);
+            edtMatchId.setEnabled(false);
             setupForLoadMatch();
         } else {
             setupForCreateNew();
@@ -208,10 +214,11 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                     matchModel = dataSnapshot.getValue(MatchModel.class);
                     if (matchModel != null) {
                         setViewForUi(matchModel);
-                        if (matchModel.getGames() != null && matchModel.getGames().size() > 0) {
-                            for (final String gameId : matchModel.getGames()) {
+                        if (matchModel.getSum() > 0) {
+                            for (int i = 1; i <= matchModel.getSum(); i++) {
                                 showCircleDialogOnly();
-                                FirebaseDatabase.getInstance().getReference("profession/games/" + gameId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                final int finalI = i;
+                                FirebaseDatabase.getInstance().getReference("profession/games/" + matchModel.getMatchId() + String.valueOf(i)).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if (dataSnapshot != null) {
@@ -219,8 +226,8 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                                             if (model != null) {
                                                 model.setTeamA(unescapeMap(model.getTeamA()));
                                                 model.setTeamB(unescapeMap(model.getTeamB()));
-                                                gameModelMapOld.put(gameId, model);
-                                                gameModelMapNew.put(gameId, model);
+                                                gameModelMapOld.put(matchModel.getMatchId() + String.valueOf(finalI), model);
+                                                gameModelMapNew.put(matchModel.getMatchId() + String.valueOf(finalI), model);
                                             }
                                         }
                                         hideCircleDialogOnly();
@@ -275,7 +282,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnLoadGame:
-
+                loadModelFollowId(edtMatchId.getText().toString().trim());
                 break;
             case R.id.btnSuggestTeamA:
                 showListDataTeam(actTeamA);
@@ -303,7 +310,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
 
                 break;
             case R.id.btnSave:
-
+                executeSave();
                 break;
             default:
                 break;
@@ -413,6 +420,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
 
     // show dialog choice time for game
     private void showDialogChoiceTime(long time_start) {
+
         new DateTimeDialog(time_start, new DateTimeDialog.HandleClickOnDialog() {
             @Override
             public void handlePickerOk(long time) {
@@ -447,13 +455,13 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
             final View view = inflater.inflate(R.layout.live_chanel_layout, null, false);
             if (list != null && list.size() > i && list.get(i) != null) {
 
-                if (list.get(i).getLanguage() != null) {
+                if (list.get(i).getLa() != null) {
                     edtLanguageLive = (EditText) view.findViewById(R.id.edtLanguageLive);
-                    edtLanguageLive.setText(list.get(i).getLanguage());
+                    edtLanguageLive.setText(list.get(i).getLa());
                 }
-                if (list.get(i).getVideoId() != null) {
+                if (list.get(i).getLv() != null) {
                     edtLiveLink = (EditText) view.findViewById(R.id.edtLiveLink);
-                    edtLiveLink.setText("https://www.youtube.com/watch?v=" + list.get(i).getVideoId());
+                    edtLiveLink.setText("https://www.youtube.com/watch?v=" + list.get(i).getLv());
                 }
             }
 
@@ -469,7 +477,13 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         edtNumberChanel.setText(Constant.NO_IMAGE);
     }
 
-    // check number to input
+    /*
+        check number to input
+        if game not have -> create game and add to gameModelMapNew
+        if game have -> load game exits and add to gameModelMapNew
+        afer that show list game to UI in linearlayout llListGames
+        handle gameModelMapNew to compare gameModelMapOld to handle save, updte and delete data
+      */
     private void handleAddAGame() {
         String gameId = edtGameData.getText().toString().trim();
         try {
@@ -496,7 +510,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         if (gameModelMapOld == null) {
             gameModelMapOld = new HashMap<>();
         }
-        GameDialogFragment gameDialogFragment = new GameDialogFragment(TYPE, edtMatchId.getText().toString() + gameId, gameModelMapNew, actTeamA.getText().toString(), actTeamB.getText().toString(), new GameDialogFragment.HandleCreateGame() {
+        GameDialogFragment gameDialogFragment = new GameDialogFragment(TYPE, edtMatchId.getText().toString() + gameId, gameModelMapNew, actTeamA.getText().toString(), actTeamB.getText().toString(), nameImageHeroesMap, new GameDialogFragment.HandleCreateGame() {
             @Override
             public void executeAddGame(int type, String id, GameModel gameModel) {
                 gameModelMapNew.put(id, gameModel);
@@ -545,6 +559,9 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         return true;
     }
 
+    /*
+    show list game to ui base on gamemodel
+     */
     private void addGamesToUi(final HashMap<String, GameModel> map) {
         while (llListGames.getChildCount() > 0) {
             llListGames.removeAllViews();
@@ -553,20 +570,24 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
             TextView tv;
             Button btn;
             LayoutInflater inflater = getLayoutInflater(null);
-            for (final String key : map.keySet()) {
-                if (inflater != null) {
-                    final View view = inflater.inflate(R.layout.list_game_layout, null, false);
-                    tv = (TextView) view.findViewById(R.id.tvGameId);
-                    btn = (Button) view.findViewById(R.id.btnGameDelete);
-                    tv.setText(key);
-                    btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            map.remove(key);
-                            llListGames.removeView(view);
-                        }
-                    });
-                    llListGames.addView(view);
+            List<String> listKey = getListKeyFromMap(map);
+            if (listKey != null) {
+                for (final String key : listKey) {
+                    if (inflater != null) {
+                        final View view = inflater.inflate(R.layout.list_game_layout, null, false);
+                        tv = (TextView) view.findViewById(R.id.tvGameId);
+                        btn = (Button) view.findViewById(R.id.btnGameDelete);
+                        tv.setText(key);
+                        btn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                map.remove(key);
+                                llListGames.removeView(view);
+                                tvSumGames.setText(map.size());
+                            }
+                        });
+                        llListGames.addView(view);
+                    }
                 }
             }
         }
@@ -622,6 +643,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         if (model.getLiveList() != null && model.getLiveList().size() > 0) {
             generateChanelLive(model.getLiveList().size(), model.getLiveList());
         }
+        tvSumGames.setText(model.getSum());
 
     }
 
@@ -633,9 +655,119 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
             return result;
         }
         for (String key : map.keySet()) {
-            result.put(CommonUtils.unescapeKey(key), imageNameHeroesMap.get(key));
+            result.put(CommonUtils.unescapeKey(key), getHeroNameBaseOnImageValue(nameImageHeroesMap, map.get(key)));
         }
         return result;
     }
+
     // create data for imageNameHeroesMap;
+        /*
+        load heroes to map<String, String>
+        player can choice heroes
+     */
+    private void loadHeroesData() {
+        nameImageHeroesMap = new HashMap<>();
+        String url = "http://www.dota2.com/heroes/";
+        showCircleDialogOnly();
+        SendRequest.requestGetJsoup(getContext(), url, new SendRequest.StringResponse() {
+            @Override
+            public void onSuccess(String data) {
+                if (data != null) {
+                    Elements elementAs = null;
+                    Element elementImg = null;
+                    String linkImg = null;
+                    String[] arrLinkName, arrLinkImg = null;
+                    Document document = Jsoup.parse(data);
+                    Elements elementHeroIcons = document.select("div.heroIcons");
+                    if (elementHeroIcons != null && elementHeroIcons.size() > 0) {
+                        for (Element elementHeroIcon : elementHeroIcons) {
+                            elementAs = elementHeroIcon.select("a.heroPickerIconLink");
+                            if (elementAs != null && elementAs.size() > 0) {
+                                for (Element elementA : elementAs) {
+                                    // link = "http://www.dota2.com/hero/Earthshaker/"
+                                    arrLinkName = elementA.attr("href").split("/");
+                                    elementImg = elementA.select("img.heroHoverLarge").first();
+                                    if (elementImg != null) {
+                                        arrLinkImg = elementImg.attr("src").split("\\?")[0].split("/");
+                                        if (arrLinkImg != null) {
+                                            linkImg = arrLinkImg[arrLinkImg.length - 1];
+                                        }
+                                    }
+                                    if (arrLinkName != null && arrLinkName.length > 0 && linkImg != null) {
+                                        nameImageHeroesMap.put(arrLinkName[arrLinkName.length - 1], linkImg.substring(0, linkImg.length() - 12));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                hideCircleDialogOnly();
+            }
+
+            @Override
+            public void onFail(String err) {
+                hideCircleDialogOnly();
+            }
+        });
+    }
+
+    // get key from value in map
+    private String getHeroNameBaseOnImageValue(HashMap<String, String> map, String imgId) {
+        if (map.isEmpty()) {
+            return Constant.NO_IMAGE;
+        }
+        for (String key : map.keySet()) {
+            if (map.get(key).equals(imgId)) {
+                return key;
+            }
+        }
+        return Constant.NO_IMAGE;
+    }
+
+    /*
+    get list key from map<String, String>
+    */
+    private List<String> getListKeyFromMap(HashMap<String, GameModel> map) {
+        if (map == null || map.isEmpty()) {
+            return null;
+        }
+        List<String> result = new ArrayList<>();
+        for (String str : map.keySet()) {
+            result.add(str);
+        }
+        Collections.sort(result);
+        return result;
+    }
+
+    /*
+        1. match upcoming -> save to profession/upcoming
+        2. match live -> save to profession/live
+
+        3. match end -> save match to -> profession/match
+                        save game to -> profession/games
+        4. save match to -> profession/tour
+        5. save match to -> profession/team
+        6. save player name to profession/suggest/player
+        7. save round name to profession/suggest/round
+        8. save team name to profession/suggest/team
+        9. save tour name to profession/suggest/tour
+        // handle video
+            1 game have two model video
+         id model video : matchId + 1 + (f or h) data : link : videoid + time : 121212
+        1. save all game video high to videoh
+        2. save all game video full to videof
+        3. save all game video full to videopf/playername
+        4. save all game video high to videoph/playername
+        5. save all game video high to videohh/heroes
+        6. save all game video full to videohf/heroes
+        7. save all game video high to videophf/playername/heroes
+        8. save all game video full to videophh/playername/heroes
+     */
+    private void executeSave() {
+        if (TYPE == Constant.CREATE_DATA) {
+
+        } else {
+
+        }
+    }
 }

@@ -17,9 +17,9 @@ public class MatchModel {
     private TeamModel teamA;
     private TeamModel teamB;
     private List<LiveChanelModel> liveList;
-    private List<String> games;
+    private int sum;
 
-    public MatchModel(String tour, String round, String matchId, int bo, int status, long time, int beta, int betb, int ra, int rb, TeamModel teamA, TeamModel teamB, List<LiveChanelModel> liveList, List<String> games) {
+    public MatchModel(String tour, String round, String matchId, int bo, int status, long time, int beta, int betb, int ra, int rb, TeamModel teamA, TeamModel teamB, List<LiveChanelModel> liveList, int sum) {
         this.tour = tour;
         this.round = round;
         this.matchId = matchId;
@@ -33,7 +33,7 @@ public class MatchModel {
         this.teamA = teamA;
         this.teamB = teamB;
         this.liveList = liveList;
-        this.games = games;
+        this.sum = sum;
     }
 
     public MatchModel() {
@@ -143,11 +143,11 @@ public class MatchModel {
         this.liveList = liveList;
     }
 
-    public List<String> getGames() {
-        return games;
+    public int getSum() {
+        return sum;
     }
 
-    public void setGames(List<String> games) {
-        this.games = games;
+    public void setSum(int sum) {
+        this.sum = sum;
     }
 }
