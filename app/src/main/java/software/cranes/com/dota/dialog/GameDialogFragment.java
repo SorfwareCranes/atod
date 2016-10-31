@@ -157,7 +157,7 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
         switch (v.getId()) {
             case R.id.btnLoadSuggestFromTeam:
                 loadSuggestPlayerFromTeam(teamAName, Constant.A_WIN);
-                loadSuggestPlayerFromTeam(teamAName, Constant.B_WIN);
+                loadSuggestPlayerFromTeam(teamBName, Constant.B_WIN);
                 break;
             case R.id.btnLoadSuggestFromPlayer:
                 loadSuggestAllPlayerName();
@@ -180,21 +180,23 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
         tvNameTeamA.setText(teamAName);
         tvNameTeamB.setText(teamBName);
         // check game want create have data or load new game
-        if (modelHashMap.containsKey(gameId)) {
+        if (modelHashMap != null && modelHashMap.containsKey(gameId)) {
             gameModel = modelHashMap.get(gameId);
             setData(gameModel, 2);
             // cannot change heroe and player -> you can change result or link youtube
-            if (!edtNameHeroA1.getText().toString().trim().isEmpty()) {
+            if (!edtNamePlayerA1.getText().toString().trim().isEmpty()) {
                 setNonEditPlayer();
             }
-            setNonEditHeroes();
+            if (!edtNameHeroA1.getText().toString().trim().isEmpty()) {
+                setNonEditHeroes();
+            }
         } else {
             gameModel = new GameModel();
             // exit game before
             if (getGameModelFromMap(modelHashMap) != null) {
                 setData(getGameModelFromMap(modelHashMap), 1);
                 // cannot change player -> you can change result or link youtube annd player
-                setNonEditPlayer();
+//                setNonEditPlayer();
             }
             // load suggest for
             loadSuggestHeroes();
@@ -337,7 +339,7 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
 
 
     private GameModel getGameModelFromMap(HashMap<String, GameModel> map) {
-        if (map.isEmpty()) {
+        if (map == null || map.isEmpty()) {
             return null;
         }
         for (String key : map.keySet()) {
@@ -431,7 +433,7 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
         type == 2 this name for team B
      */
     private void loadSuggestPlayerFromTeam(String teamName, final int type) {
-        showCircleDialog();
+        showCircleDialogOnly();
         FirebaseDatabase.getInstance().getReference("joindota/suggest_team_player/" + CommonUtils.escapeKey(teamName)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -518,6 +520,7 @@ public class GameDialogFragment extends BaseDialogFragment implements View.OnCli
                         edtNamePlayerB5.setAdapter(adapter);
                     }
                 }
+                hideCircleDialogOnly();
             }
 
             @Override

@@ -36,6 +36,7 @@ public class BaseDialogFragment extends DialogFragment {
         if (circleDialog != null) {
             circleDialog.dismiss();
             CircleDialog.z = 0;
+            circleDialog = null;
         }
     }
 
@@ -58,6 +59,7 @@ public class BaseDialogFragment extends DialogFragment {
         } else if (CircleDialog.z == 1) {
             if (circleDialog != null) {
                 circleDialog.dismiss();
+                circleDialog = null;
                 CircleDialog.z = 0;
             }
         }

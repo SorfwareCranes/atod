@@ -370,22 +370,22 @@ public class AdminFragment extends BaseFragment implements View.OnClickListener 
 //            });
 //        }
         // save https://fir-dota.firebaseio.com/gosu/suggest_team_player
-        if (teamPlayerMap != null && teamPlayerMap.size() != 0) {
-            showCircleDialogOnly();
-            DatabaseReference reference = mFirebaseDatabase.getReference("gosu/suggest_team_player");
-            reference.setValue(teamPlayerMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    hideCircleDialogOnly();
-                    if (!task.isSuccessful()) {
-                        Toast.makeText(getContext(), "gosu/suggest_team_player failed", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), "gosu/suggest_team_player saved", Toast.LENGTH_SHORT).show();
-                        teamPlayerMap = null;
-                    }
-                }
-            });
-        }
+//        if (teamPlayerMap != null && teamPlayerMap.size() != 0) {
+//            showCircleDialogOnly();
+//            DatabaseReference reference = mFirebaseDatabase.getReference("gosu/suggest_team_player");
+//            reference.setValue(teamPlayerMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                @Override
+//                public void onComplete(@NonNull Task<Void> task) {
+//                    hideCircleDialogOnly();
+//                    if (!task.isSuccessful()) {
+//                        Toast.makeText(getContext(), "gosu/suggest_team_player failed", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        Toast.makeText(getContext(), "gosu/suggest_team_player saved", Toast.LENGTH_SHORT).show();
+//                        teamPlayerMap = null;
+//                    }
+//                }
+//            });
+//        }
 //        // save suggest : https://fir-dota.firebaseio.com/gosu/suggest_team
 //        if (teamRankWorldMap != null && teamRankWorldMap.size() != 0) {
 //            showCircleDialogOnly();
@@ -634,7 +634,7 @@ public class AdminFragment extends BaseFragment implements View.OnClickListener 
                                 if (elementTexts != null && elementTexts.size() > 0) {
                                     elementText = elementTexts.first();
                                     text2 = elementText.text().split(" ");
-                                    if (text2[text2.length - 1] != null && (text2[text2.length - 1].equalsIgnoreCase("Stand-In") || text2[text2.length - 1].equalsIgnoreCase("Manager"))) {
+                                    if (text2[text2.length - 1] != null && (text2[text2.length - 1].startsWith("S") || text2[text2.length - 1].startsWith("M"))) {
                                         continue;
                                     } else {
 //                                        model = new PlayerModel();

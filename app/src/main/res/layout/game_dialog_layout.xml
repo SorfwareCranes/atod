@@ -1,286 +1,293 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-        <TextView
-                android:id="@+id/tvNameTeamA"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"/>
-
-        <TextView
-                android:id="@+id/tvNameTeamB"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"/>
-
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="From Team"
-                android:id="@+id/btnLoadSuggestFromTeam"/>
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="From Player"
-                android:id="@+id/btnLoadSuggestFromPlayer"/>
-    </LinearLayout>
-
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
         <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="5dp"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-            <AutoCompleteTextView
-                    android:hint="@string/name"
-                    android:layout_width="match_parent"
+            <TextView
+                    android:id="@+id/tvNameTeamA"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edtNamePlayerA1"/>
+                    android:layout_marginRight="5dp"/>
 
-            <AutoCompleteTextView
-                    android:hint="@string/name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/edtNamePlayerA2"/>
+            <TextView
+                    android:id="@+id/tvNameTeamB"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"/>
 
-            <AutoCompleteTextView
-                    android:hint="@string/name"
-                    android:layout_width="match_parent"
+            <Button
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edtNamePlayerA3"/>
+                    android:text="FromTeam"
+                    android:id="@+id/btnLoadSuggestFromTeam"/>
 
-            <AutoCompleteTextView
-                    android:hint="@string/name"
-                    android:layout_width="match_parent"
+            <Button
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edtNamePlayerA4"/>
-
-            <AutoCompleteTextView
-                    android:hint="@string/name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/edtNamePlayerA5"/>
+                    android:text="FromPlayer"
+                    android:id="@+id/btnLoadSuggestFromPlayer"/>
         </LinearLayout>
 
         <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="5dp"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-            <AutoCompleteTextView
-                    android:hint="@string/hero"
-                    android:layout_width="match_parent"
+            <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edtNameHeroA1"/>
+                    android:layout_weight="1"
+                    android:layout_marginRight="5dp"
+                    android:orientation="vertical">
 
-            <AutoCompleteTextView
-                    android:hint="@string/hero"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/edtNameHeroA2"/>
+                <AutoCompleteTextView
+                        android:hint="@string/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNamePlayerA1"/>
 
-            <AutoCompleteTextView
-                    android:hint="@string/hero"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/edtNameHeroA3"/>
+                <AutoCompleteTextView
+                        android:hint="@string/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNamePlayerA2"/>
 
-            <AutoCompleteTextView
-                    android:hint="@string/hero"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/edtNameHeroA4"/>
+                <AutoCompleteTextView
+                        android:hint="@string/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNamePlayerA3"/>
 
-            <AutoCompleteTextView
-                    android:hint="@string/hero"
-                    android:layout_width="match_parent"
+                <AutoCompleteTextView
+                        android:hint="@string/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNamePlayerA4"/>
+
+                <AutoCompleteTextView
+                        android:hint="@string/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNamePlayerA5"/>
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edtNameHeroA5"/>
+                    android:layout_weight="1"
+                    android:layout_marginRight="5dp"
+                    android:orientation="vertical">
+
+                <AutoCompleteTextView
+                        android:hint="@string/hero"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNameHeroA1"/>
+
+                <AutoCompleteTextView
+                        android:hint="@string/hero"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNameHeroA2"/>
+
+                <AutoCompleteTextView
+                        android:hint="@string/hero"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNameHeroA3"/>
+
+                <AutoCompleteTextView
+                        android:hint="@string/hero"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNameHeroA4"/>
+
+                <AutoCompleteTextView
+                        android:hint="@string/hero"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNameHeroA5"/>
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="5dp"
+                    android:orientation="vertical">
+
+                <AutoCompleteTextView
+                        android:hint="@string/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNamePlayerB1"/>
+
+                <AutoCompleteTextView
+                        android:hint="@string/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNamePlayerB2"/>
+
+                <AutoCompleteTextView
+                        android:hint="@string/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNamePlayerB3"/>
+
+                <AutoCompleteTextView
+                        android:hint="@string/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNamePlayerB4"/>
+
+                <AutoCompleteTextView
+                        android:hint="@string/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNamePlayerB5"/>
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="5dp"
+                    android:orientation="vertical">
+
+                <AutoCompleteTextView
+                        android:hint="@string/hero"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNameHeroB1"/>
+
+                <AutoCompleteTextView
+                        android:hint="@string/hero"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNameHeroB2"/>
+
+                <AutoCompleteTextView
+                        android:hint="@string/hero"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNameHeroB3"/>
+
+                <AutoCompleteTextView
+                        android:hint="@string/hero"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNameHeroB4"/>
+
+                <AutoCompleteTextView
+                        android:hint="@string/hero"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edtNameHeroB5"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="RESULT"/>
+
+        <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:orientation="horizontal">
+
+            <RadioButton
+                    android:id="@+id/rbAWin"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="A win"/>
+
+            <RadioButton
+                    android:checked="true"
+                    android:id="@+id/rbDraw"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Draw"/>
+
+            <RadioButton
+                    android:id="@+id/rbBWin"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="B win"/>
+        </RadioGroup>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="HighLight"/>
+
+            <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/edtHighlightLink"/>
         </LinearLayout>
 
         <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="5dp"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-            <AutoCompleteTextView
-                    android:hint="@string/name"
-                    android:layout_width="match_parent"
+            <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edtNamePlayerB1"/>
+                    android:text="Full"/>
 
-            <AutoCompleteTextView
-                    android:hint="@string/name"
-                    android:layout_width="match_parent"
+            <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edtNamePlayerB2"/>
-
-            <AutoCompleteTextView
-                    android:hint="@string/name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/edtNamePlayerB3"/>
-
-            <AutoCompleteTextView
-                    android:hint="@string/name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/edtNamePlayerB4"/>
-
-            <AutoCompleteTextView
-                    android:hint="@string/name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/edtNamePlayerB5"/>
+                    android:id="@+id/edtFulltLink"/>
         </LinearLayout>
 
         <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginRight="5dp"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-            <AutoCompleteTextView
-                    android:hint="@string/hero"
-                    android:layout_width="match_parent"
+            <Button
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="15dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edtNameHeroB1"/>
+                    android:text="Cancel"
+                    android:id="@+id/btnCancel"/>
 
-            <AutoCompleteTextView
-                    android:hint="@string/hero"
-                    android:layout_width="match_parent"
+            <Button
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edtNameHeroB2"/>
-
-            <AutoCompleteTextView
-                    android:hint="@string/hero"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/edtNameHeroB3"/>
-
-            <AutoCompleteTextView
-                    android:hint="@string/hero"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/edtNameHeroB4"/>
-
-            <AutoCompleteTextView
-                    android:hint="@string/hero"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/edtNameHeroB5"/>
+                    android:text="OK"
+                    android:id="@+id/btnOK"/>
         </LinearLayout>
     </LinearLayout>
-
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="RESULT"/>
-
-    <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:orientation="horizontal">
-
-        <RadioButton
-                android:id="@+id/rbAWin"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="A win"/>
-
-        <RadioButton
-                android:checked="true"
-                android:id="@+id/rbDraw"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Draw"/>
-
-        <RadioButton
-                android:id="@+id/rbBWin"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="B win"/>
-    </RadioGroup>
-
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-        <TextView
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="wrap_content"
-                android:text="Link HighLight"/>
-
-        <EditText
-                android:layout_width="0dp"
-                android:layout_weight="3"
-                android:layout_height="wrap_content"
-                android:id="@+id/edtHighlightLink"/>
-    </LinearLayout>
-
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-        <TextView
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="wrap_content"
-                android:text="Link Full"/>
-
-        <EditText
-                android:layout_width="0dp"
-                android:layout_weight="3"
-                android:layout_height="wrap_content"
-                android:id="@+id/edtFulltLink"/>
-    </LinearLayout>
-
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-        <Button
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginLeft="15dp"
-                android:layout_height="wrap_content"
-                android:text="Cancel"
-                android:id="@+id/btnCancel"/>
-
-        <Button
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="OK"
-                android:id="@+id/btnOK"/>
-    </LinearLayout>
-</LinearLayout>
+</ScrollView>

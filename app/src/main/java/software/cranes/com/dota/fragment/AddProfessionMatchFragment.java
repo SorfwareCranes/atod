@@ -1,12 +1,16 @@
 package software.cranes.com.dota.fragment;
 
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -29,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import software.cranes.com.dota.R;
 import software.cranes.com.dota.adapter.AutoCompleteAdapter;
@@ -42,10 +48,9 @@ import software.cranes.com.dota.model.GameModel;
 import software.cranes.com.dota.model.LiveChanelModel;
 import software.cranes.com.dota.model.MatchModel;
 import software.cranes.com.dota.model.TeamModel;
+import software.cranes.com.dota.model.VideoModel;
 
-import static android.R.attr.type;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
-
+import static com.google.android.gms.internal.zzams.d;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,6 +77,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
     private Button btnBack;
     private Button btnDelete;
     private Button btnSave;
+    private Button btnReset;
     private EditText edtPhotoA, edtPhotoB;
     private Button btnLoadPhoto;
     private String matchId;
@@ -80,11 +86,11 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
     private List<String> suggestTeam, suggestListTeam;
     private SuggestDialogFragment suggestDialogFragment;
     private long time;
-    private HashMap<String, GameModel> gameModelMapOld, gameModelMapNew;
+    private HashMap<String, GameModel> gameModelMapOld, gameModelMapNew, gameModelMapSave;
     private MatchModel matchModel;
-    private TeamModel teamAModel, teamBModel;
     private HashMap<String, String> nameImageHeroesMap;
     private TextView tvSumGames;
+    private List<String> listTour, listRo, listPl;
 
     public AddProfessionMatchFragment() {
         // Required empty public constructor
@@ -98,8 +104,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
             TYPE = Constant.LOAD_DATA;
         }
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        suggestTeam = new ArrayList<>();
-        suggestListTeam = new ArrayList<>();
+
         loadHeroesData();
     }
 
@@ -142,6 +147,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         btnSave = (Button) view.findViewById(R.id.btnSave);
         llListGames = (LinearLayout) view.findViewById(R.id.llListGames);
         tvSumGames = (TextView) view.findViewById(R.id.tvSumGames);
+        btnReset = (Button) view.findViewById(R.id.btnReset);
 
         edtPhotoA = (EditText) view.findViewById(R.id.edtPhotoA);
         edtPhotoB = (EditText) view.findViewById(R.id.edtPhotoB);
@@ -159,6 +165,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         btnDelete.setOnClickListener(this);
         btnSave.setOnClickListener(this);
         btnLoadPhoto.setOnClickListener(this);
+        btnReset.setOnClickListener(this);
         setupUi();
     }
 
@@ -169,9 +176,9 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
      */
     private void setupUi() {
         // for actTournament
-        loadDataAutoCompleteText(actTournament, "profession/suggest/tour");
+        loadDataAutoCompleteText(actTournament, "pro/suggest/tour", 1);
         // for actRound
-        loadDataAutoCompleteText(actRound, "profession/suggest/round");
+        loadDataAutoCompleteText(actRound, "pro/suggest/round", 2);
         if (TYPE == Constant.LOAD_DATA) {
             edtMatchId.setText(matchId);
             edtMatchId.setEnabled(false);
@@ -184,19 +191,21 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
     private void setupForCreateNew() {
         // for actTeamA, actTeamB
         loadSuggestTeam();
+        loadSuggestPlayer();
 
     }
 
     private void setupForLoadMatch() {
         loadModelFollowId(matchId);
-        if (actTeamA.getText().toString().isEmpty() || actTeamA.getText().toString().equals(Constant.TBD) || actTeamB.getText().toString().isEmpty() || actTeamB.getText().toString().equals(Constant.TBD)) {
-            actTeamA.setEnabled(true);
-            actTeamB.setEnabled(true);
-            loadSuggestTeam();
-        } else {
-            actTeamA.setEnabled(false);
-            actTeamB.setEnabled(false);
-        }
+
+//        if (actTeamA.getText().toString().isEmpty() || actTeamA.getText().toString().equals(Constant.TBD) || actTeamB.getText().toString().isEmpty() || actTeamB.getText().toString().equals(Constant.TBD)) {
+//            actTeamA.setEnabled(true);
+//            actTeamB.setEnabled(true);
+//            loadSuggestTeam();
+//        } else {
+//            actTeamA.setEnabled(false);
+//            actTeamB.setEnabled(false);
+//        }
 
         // from matchId -> load data for MatchModel
         // from MatchModel -> load data for gameModelMapOld
@@ -207,18 +216,19 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         gameModelMapOld = new HashMap<>();
         gameModelMapNew = new HashMap<>();
         showCircleDialog();
-        FirebaseDatabase.getInstance().getReference("profession/match/" + matchId).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("pro/match/" + matchId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot != null) {
                     matchModel = dataSnapshot.getValue(MatchModel.class);
                     if (matchModel != null) {
                         setViewForUi(matchModel);
+                        TYPE = Constant.LOAD_DATA;
                         if (matchModel.getSum() > 0) {
                             for (int i = 1; i <= matchModel.getSum(); i++) {
                                 showCircleDialogOnly();
                                 final int finalI = i;
-                                FirebaseDatabase.getInstance().getReference("profession/games/" + matchModel.getId() + String.valueOf(i)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                FirebaseDatabase.getInstance().getReference("pro/games").child(matchModel.getId() + String.valueOf(i)).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         if (dataSnapshot != null) {
@@ -228,6 +238,9 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                                                 model.setTmB(unescapeMap(model.getTmB()));
                                                 gameModelMapOld.put(matchModel.getId() + String.valueOf(finalI), model);
                                                 gameModelMapNew.put(matchModel.getId() + String.valueOf(finalI), model);
+                                                if (finalI == matchModel.getSum()) {
+                                                    addGamesToUi(gameModelMapNew);
+                                                }
                                             }
                                         }
                                         hideCircleDialogOnly();
@@ -257,13 +270,18 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         load suggest for AutoCompleteTextView
         for actTournament, actRound
      */
-    private void loadDataAutoCompleteText(final AutoCompleteTextView actText, String pathData) {
+    private void loadDataAutoCompleteText(final AutoCompleteTextView actText, String pathData, final int type) {
         showCircleDialogOnly();
         mFirebaseDatabase.getReference(pathData).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<String> teamList = (List<String>) dataSnapshot.getValue();
                 if (teamList != null && getActivity() != null) {
+                    if (type == 1) {
+                        listTour = teamList;
+                    } else {
+                        listRo = teamList;
+                    }
                     AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, teamList);
                     actText.setAdapter(adapter);
                 }
@@ -304,13 +322,18 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                 handleAddAGame();
                 break;
             case R.id.btnBack:
-
+                getFragmentManager().popBackStack();
                 break;
             case R.id.btnDelete:
-
+                deleteMatch();
+//                executeDelete();
                 break;
             case R.id.btnSave:
-                executeSave();
+                executeSaveNewCode();
+//                executeSave();
+                break;
+            case R.id.btnReset:
+                resetUi();
                 break;
             default:
                 break;
@@ -363,7 +386,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
     // for actTeamA, actTeamB
     private void loadSuggestTeam() {
         showCircleDialogOnly();
-        mFirebaseDatabase.getReference("profession/suggest/team").addListenerForSingleValueEvent(new ValueEventListener() {
+        mFirebaseDatabase.getReference("pro/suggest/team").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 suggestTeam = (List<String>) dataSnapshot.getValue();
@@ -382,6 +405,23 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         });
     }
 
+    private void loadSuggestPlayer() {
+        showCircleDialogOnly();
+        mFirebaseDatabase.getReference("pro/suggest/pl").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                hideCircleDialogOnly();
+                if (dataSnapshot != null) {
+                    listPl = (List<String>) dataSnapshot.getValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                hideCircleDialogOnly();
+            }
+        });
+    }
 
     /*
 
@@ -485,6 +525,10 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         handle gameModelMapNew to compare gameModelMapOld to handle save, updte and delete data
       */
     private void handleAddAGame() {
+        if (rbUpcoming.isChecked()) {
+            Toast.makeText(getContext(), "upcoming can have a game", Toast.LENGTH_SHORT).show();
+            return;
+        }
         String gameId = edtGameData.getText().toString().trim();
         try {
             Integer.valueOf(gameId);
@@ -521,43 +565,6 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         gameDialogFragment.show(getFragmentManager(), null);
     }
 
-    // validate value input with no data player name
-    private boolean validateInputData() {
-        String requried = "requried";
-        if (actTeamA.getText().toString().trim().isEmpty()) {
-            actTeamA.setError(requried);
-            return false;
-        }
-        if (actTeamB.getText().toString().trim().isEmpty()) {
-            actTeamB.setError(requried);
-            return false;
-        }
-        if (actTournament.getText().toString().trim().isEmpty()) {
-            actTournament.setError(requried);
-            return false;
-        }
-        if (actRound.getText().toString().trim().isEmpty()) {
-            actRound.setError(requried);
-            return false;
-        }
-        if (edtBo.getText().toString().trim().isEmpty()) {
-            edtBo.setError(requried);
-            return false;
-        }
-        if (btnAddTime.getText().toString().startsWith("T")) {
-            Toast.makeText(getContext(), "Set Time Please", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (!rbEnd.isChecked() && !rbLive.isChecked() && !rbUpcoming.isChecked()) {
-            Toast.makeText(getContext(), "Set Live or End or Upcoming", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (edtPhotoA.getText().toString().trim().startsWith("P") || edtPhotoB.getText().toString().trim().startsWith("P")) {
-            Toast.makeText(getContext(), "Set Photo ID", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return true;
-    }
 
     /*
     show list game to ui base on gamemodel
@@ -583,13 +590,14 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                             public void onClick(View v) {
                                 map.remove(key);
                                 llListGames.removeView(view);
-                                tvSumGames.setText(map.size());
+                                tvSumGames.setText(String.valueOf(map.size()));
                             }
                         });
                         llListGames.addView(view);
                     }
                 }
             }
+            tvSumGames.setText(String.valueOf(map.size()));
         }
     }
 
@@ -606,7 +614,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
 
         if (model.getTb() != null) {
             if (model.getTb().getNa() != null) {
-                actTeamB.setText(model.getTb().getPt());
+                actTeamB.setText(model.getTb().getNa());
             }
             if (model.getTb().getNa() != null) {
                 edtPhotoB.setText(model.getTb().getPt());
@@ -631,6 +639,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
             actRound.setText(model.getRo());
         }
         if (model.getTime() > 0) {
+            time = model.getTime();
             btnAddTime.setText(CommonUtils.convertintDateTimeToString(time));
         }
         if (model.getSt() == Constant.LIVE) {
@@ -643,7 +652,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         if (model.getLl() != null && model.getLl().size() > 0) {
             generateChanelLive(model.getLl().size(), model.getLl());
         }
-        tvSumGames.setText(model.getSum());
+        tvSumGames.setText(String.valueOf(model.getSum()));
 
     }
 
@@ -651,7 +660,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
     // convert nameplayer and heroes image to heroes name
     private HashMap<String, String> unescapeMap(HashMap<String, String> map) {
         HashMap<String, String> result = new HashMap<>();
-        if (map == null && map.isEmpty()) {
+        if (map == null || map.isEmpty()) {
             return result;
         }
         for (String key : map.keySet()) {
@@ -740,34 +749,1095 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
     }
 
     /*
-        1. match upcoming -> save to profession/upcoming
-        2. match live -> save to profession/live
+        1. match upcoming -> save to pro/upcoming
+        2. match live -> save to pro/live
 
-        3. match end -> save match to -> profession/match
-                        save game to -> profession/games
-        4. save match to -> profession/tour
-        5. save match to -> profession/team
-        6. save player name to profession/suggest/player
-        7. save round name to profession/suggest/round
-        8. save team name to profession/suggest/team
-        9. save tour name to profession/suggest/tour
+        3. match end -> save match to -> pro/match
+                        save game to -> pro/games
+        4. save match to -> pro/tour
+        5. save match to -> pro/team
+        6. save player name to pro/suggest/player
+        7. save round name to pro/suggest/round
+        8. save team name to pro/suggest/team
+        9. save tour name to pro/suggest/tour
         // handle video
             1 game have two model video
          id model video : matchId + 1 + (f or h) data : link : videoid + time : 121212
-        1. save all game video high to videoh
-        2. save all game video full to videof
-        3. save all game video full to videopf/playername
-        4. save all game video high to videoph/playername
-        5. save all game video high to videohh/heroes
-        6. save all game video full to videohf/heroes
-        7. save all game video high to videophf/playername/heroes
-        8. save all game video full to videophh/playername/heroes
+        1. save all game video high to vih
+        2. save all game video full to vif
+        3. save all game video full to vipf/playername
+        4. save all game video high to viph/playername
+        5. save all game video high to vihh/heroes
+        6. save all game video full to vihf/heroes
+        7. save all game video high to viphf/playername/heroes
+        8. save all game video full to viphh/playername/heroes
      */
-    private void executeSave() {
+//    private void executeSave() {
+//        if (!validateInputData()) {
+//            return;
+//        }
+//        DatabaseReference reference;
+//        OnCustomCompleteListener listener = new OnCustomCompleteListener();
+//        String matchNewId;
+//        if (TYPE == Constant.CREATE_DATA) {
+//
+//            // save for upcoming
+//            if (rbUpcoming.isChecked()) {
+//                showCircleDialogOnly();
+//                // create upcoming model -> save to tour, upcoming
+//                // match model no have games -> sum = 0
+//                reference = mFirebaseDatabase.getReference("pro/upcoming");
+//                matchNewId = reference.push().getKey();
+//                // create model
+//                matchModel = createMatchModel(Constant.UPCOMING, matchNewId);
+//                // save suggest team, tournament, ro
+//                if (!matchModel.getTa().getNa().equals(Constant.TBD)) {
+//                    saveSuggest(matchModel.getTa().getNa(), suggestTeam, 1);
+//                }
+//                if (!matchModel.getTb().getNa().equals(Constant.TBD)) {
+//                    saveSuggest(matchModel.getTb().getNa(), suggestTeam, 1);
+//                }
+//                // save suggest tour
+//                saveSuggest(matchModel.getTo(), listTour, 3);
+//                // save suggest ro
+//                saveSuggest(matchModel.getRo(), listRo, 4);
+//                // save to "pro/upcoming"
+//                reference.child(matchModel.getId()).setValue(matchModel).addOnCompleteListener(listener);
+//                // save to "pro/tour"
+//                showCircleDialogOnly();
+//                mFirebaseDatabase.getReference("pro/tour").child(CommonUtils.escapeKey(matchModel.getTo())).child(matchModel.getId()).setValue(matchModel).addOnCompleteListener(new OnEndCompleteListiner());
+////                // save to "pro/match"
+////                showCircleDialogOnly();
+////                mFirebaseDatabase.getReference("pro/match").child(matchModel.getId()).setValue(matchModel).addOnCompleteListener(listener);
+//
+//            } else if (rbLive.isChecked()) {
+//                showCircleDialogOnly();
+//                reference = mFirebaseDatabase.getReference("pro/live");
+//                // create model
+//                matchNewId = reference.push().getKey();
+//                matchModel = createMatchModel(Constant.LIVE, matchNewId);
+//                // save suggest team, tournament, ro
+//                if (!matchModel.getTa().getNa().equals(Constant.TBD)) {
+//                    saveSuggest(matchModel.getTa().getNa(), suggestTeam, 1);
+//                }
+//                if (!matchModel.getTb().getNa().equals(Constant.TBD)) {
+//                    saveSuggest(matchModel.getTb().getNa(), suggestTeam, 1);
+//                }
+//                // save suggest tour
+//                saveSuggest(matchModel.getTo(), listTour, 3);
+//                // save suggest ro
+//                saveSuggest(matchModel.getRo(), listRo, 4);
+//                // save suggest player
+//                if (gameModelMapNew != null && !gameModelMapSave.isEmpty()) {
+//                    GameModel game = gameModelMapSave.get(matchModel.getId() + 1);
+//                    if (game != null) {
+//                        HashMap<String, String> mapA = game.getTmA();
+//                        HashMap<String, String> mapB = game.getTmB();
+//
+//                        if (mapA != null && mapA.size() > 0 && mapB != null && mapB.size() > 0) {
+//                            for (String str : mapA.keySet()) {
+//                                saveSuggest(str, listPl, 2);
+//                            }
+//                            for (String str : mapB.keySet()) {
+//                                saveSuggest(str, listPl, 2);
+//                            }
+//                        }
+//
+//                    }
+//                }
+//                // save games
+//                if (gameModelMapNew != null && !gameModelMapSave.isEmpty()) {
+//                    DatabaseReference ref = mFirebaseDatabase.getReference("pro/games");
+//                    GameModel gameModelSave;
+//                    for (String gameId : gameModelMapSave.keySet()) {
+//                        gameModelSave = gameModelMapSave.get(gameId);
+//                        ref.child(gameId).setValue(convertNameAndHeroes(gameModelSave));
+//                        // save video
+//                        saveVideoFollowGameModel(gameModelSave, gameId);
+//                    }
+//                }
+//                // save matchModel to live
+//                reference.child(matchModel.getId()).setValue(matchModel).addOnCompleteListener(listener);
+//                // save matchModel to tour
+//                showCircleDialogOnly();
+//                mFirebaseDatabase.getReference("pro/tour").child(CommonUtils.escapeKey(matchModel.getTo())).child(matchModel.getId()).setValue(matchModel).addOnCompleteListener(new OnEndCompleteListiner());
+//
+//            } else if (rbEnd.isChecked()) {
+//                if (!validateInputTeamName()) {
+//                    actTeamA.setError("requried");
+//                    return;
+//                }
+//                reference = mFirebaseDatabase.getReference("pro/match");
+//                matchNewId = reference.push().getKey();
+//                matchModel = createMatchModel(Constant.END, matchNewId);
+//
+//                showCircleDialogOnly();
+//                // save suggest team, tournament, ro
+//                if (!matchModel.getTa().getNa().equals(Constant.TBD)) {
+//                    saveSuggest(matchModel.getTa().getNa(), suggestTeam, 1);
+//                }
+//                if (!matchModel.getTb().getNa().equals(Constant.TBD)) {
+//                    saveSuggest(matchModel.getTb().getNa(), suggestTeam, 1);
+//                }
+//                // save suggest tour
+//                saveSuggest(matchModel.getTo(), listTour, 3);
+//                // save suggest ro
+//                saveSuggest(matchModel.getRo(), listRo, 4);
+//                // save suggest player
+//                if (gameModelMapNew != null && !gameModelMapSave.isEmpty()) {
+//                    GameModel game = gameModelMapSave.get(matchModel.getId() + 1);
+//                    if (game != null) {
+//                        HashMap<String, String> mapA = game.getTmA();
+//                        HashMap<String, String> mapB = game.getTmB();
+//
+//                        if (mapA != null && mapA.size() > 0 && mapB != null && mapB.size() > 0) {
+//                            for (String str : mapA.keySet()) {
+//                                saveSuggest(str, listPl, 2);
+//                            }
+//                            for (String str : mapB.keySet()) {
+//                                saveSuggest(str, listPl, 2);
+//                            }
+//                        }
+//
+//                    }
+//                }
+//                // save games
+//                if (gameModelMapSave != null && !gameModelMapSave.isEmpty()) {
+//                    DatabaseReference ref = mFirebaseDatabase.getReference("pro/games");
+//                    GameModel gameModelSave;
+//                    for (String gameId : gameModelMapSave.keySet()) {
+//                        gameModelSave = gameModelMapSave.get(gameId);
+//                        ref.child(gameId).setValue(convertNameAndHeroes(gameModelSave));
+//                        // save video
+//                        saveVideoFollowGameModel(gameModelSave, gameId);
+//                    }
+//                }
+//                // save to match
+//                reference.child(matchModel.getId()).setValue(matchModel).addOnCompleteListener(listener);
+//                // save to team
+//                showCircleDialogOnly();
+//                mFirebaseDatabase.getReference("pro/team").child(CommonUtils.escapeKey(matchModel.getTa().getNa())).child(matchModel.getId()).setValue(matchModel).addOnCompleteListener(listener);
+//                showCircleDialogOnly();
+//                mFirebaseDatabase.getReference("pro/team").child(CommonUtils.escapeKey(matchModel.getTb().getNa())).child(matchModel.getId()).setValue(matchModel).addOnCompleteListener(listener);
+//                // save to tour
+//                showCircleDialogOnly();
+//                mFirebaseDatabase.getReference("pro/tour").child(CommonUtils.escapeKey(matchModel.getTo())).child(matchModel.getId()).setValue(matchModel).addOnCompleteListener(new OnEndCompleteListiner());
+//            }
+//        } else if (TYPE == Constant.LOAD_DATA) {
+//            MatchModel matchModelSave;
+//
+//            if (rbUpcoming.isChecked()) {
+//                showCircleDialogOnly();
+//                // create upcoming model -> save to tour, upcoming
+//                // match model no have games -> sum = 0
+//                reference = mFirebaseDatabase.getReference("pro/upcoming");
+//                // create model
+//                matchModelSave = createMatchModel(Constant.UPCOMING, null);
+//                if (matchModel.getSt() == Constant.LIVE || matchModel.getSt() == Constant.END) {
+//                    if (matchModel.getSt() == Constant.LIVE) {
+//                        mFirebaseDatabase.getReference("pro/live").child(matchModel.getId()).removeValue();
+//                    } else {
+//                        mFirebaseDatabase.getReference("pro/match").child(matchModel.getId()).removeValue();
+//                        if (!matchModel.getTa().getNa().equals(Constant.TBD)) {
+//                            mFirebaseDatabase.getReference("pro/team").child(CommonUtils.escapeKey(matchModel.getTa().getNa())).child(matchModel.getId()).removeValue();
+//                        }
+//                        if (!matchModel.getTb().getNa().equals(Constant.TBD)) {
+//                            mFirebaseDatabase.getReference("pro/team").child(CommonUtils.escapeKey(matchModel.getTb().getNa())).child(matchModel.getId()).removeValue();
+//                        }
+//                    }
+//                    if (gameModelMapOld != null && gameModelMapOld.size() > 0) {
+//                        for (String gameId : gameModelMapOld.keySet()) {
+//                            mFirebaseDatabase.getReference("pro/games").child(gameId).removeValue();
+//                            GameModel game = gameModelMapOld.get(gameId);
+//                            deleteVideoFollowGameModel(game, gameId);
+//                        }
+//                    }
+//                }
+//                if (!matchModel.getTo().equals(matchModelSave.getTo())) {
+//                    mFirebaseDatabase.getReference("pro/tour").child(CommonUtils.escapeKey(matchModel.getTo())).child(matchModel.getId()).removeValue();
+//                }
+//                // save to "pro/upcoming"
+//                reference.child(matchModel.getId()).setValue(matchModelSave).addOnCompleteListener(listener);
+//                // save to "pro/tour"
+//                showCircleDialogOnly();
+//                mFirebaseDatabase.getReference("pro/tour").child(CommonUtils.escapeKey(matchModelSave.getTo())).child(matchModel.getId()).setValue(matchModelSave).addOnCompleteListener(new OnEndCompleteListiner());
+//            } else if (rbLive.isChecked()) {
+//                showCircleDialogOnly();
+//                reference = mFirebaseDatabase.getReference("pro/live");
+//                // create model
+//                matchModelSave = createMatchModel(Constant.LIVE, null);
+//                if (matchModel.getSt() == Constant.UPCOMING) {
+//                    mFirebaseDatabase.getReference("pro/upcoming").child(matchModel.getId()).removeValue();
+//                } else if (matchModel.getSt() == Constant.END || matchModel.getSt() == Constant.LIVE) {
+//                    if (matchModel.getSt() == Constant.END) {
+//                        mFirebaseDatabase.getReference("pro/match").child(matchModel.getId()).removeValue();
+//                        mFirebaseDatabase.getReference("pro/team").child(CommonUtils.escapeKey(matchModel.getTa().getNa())).child(matchModel.getId()).removeValue();
+//                        mFirebaseDatabase.getReference("pro/team").child(CommonUtils.escapeKey(matchModel.getTb().getNa())).child(matchModel.getId()).removeValue();
+//                    }
+//                    if (matchModel.getSum() > matchModelSave.getSum()) {
+//                        for (int i = matchModel.getSum(); i > matchModelSave.getSum(); i--) {
+//                            GameModel game = gameModelMapOld.get(matchModel.getId() + i);
+//                            if (game != null) {
+//                                mFirebaseDatabase.getReference("pro/games").child(matchModel.getId() + i).removeValue();
+//                                deleteVideoFollowGameModel(game, matchModel.getId() + i);
+//                            }
+//                        }
+//                    }
+//                }
+//                // save games
+//                if (gameModelMapNew != null && !gameModelMapSave.isEmpty()) {
+//                    DatabaseReference ref = mFirebaseDatabase.getReference("pro/games");
+//                    GameModel gameModelSave;
+//                    for (String gameId : gameModelMapSave.keySet()) {
+//                        gameModelSave = gameModelMapSave.get(gameId);
+//                        ref.child(gameId).setValue(convertNameAndHeroes(gameModelSave));
+//                        // save video
+//                        saveVideoFollowGameModel(gameModelSave, gameId);
+//                    }
+//                }
+//                if (!matchModel.getTo().equals(matchModelSave.getTo())) {
+//                    mFirebaseDatabase.getReference("pro/tour").child(CommonUtils.escapeKey(matchModel.getTo())).child(matchModel.getId()).removeValue();
+//                }
+//                // save matchModel to live
+//                reference.child(matchModel.getId()).setValue(matchModelSave).addOnCompleteListener(listener);
+//                // save matchModel to tour
+//                showCircleDialogOnly();
+//                mFirebaseDatabase.getReference("pro/tour").child(CommonUtils.escapeKey(matchModelSave.getTo())).child(matchModel.getId()).setValue(matchModelSave).addOnCompleteListener(new OnEndCompleteListiner());
+//            } else if (rbEnd.isChecked()) {
+//                if (!validateInputTeamName()) {
+//                    actTeamA.setError("requried");
+//                    return;
+//                }
+//                showCircleDialogOnly();
+//                reference = mFirebaseDatabase.getReference("pro/match");
+//                matchModelSave = createMatchModel(Constant.END, null);
+//                if (matchModel.getSt() == Constant.UPCOMING) {
+//                    mFirebaseDatabase.getReference("pro/upcoming").child(matchModel.getId()).removeValue();
+//                } else if (matchModel.getSt() == Constant.LIVE || matchModel.getSt() == Constant.END) {
+//                    if (matchModel.getSt() == Constant.LIVE) {
+//                        mFirebaseDatabase.getReference("pro/live").child(matchModel.getId()).removeValue();
+//                    } else {
+//                        if (!matchModel.getTa().getNa().equals(matchModelSave.getTa().getNa())) {
+//                            mFirebaseDatabase.getReference("pro/team").child(CommonUtils.escapeKey(matchModel.getTa().getNa())).child(matchModel.getId()).removeValue();
+//                        }
+//                        if (!matchModel.getTb().getNa().equals(matchModelSave.getTb().getNa())) {
+//                            mFirebaseDatabase.getReference("pro/team").child(CommonUtils.escapeKey(matchModel.getTb().getNa())).child(matchModel.getId()).removeValue();
+//                        }
+//                    }
+//                    if (matchModel.getSum() > matchModelSave.getSum()) {
+//                        for (int i = matchModel.getSum(); i > matchModelSave.getSum(); i--) {
+//                            GameModel game = gameModelMapOld.get(matchModel.getId() + i);
+//                            if (game != null) {
+//                                mFirebaseDatabase.getReference("pro/games").child(matchModel.getId() + i).removeValue();
+//                                deleteVideoFollowGameModel(game, matchModel.getId() + i);
+//                            }
+//                        }
+//                    }
+//                }
+//                // save games
+//                if (gameModelMapNew != null && !gameModelMapSave.isEmpty()) {
+//                    DatabaseReference ref = mFirebaseDatabase.getReference("pro/games");
+//                    GameModel gameModelSave;
+//                    for (String gameId : gameModelMapSave.keySet()) {
+//                        gameModelSave = gameModelMapSave.get(gameId);
+//                        ref.child(gameId).setValue(convertNameAndHeroes(gameModelSave));
+//                        // save video
+//                        saveVideoFollowGameModel(gameModelSave, gameId);
+//                    }
+//                }
+//                // save to match
+//                reference.child(matchModelSave.getId()).setValue(matchModelSave).addOnCompleteListener(listener);
+//                // save to team
+//                showCircleDialogOnly();
+//                mFirebaseDatabase.getReference("pro/team").child(CommonUtils.escapeKey(matchModelSave.getTa().getNa())).child(matchModelSave.getId()).setValue(matchModelSave).addOnCompleteListener(listener);
+//                showCircleDialogOnly();
+//                mFirebaseDatabase.getReference("pro/team").child(CommonUtils.escapeKey(matchModelSave.getTb().getNa())).child(matchModelSave.getId()).setValue(matchModelSave).addOnCompleteListener(listener);
+//                if (!matchModel.getTo().equals(matchModelSave.getTo())) {
+//                    mFirebaseDatabase.getReference("pro/tour").child(CommonUtils.escapeKey(matchModel.getTo())).child(matchModel.getId()).removeValue();
+//                }
+//                // save to tour
+//                showCircleDialogOnly();
+//                mFirebaseDatabase.getReference("pro/tour").child(CommonUtils.escapeKey(matchModelSave.getTo())).child(matchModelSave.getId()).setValue(matchModelSave).addOnCompleteListener(new OnEndCompleteListiner());
+//            }
+//
+//        }
+//    }
+
+//    private void executeDelete() {
+//        if (TYPE == Constant.LOAD_DATA && matchModel != null) {
+//            showCircleDialogOnly();
+//            if (matchModel.getSt() == Constant.LIVE) {
+//                mFirebaseDatabase.getReference("pro/upcoming").child(matchModel.getId()).removeValue();
+//
+//            } else if (matchModel.getSt() == Constant.END || matchModel.getSt() == Constant.LIVE) {
+//                if (matchModel.getSt() == Constant.LIVE) {
+//                    mFirebaseDatabase.getReference("pro/live").child(matchModel.getId()).removeValue();
+//                }
+//                if (matchModel.getSt() == Constant.END) {
+//                    //  delete match
+//                    mFirebaseDatabase.getReference("pro/match").child(matchModel.getId()).removeValue();
+//                    // delete team
+//                    mFirebaseDatabase.getReference("pro/team").child(CommonUtils.escapeKey(matchModel.getTa().getNa())).child(matchModel.getId()).removeValue();
+//                    mFirebaseDatabase.getReference("pro/team").child(CommonUtils.escapeKey(matchModel.getTb().getNa())).child(matchModel.getId()).removeValue();
+//                }
+//                if (gameModelMapOld != null && !gameModelMapOld.isEmpty()) {
+//                    for (String gameId : gameModelMapOld.keySet()) {
+//                        mFirebaseDatabase.getReference("pro/games").child(gameId).removeValue();
+//                        GameModel game = gameModelMapOld.get(gameId);
+//                        deleteVideoFollowGameModel(game, gameId);
+//                    }
+//                }
+//            }
+//
+//            mFirebaseDatabase.getReference("pro/tour").child(CommonUtils.escapeKey(matchModel.getTo())).child(matchModel.getId()).removeValue().addOnCompleteListener(new OnEndCompleteListiner());
+//        }
+//    }
+//
+    private void deleteMatch() {
+        if (TYPE == Constant.LOAD_DATA && matchModel != null) {
+            showCircleDialogOnly();
+            Map<String, Object> mapData = new HashMap<>();
+            if (matchModel.getSt() == Constant.LIVE) {
+                mapData.put(new StringBuilder("pro/upcoming/").append(matchModel.getId()).toString(), null);
+            } else if (matchModel.getSt() == Constant.END || matchModel.getSt() == Constant.LIVE) {
+                if (matchModel.getSt() == Constant.LIVE) {
+                    mapData.put(new StringBuilder("pro/live/").append(matchModel.getId()).toString(), null);
+                }
+                if (matchModel.getSt() == Constant.END) {
+                    //  delete match
+                    mapData.put(new StringBuilder("pro/match/").append(matchModel.getId()).toString(), null);
+                    // delete team
+                    mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModel.getTa().getNa())).append("/").append(matchModel.getId()).toString(), null);
+                    mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModel.getTb().getNa())).append("/").append(matchModel.getId()).toString(), null);
+                }
+                if (gameModelMapOld != null && !gameModelMapOld.isEmpty()) {
+                    for (String gameId : gameModelMapOld.keySet()) {
+                        mapData.put(new StringBuilder("pro/games/").append(gameId).toString(), null);
+                        GameModel game = gameModelMapOld.get(gameId);
+                        deleteVideoForMatch(game, gameId, mapData);
+                    }
+                }
+            }
+            mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append("/").append(matchModel.getId()).toString(), null);
+            mFirebaseDatabase.getReference().updateChildren(mapData, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    hideCircleDialogOnly();
+                    if (databaseError != null) {
+                        showWarningDialog(databaseError.getMessage());
+                    } else {
+                        Toast.makeText(getContext(), "DELETE OK", Toast.LENGTH_SHORT).show();
+                        resetUi();
+                    }
+                }
+            });
+        }
+    }
+
+    // create new MatchModel from UI
+    private MatchModel createMatchModel(int type, String matchNewId) {
+        MatchModel model = new MatchModel();
+        //1
+        model.setBa(Integer.valueOf(edtOddsTeamA.getText().toString()));
+        //2
+        model.setBb(Integer.valueOf(edtOddsTeamB.getText().toString()));
+        //3
+        model.setBo(Integer.valueOf(edtBo.getText().toString()));
+        //4
+        model.setTo(actTournament.getText().toString().trim());
+        //5
+        model.setRo(actRound.getText().toString().trim());
+        //6
+        model.setSt(type);
+        //7
+        model.setTime(time);
+        TeamModel teamAModel = new TeamModel(actTeamA.getText().toString(), edtPhotoA.getText().toString().equals(Constant.NO_IMAGE) ? null : edtPhotoA.getText().toString());
+        TeamModel teamBModel = new TeamModel(actTeamB.getText().toString(), edtPhotoB.getText().toString().equals(Constant.NO_IMAGE) ? null : edtPhotoB.getText().toString());
+        //8
+        model.setTa(teamAModel);
+        //9
+        model.setTb(teamBModel);
+        if (type == Constant.UPCOMING) {
+            model.setSum(0);
+            //11
+            if (TYPE == Constant.CREATE_DATA) {
+                model.setId(matchNewId);
+            } else {
+                model.setId(matchModel.getId());
+            }
+
+            return model;
+        } else if (type == Constant.LIVE || type == Constant.END) {
+            //10
+            if (!tvSumGames.getText().toString().equals(Constant.NO_IMAGE)) {
+                model.setSum(Integer.valueOf(tvSumGames.getText().toString()));
+            }
+            //11
+            if (TYPE == Constant.CREATE_DATA) {
+                model.setId(matchNewId);
+            } else {
+                model.setId(matchModel.getId());
+            }
+            //12
+            model.setRa(Integer.valueOf(edtResultA.getText().toString()));
+            //13
+            model.setRb(Integer.valueOf(edtResultB.getText().toString()));
+            if (llChanelLive.getChildCount() > 0 || type == Constant.LIVE) {
+                List<LiveChanelModel> list = new ArrayList<>();
+                LiveChanelModel liveModel;
+                EditText edtLiveLink, edtLanguageLive;
+                String link;
+                for (int i = 0; i < llChanelLive.getChildCount(); i++) {
+                    edtLiveLink = (EditText) llChanelLive.getChildAt(i).findViewById(R.id.edtLiveLink);
+                    link = edtLiveLink.getText().toString().trim();
+                    edtLanguageLive = (EditText) llChanelLive.getChildAt(i).findViewById(R.id.edtLanguageLive);
+                    if (CommonUtils.isYoutube(link) && CommonUtils.extractVideoIdFromUrl(link) != null) {
+                        liveModel = new LiveChanelModel();
+                        liveModel.setLv(CommonUtils.extractVideoIdFromUrl(link));
+                        liveModel.setLa(edtLanguageLive.getText().toString().trim());
+                        list.add(liveModel);
+                    }
+                }
+                //14
+                model.setLl(list);
+            }
+            if (model.getSum() > 0 && gameModelMapNew != null && gameModelMapNew.size() > 0) {
+                gameModelMapSave = new HashMap<>();
+                TextView tv;
+                for (int i = 0; i < llListGames.getChildCount(); i++) {
+                    tv = (TextView) llListGames.getChildAt(i).findViewById(R.id.tvGameId);
+                    GameModel game = gameModelMapNew.get(tv.getText().toString());
+                    if (game != null) {
+                        gameModelMapSave.put(model.getId() + (i + 1), game);
+                    }
+                }
+            }
+            return model;
+        }
+        return model;
+
+    }
+
+    // validate value input with no data player name
+    private boolean validateInputData() {
+        String requried = "requried";
+        if (actTeamA.getText().toString().trim().isEmpty()) {
+            actTeamA.setError(requried);
+            return false;
+        }
+
+        if (actTeamB.getText().toString().trim().isEmpty()) {
+            actTeamB.setError(requried);
+            return false;
+        }
+
+        if (actTeamA.getText().toString().trim().equals(actTeamB.getText().toString().trim()) && !actTeamA.getText().toString().trim().equals(Constant.TBD)) {
+            actTeamA.setError(requried);
+            return false;
+        }
+
+        if (actTournament.getText().toString().trim().isEmpty()) {
+            actTournament.setError(requried);
+            return false;
+        }
+
+        if (actRound.getText().toString().trim().isEmpty()) {
+            actRound.setError(requried);
+            return false;
+        }
+        if (edtBo.getText().toString().trim().isEmpty()) {
+            edtBo.setError(requried);
+            return false;
+        }
+        if (btnAddTime.getText().toString().startsWith("T")) {
+            Toast.makeText(getContext(), "Set Time Please", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!rbEnd.isChecked() && !rbLive.isChecked() && !rbUpcoming.isChecked()) {
+            Toast.makeText(getContext(), "Set Live or End or Upcoming", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (edtPhotoA.getText().toString().trim().startsWith("P") || edtPhotoB.getText().toString().trim().startsWith("P")) {
+            Toast.makeText(getContext(), "Set Photo ID", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+//    // type == 1 -> save suggest team
+//    // type == 2 -> save suggest player
+//    // type == 3 -> save suggest tourn
+//    // type == 4 -> save suggest ro
+//    private void saveSuggest(String s, List<String> list, int type) {
+//        String path;
+//        switch (type) {
+//            case 1:
+//                path = "pro/suggest/team";
+//                break;
+//            case 2:
+//                path = "pro/suggest/pl";
+//                break;
+//            case 3:
+//                path = "pro/suggest/tour";
+//                break;
+//            default:
+//                path = "pro/suggest/round";
+//                break;
+//        }
+//        if (list == null) {
+//            list = new ArrayList<>();
+//            list.add(s);
+//            mFirebaseDatabase.getReference(path).setValue(list);
+//            return;
+//        }
+//        if (!list.contains(s)) {
+//            mFirebaseDatabase.getReference(path + "/" + list.size()).setValue(s);
+//            list.add(s);
+//            return;
+//        }
+//    }
+
+    private GameModel convertNameAndHeroes(GameModel model) {
+        if (model == null) {
+            return null;
+        }
+        GameModel result = new GameModel();
+        result.setLh(model.getLh());
+        result.setLf(model.getLf());
+        result.setRs(model.getRs());
+
+        if (model.getTmA() != null && nameImageHeroesMap != null) {
+            HashMap<String, String> resultA = new HashMap<>();
+            for (String key : model.getTmA().keySet()) {
+                resultA.put(CommonUtils.escapeKey(key), nameImageHeroesMap.get(model.getTmA().get(key)));
+            }
+            result.setTmA(resultA);
+        }
+        if (model.getTmB() != null && nameImageHeroesMap != null) {
+            HashMap<String, String> resultB = new HashMap<>();
+            for (String key : model.getTmB().keySet()) {
+                resultB.put(CommonUtils.escapeKey(key), nameImageHeroesMap.get(model.getTmB().get(key)));
+            }
+            result.setTmB(resultB);
+        }
+        return result;
+    }
+
+    // 1. save to vif
+    // 2. save to vipf
+    // 3. save to vihf
+    // 4. save to viphf
+    // 5. save to vih
+    // 6. save to viph
+    // 7. save to vihh
+    // 8. save to viphh
+//    private void saveVideoFollowGameModel(GameModel game, String gameId) {
+//        VideoModel videoModel;
+//        if (game.getLf() != null && !game.getLf().equals(Constant.NO_IMAGE)) {
+//            String videoid = gameId + "f";
+//            videoModel = new VideoModel(game.getLf(), time);
+//            // save to vif
+//            mFirebaseDatabase.getReference("vif").child(videoid).setValue(videoModel);
+//            // save to vipf
+//            // save to vihf
+//            // save to viphf
+//            for (String name : game.getTmA().keySet()) {
+//                mFirebaseDatabase.getReference("vipf").child(CommonUtils.escapeKey(name)).child(videoid).setValue(videoModel);
+//                mFirebaseDatabase.getReference("vihf").child(game.getTmA().get(name)).child(videoid).setValue(videoModel);
+//                mFirebaseDatabase.getReference("viphf").child(CommonUtils.escapeKey(name)).child(game.getTmA().get(name)).child(videoid).setValue(videoModel);
+//            }
+//            for (String name : game.getTmB().keySet()) {
+//                mFirebaseDatabase.getReference("vipf").child(CommonUtils.escapeKey(name)).child(videoid).setValue(videoModel);
+//                mFirebaseDatabase.getReference("vihf").child(game.getTmB().get(name)).child(videoid).setValue(videoModel);
+//                mFirebaseDatabase.getReference("viphf").child(CommonUtils.escapeKey(name)).child(game.getTmB().get(name)).child(videoid).setValue(videoModel);
+//            }
+//
+//        }
+//        if (game.getLh() != null && !game.getLh().equals(Constant.NO_IMAGE)) {
+//            String videoid = gameId + "h";
+//            videoModel = new VideoModel(game.getLh(), time);
+//            // save to vif
+//            mFirebaseDatabase.getReference("vih").child(videoid).setValue(videoModel);
+//            // save to vipf
+//            // save to vihf
+//            // save to viphf
+//            for (String name : game.getTmA().keySet()) {
+//                mFirebaseDatabase.getReference("viph").child(CommonUtils.escapeKey(name)).child(videoid).setValue(videoModel);
+//                mFirebaseDatabase.getReference("vihh").child(game.getTmA().get(name)).child(videoid).setValue(videoModel);
+//                mFirebaseDatabase.getReference("viphh").child(CommonUtils.escapeKey(name)).child(game.getTmA().get(name)).child(videoid).setValue(videoModel);
+//            }
+//            for (String name : game.getTmB().keySet()) {
+//                mFirebaseDatabase.getReference("viph").child(CommonUtils.escapeKey(name)).child(videoid).setValue(videoModel);
+//                mFirebaseDatabase.getReference("vihh").child(game.getTmB().get(name)).child(videoid).setValue(videoModel);
+//                mFirebaseDatabase.getReference("viphh").child(CommonUtils.escapeKey(name)).child(game.getTmB().get(name)).child(videoid).setValue(videoModel);
+//            }
+//        }
+//    }
+
+    // delte all video
+//    private void deleteVideoFollowGameModel(GameModel game, String gameId) {
+//        String videoid;
+//        if (game.getLf() != null && !game.getLf().equals(Constant.NO_IMAGE)) {
+//            videoid = gameId + "f";
+//            // save to vif
+//            mFirebaseDatabase.getReference("vif").child(videoid).removeValue();
+//            // save to vipf
+//            // save to vihf
+//            // save to viphf
+//            for (String name : game.getTmA().keySet()) {
+//                mFirebaseDatabase.getReference("vipf").child(CommonUtils.escapeKey(name)).child(videoid).removeValue();
+//                mFirebaseDatabase.getReference("vihf").child(game.getTmA().get(name)).child(videoid).removeValue();
+//                mFirebaseDatabase.getReference("viphf").child(CommonUtils.escapeKey(name)).child(game.getTmA().get(name)).child(videoid).removeValue();
+//            }
+//            for (String name : game.getTmB().keySet()) {
+//                mFirebaseDatabase.getReference("vipf").child(CommonUtils.escapeKey(name)).child(videoid).removeValue();
+//                mFirebaseDatabase.getReference("vihf").child(game.getTmB().get(name)).child(videoid).removeValue();
+//                mFirebaseDatabase.getReference("viphf").child(CommonUtils.escapeKey(name)).child(game.getTmB().get(name)).child(videoid).removeValue();
+//            }
+//
+//        }
+//        if (game.getLh() != null && !game.getLh().equals(Constant.NO_IMAGE)) {
+//            videoid = gameId + "h";
+//            // save to vif
+//            mFirebaseDatabase.getReference("vih").child(videoid).removeValue();
+//            // save to vipf
+//            // save to vihf
+//            // save to viphf
+//            for (String name : game.getTmA().keySet()) {
+//                mFirebaseDatabase.getReference("viph").child(CommonUtils.escapeKey(name)).child(videoid).removeValue();
+//                mFirebaseDatabase.getReference("vihh").child(game.getTmA().get(name)).child(videoid).removeValue();
+//                mFirebaseDatabase.getReference("viphh").child(CommonUtils.escapeKey(name)).child(game.getTmA().get(name)).child(videoid).removeValue();
+//            }
+//            for (String name : game.getTmB().keySet()) {
+//                mFirebaseDatabase.getReference("viph").child(CommonUtils.escapeKey(name)).child(videoid).removeValue();
+//                mFirebaseDatabase.getReference("vihh").child(game.getTmB().get(name)).child(videoid).removeValue();
+//                mFirebaseDatabase.getReference("viphh").child(CommonUtils.escapeKey(name)).child(game.getTmB().get(name)).child(videoid).removeValue();
+//            }
+//        }
+//    }
+
+    private boolean validateInputTeamName() {
+        if (actTeamA.getText().toString().trim().equals(Constant.TBD) || actTeamB.getText().toString().trim().equals(Constant.TBD)) {
+            return false;
+        } else return true;
+    }
+
+    private void resetUi() {
+        edtMatchId.setText(Constant.NO_IMAGE);
+        edtMatchId.setEnabled(true);
+        actTeamA.setText(Constant.NO_IMAGE);
+        actTeamA.setEnabled(true);
+        actTeamB.setText(Constant.NO_IMAGE);
+        actTeamB.setEnabled(true);
+        edtResultA.setText("0");
+        edtResultB.setText("0");
+        edtOddsTeamA.setText(Constant.NO_IMAGE);
+        edtOddsTeamB.setText(Constant.NO_IMAGE);
+        edtPhotoA.setText("Photo Id");
+        edtPhotoB.setText("Photo Id");
+        actRound.setText(Constant.NO_IMAGE);
+        actTournament.setText(Constant.NO_IMAGE);
+        edtBo.setText(Constant.NO_IMAGE);
+        btnAddTime.setText("TIME");
+        tvSumGames.setText("0");
+        edtGameData.setText(Constant.NO_IMAGE);
+        llChanelLive.removeAllViews();
+        llListGames.removeAllViews();
+
+        actTeamA.setEnabled(true);
+        edtNumberChanel.setText(Constant.NO_IMAGE);
+        gameModelMapOld = null;
+        gameModelMapNew = null;
+        matchId = null;
+        TYPE = Constant.CREATE_DATA;
+        time = 0l;
+        matchModel = null;
+    }
+
+//    private class OnCustomCompleteListener implements OnCompleteListener<Void> {
+//
+//        @Override
+//        public void onComplete(@NonNull Task<Void> task) {
+//            hideCircleDialogOnly();
+//            if (!task.isSuccessful()) {
+//                Toast.makeText(getContext(), "Save failed: " + task.getException().toString(), Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//    }
+
+//    private class OnEndCompleteListiner implements OnCompleteListener<Void> {
+//
+//        @Override
+//        public void onComplete(@NonNull Task<Void> task) {
+//            hideCircleDialogOnly();
+//            if (!task.isSuccessful()) {
+//                Toast.makeText(getContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+//            } else {
+//                Toast.makeText(getContext(), "SAVE SUCCESS", Toast.LENGTH_SHORT).show();
+//                resetUi();
+//            }
+//        }
+//    }
+
+    private void executeSaveNewCode() {
+        if (!validateInputData()) {
+            return;
+        }
+        String matchNewId;
+        DatabaseReference reference;
+        String slash = "/";
+        Map<String, Object> mapData = new HashMap<>();
         if (TYPE == Constant.CREATE_DATA) {
+            // save for upcoming
+            if (rbUpcoming.isChecked()) {
+                showCircleDialogOnly();
+                // create upcoming model -> save to tour, upcoming
+                // match model no have games -> sum = 0
+                reference = mFirebaseDatabase.getReference("pro/upcoming");
+                matchNewId = reference.push().getKey();
+                // create model
+                matchModel = createMatchModel(Constant.UPCOMING, matchNewId);
+                // save suggest for team, tourn, round
+                saveSuggestForMatch(matchModel, mapData);
+                // save to "pro/upcoming"
+                mapData.put(new StringBuilder("pro/upcoming/").append(matchModel.getId()).toString(), matchModel);
+                // save to "pro/tour"
+                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), matchModel);
 
-        } else {
+            } else if (rbLive.isChecked()) {
+                showCircleDialogOnly();
+                reference = mFirebaseDatabase.getReference("pro/live");
+                matchNewId = reference.push().getKey();
+                // create model
+                matchModel = createMatchModel(Constant.LIVE, matchNewId);
+                // save suggest for team, tourn, round, player
+                saveSuggestForMatch(matchModel, mapData);
+                // save games
+                if (gameModelMapNew != null && !gameModelMapSave.isEmpty()) {
+                    GameModel gameModelSave;
+                    for (String gameId : gameModelMapSave.keySet()) {
+                        gameModelSave = gameModelMapSave.get(gameId);
+                        mapData.put(new StringBuilder("pro/games/").append(gameId).toString(), convertNameAndHeroes(gameModelSave));
+                        // save video
+                        saveVideoForMatch(gameModelSave, gameId, mapData);
+                    }
+                }
+                // save matchModel to live
+                mapData.put(new StringBuilder("pro/live/").append(matchModel.getId()).toString(), matchModel);
+                // save matchModel to tour
+                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), matchModel);
+            } else if (rbEnd.isChecked()) {
+                if (!validateInputTeamName()) {
+                    actTeamA.setError("requried");
+                    return;
+                }
+                showCircleDialogOnly();
+                reference = mFirebaseDatabase.getReference("pro/match");
+                matchNewId = reference.push().getKey();
+                matchModel = createMatchModel(Constant.END, matchNewId);
+                // save suggest for team, tourn, round, player
+                saveSuggestForMatch(matchModel, mapData);
+                // save games
+                if (gameModelMapNew != null && !gameModelMapSave.isEmpty()) {
+                    GameModel gameModelSave;
+                    for (String gameId : gameModelMapSave.keySet()) {
+                        gameModelSave = gameModelMapSave.get(gameId);
+                        mapData.put(new StringBuilder("pro/games/").append(gameId).toString(), convertNameAndHeroes(gameModelSave));
+                        // save video
+                        saveVideoForMatch(gameModelSave, gameId, mapData);
+                    }
+                }
+                // save to match
+                mapData.put(new StringBuilder("pro/match/").append(matchModel.getId()).toString(), matchModel);
+                // save to team
+                mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModel.getTa().getNa())).append(slash).append(matchModel.getId()).toString(), matchModel);
+                mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModel.getTb().getNa())).append(slash).append(matchModel.getId()).toString(), matchModel);
+                // save to tour
+                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), matchModel);
+            }
+        } else if (TYPE == Constant.LOAD_DATA) {
+            MatchModel matchModelSave;
+            if (rbUpcoming.isChecked()) {
+                showCircleDialogOnly();
+                // create upcoming model -> save to tour, upcoming
+                // match model no have games -> sum = 0
+                // create model
+                matchModelSave = createMatchModel(Constant.UPCOMING, null);
+                if (matchModel.getSt() == Constant.LIVE || matchModel.getSt() == Constant.END) {
+                    if (matchModel.getSt() == Constant.LIVE) {
+                        mapData.put(new StringBuilder("pro/live/").append(matchModel.getId()).toString(), null);
+                    } else {
+                        mapData.put(new StringBuilder("pro/match/").append(matchModel.getId()).toString(), null);
+                        if (!matchModel.getTa().getNa().equals(Constant.TBD)) {
+                            mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModel.getTa().getNa())).append(slash).append(matchModel.getId()).toString(), null);
+                        }
+                        if (!matchModel.getTb().getNa().equals(Constant.TBD)) {
+                            mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModel.getTb().getNa())).append(slash).append(matchModel.getId()).toString(), null);
+                        }
+                    }
+                    if (gameModelMapOld != null && gameModelMapOld.size() > 0) {
+                        for (String gameId : gameModelMapOld.keySet()) {
+                            mapData.put(new StringBuilder("pro/games/").append(gameId).toString(), null);
+                            GameModel game = gameModelMapOld.get(gameId);
+                            deleteVideoForMatch(game, gameId, mapData);
+                        }
+                    }
+                }
+                if (!matchModel.getTo().equals(matchModelSave.getTo())) {
+                    mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), null);
+                }
+                // save to "pro/upcoming"
+                mapData.put(new StringBuilder("pro/upcoming/").append(matchModel.getId()).toString() , matchModelSave);
+                // save to "pro/tour"
+                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModelSave.getTo())).append(slash).append(matchModel.getId()).toString(), matchModelSave);
+            } else if (rbLive.isChecked()) {
+                showCircleDialogOnly();
+                // create model
+                matchModelSave = createMatchModel(Constant.LIVE, null);
+                if (matchModel.getSt() == Constant.UPCOMING) {
+                    mapData.put(new StringBuilder("pro/upcoming/").append( matchModel.getId()).toString(), null);
+                } else if (matchModel.getSt() == Constant.END || matchModel.getSt() == Constant.LIVE) {
+                    if (matchModel.getSt() == Constant.END) {
+                        mapData.put(new StringBuilder("pro/match/").append( matchModel.getId()).toString(), null);
+                        mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModel.getTa().getNa())).append(slash).append(matchModel.getId()).toString(), null);
+                        mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModel.getTb().getNa())).append(slash).append(matchModel.getId()).toString(), null);
+                    }
+                    if (matchModel.getSum() > matchModelSave.getSum()) {
+                        for (int i = matchModel.getSum(); i > matchModelSave.getSum(); i--) {
+                            GameModel game = gameModelMapOld.get(matchModel.getId() + i);
+                            if (game != null) {
+                                mapData.put(new StringBuilder("pro/games/").append(matchModel.getId()).append(i).toString(), null);
+                                deleteVideoForMatch(game, matchModel.getId() + i, mapData);
+                            }
+                        }
+                    }
+                }
+                // save games
+                if (gameModelMapNew != null && !gameModelMapSave.isEmpty()) {
+                    GameModel gameModelSave;
+                    for (String gameId : gameModelMapSave.keySet()) {
+                        gameModelSave = gameModelMapSave.get(gameId);
+                        mapData.put(new StringBuilder("pro/games/").append(gameId).toString(), convertNameAndHeroes(gameModelSave));
+                        // save video
+                        saveVideoForMatch(gameModelSave, gameId, mapData);
+                    }
+                }
+                if (!matchModel.getTo().equals(matchModelSave.getTo())) {
+                    mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), null);
+                }
+                // save matchModel to live
+                mapData.put(new StringBuilder("pro/live/").append(matchModel.getId()).toString(), matchModelSave);
+                // save matchModel to tour
+                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModelSave.getTo())).append(slash).append(matchModel.getId()).toString(), matchModelSave);
+            } else if (rbEnd.isChecked()) {
+                if (!validateInputTeamName()) {
+                    actTeamA.setError("requried");
+                    return;
+                }
+                showCircleDialogOnly();
+                matchModelSave = createMatchModel(Constant.END, null);
+                if (matchModel.getSt() == Constant.UPCOMING) {
+                    mapData.put(new StringBuilder("pro/upcoming/").append(matchModel.getId()).toString(), null);
+                } else if (matchModel.getSt() == Constant.LIVE || matchModel.getSt() == Constant.END) {
+                    if (matchModel.getSt() == Constant.LIVE) {
+                        mapData.put(new StringBuilder("pro/live/").append(matchModel.getId()).toString(), null);
+                    } else {
+                        if (!matchModel.getTa().getNa().equals(matchModelSave.getTa().getNa())) {
+                            mapData.put(new StringBuilder("pro/team").append(CommonUtils.escapeKey(matchModel.getTa().getNa())).append(slash).append(matchModel.getId()).toString(), null);
+                        }
+                        if (!matchModel.getTb().getNa().equals(matchModelSave.getTb().getNa())) {
+                            mapData.put(new StringBuilder("pro/team").append(CommonUtils.escapeKey(matchModel.getTb().getNa())).append(slash).append(matchModel.getId()).toString(), null);
+                        }
+                    }
+                    if (matchModel.getSum() > matchModelSave.getSum()) {
+                        for (int i = matchModel.getSum(); i > matchModelSave.getSum(); i--) {
+                            GameModel game = gameModelMapOld.get(matchModel.getId() + i);
+                            if (game != null) {
+                                mapData.put(new StringBuilder("pro/games/").append(matchModel.getId()).append(i).toString(), null);
+                                deleteVideoForMatch(game, matchModel.getId() + i, mapData);
+                            }
+                        }
+                    }
+                }
+                // save games
+                if (gameModelMapNew != null && !gameModelMapSave.isEmpty()) {
+                    GameModel gameModelSave;
+                    for (String gameId : gameModelMapSave.keySet()) {
+                        gameModelSave = gameModelMapSave.get(gameId);
+                        mapData.put(new StringBuilder("pro/games/").append(gameId).toString(), convertNameAndHeroes(gameModelSave));
+                        // save video
+                        deleteVideoForMatch(gameModelSave, gameId, mapData);
+                    }
+                }
+                // save to match
+                mapData.put(new StringBuilder("pro/match/").append(matchModelSave.getId()).toString(), matchModelSave);
+                // save to team
+                mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModelSave.getTa().getNa())).append(slash).append(matchModelSave.getId()).toString(), matchModelSave);
+                mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModelSave.getTb().getNa())).append(slash).append(matchModelSave.getId()).toString(), matchModelSave);
+                if (!matchModel.getTo().equals(matchModelSave.getTo())) {
+                    mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), null);
+                }
+                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModelSave.getTo())).append(slash).append(matchModel.getId()).toString(), matchModelSave);
+            }
 
+        }
+        hideCircleDialogOnly();
+        if (!mapData.isEmpty()) {
+            showCircleDialogOnly();
+            mFirebaseDatabase.getReference().updateChildren(mapData, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    hideCircleDialogOnly();
+                    if (databaseError == null) {
+                        Toast.makeText(getContext(), "SAVE OK !!!", Toast.LENGTH_SHORT).show();
+                        resetUi();
+                    } else {
+                        showWarningDialog(databaseError.getMessage());
+                    }
+                }
+            });
+        }
+    }
+
+    private void saveSuggestForMatch(MatchModel model, Map<String, Object> mapData) {
+        // save suggest team, tournament, ro
+        if (suggestTeam == null) {
+            suggestTeam = new ArrayList<>();
+        }
+        if (!model.getTa().getNa().equals(Constant.TBD) && !suggestTeam.contains(model.getTa().getNa().equals(Constant.TBD))) {
+            mapData.put(new StringBuilder("pro/suggest/team/").append(suggestTeam.size()).toString(), model.getTa().getNa());
+            suggestTeam.add(model.getTa().getNa());
+        }
+        if (!model.getTb().getNa().equals(Constant.TBD) && !suggestTeam.contains(model.getTb().getNa().equals(Constant.TBD))) {
+            mapData.put(new StringBuilder("pro/suggest/team/").append(suggestTeam.size()).toString(), model.getTb().getNa());
+            suggestTeam.add(model.getTb().getNa());
+        }
+
+        // save suggest tour
+        if (listTour == null) {
+            listTour = new ArrayList<>();
+        }
+        if (!model.getTo().equals(Constant.NO_IMAGE) && !listTour.contains(model.getTo())) {
+            mapData.put(new StringBuilder("pro/suggest/tour/").append(listTour.size()).toString(), model.getTo());
+        }
+
+        // save suggest ro
+        if (listRo == null) {
+            listRo = new ArrayList<>();
+        }
+        if (!model.getRo().equals(Constant.NO_IMAGE) && !listRo.contains(model.getRo())) {
+            mapData.put(new StringBuilder("pro/suggest/round/").append(listRo.size()).toString() , model.getRo());
+        }
+        // save suggest player
+        if (listPl == null) {
+            listPl = new ArrayList<>();
+        }
+        if (gameModelMapNew != null && !gameModelMapSave.isEmpty()) {
+            GameModel game = gameModelMapSave.get(matchModel.getId() + 1);
+            if (game != null) {
+                HashMap<String, String> mapA = game.getTmA();
+                HashMap<String, String> mapB = game.getTmB();
+
+                if (mapA != null && mapA.size() > 0 && mapB != null && mapB.size() > 0) {
+                    for (String str : mapA.keySet()) {
+                        if (!listPl.contains(str)) {
+                            mapData.put(new StringBuilder("pro/suggest/pl/").append(listPl.size()).toString(), str);
+                            listPl.add(str);
+                        }
+                    }
+                    for (String str : mapB.keySet()) {
+                        if (!listPl.contains(str)) {
+                            mapData.put(new StringBuilder("pro/suggest/pl/").append(listPl.size()).toString(), str);
+                            listPl.add(str);
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    private void saveVideoForMatch(GameModel game, String gameId, Map<String, Object> map) {
+        VideoModel videoModel;
+        String slash = "/";
+
+        if (game.getLf() != null && !game.getLf().equals(Constant.NO_IMAGE)) {
+            videoModel = new VideoModel(game.getLf(), time);
+            // save to vif
+            map.put(new StringBuilder("vif/").append(gameId).toString(), videoModel);
+            // save to vipf
+            // save to vihf
+            // save to viphf
+            for (String name : game.getTmA().keySet()) {
+                map.put(new StringBuilder("vipf/").append(CommonUtils.escapeKey(name)).append(slash).append(gameId).toString(), videoModel);
+                map.put(new StringBuilder("vihf/").append(game.getTmA().get(name)).append(slash).append(gameId).toString(), videoModel);
+                map.put(new StringBuilder("viphf/").append(CommonUtils.escapeKey(name)).append(slash).append(game.getTmA().get(name)).append(slash).append(gameId).toString(), videoModel);
+            }
+            for (String name : game.getTmB().keySet()) {
+                map.put(new StringBuilder("vipf/").append(CommonUtils.escapeKey(name)).append(slash).append(gameId).toString(), videoModel);
+                map.put(new StringBuilder("vihf/").append(game.getTmB().get(name)).append(slash).append(gameId).toString(), videoModel);
+                map.put(new StringBuilder("viphf/").append(CommonUtils.escapeKey(name)).append(slash).append(game.getTmB().get(name)).append(slash).append(gameId).toString(), videoModel);
+            }
+
+        }
+        if (game.getLh() != null && !game.getLh().equals(Constant.NO_IMAGE)) {
+            videoModel = new VideoModel(game.getLh(), time);
+            // save to vif
+            map.put(new StringBuilder("vih/").append(gameId).toString(), videoModel);
+            // save to vipf
+            // save to vihf
+            // save to viphf
+            for (String name : game.getTmA().keySet()) {
+                map.put(new StringBuilder("viph/").append(CommonUtils.escapeKey(name)).append(slash).append(gameId).toString(), videoModel);
+                map.put(new StringBuilder("vihh/").append(game.getTmA().get(name)).append(slash).append(gameId).toString(), videoModel);
+                map.put(new StringBuilder("viphh/").append(CommonUtils.escapeKey(name)).append(slash).append(game.getTmA().get(name)).append(slash).append(gameId).toString(), videoModel);
+            }
+            for (String name : game.getTmB().keySet()) {
+                map.put(new StringBuilder("viph/").append(CommonUtils.escapeKey(name)).append(slash).append(gameId).toString(), videoModel);
+                map.put(new StringBuilder("vihh/").append(game.getTmB().get(name)).append(slash).append(gameId).toString(), videoModel);
+                map.put(new StringBuilder("viphh/").append(CommonUtils.escapeKey(name)).append(slash).append(game.getTmB().get(name)).append(slash).append(gameId).toString(), videoModel);
+            }
+        }
+    }
+
+    // delte all video
+    private void deleteVideoForMatch(GameModel game, String gameId, Map<String, Object> map) {
+        String slash = "/";
+        if (game.getLf() != null && !game.getLf().equals(Constant.NO_IMAGE)) {
+            // save to vif
+            map.put(new StringBuilder("vif/").append(gameId).toString(), null);
+            // save to vipf
+            // save to vihf
+            // save to viphf
+            for (String name : game.getTmA().keySet()) {
+                map.put(new StringBuilder("vipf/").append(CommonUtils.escapeKey(name)).append(slash).append(gameId).toString(), null);
+                map.put(new StringBuilder("vihf/").append(game.getTmA().get(name)).append(slash).append(gameId).toString(), null);
+                map.put(new StringBuilder("viphf/").append(CommonUtils.escapeKey(name)).append(slash).append(game.getTmA().get(name)).append(slash).append(gameId).toString(), null);
+            }
+            for (String name : game.getTmB().keySet()) {
+                map.put(new StringBuilder("vipf/").append(CommonUtils.escapeKey(name)).append(slash).append(gameId).toString(), null);
+                map.put(new StringBuilder("vihf/").append(game.getTmB().get(name)).append(slash).append(gameId).toString(), null);
+                map.put(new StringBuilder("viphf/").append(CommonUtils.escapeKey(name)).append(slash).append(game.getTmB().get(name)).append(slash).append(gameId).toString(), null);
+            }
+
+        }
+        if (game.getLh() != null && !game.getLh().equals(Constant.NO_IMAGE)) {
+
+            // save to vif
+            map.put(new StringBuilder("vih/").append(gameId).toString(), null);
+            // save to vipf
+            // save to vihf
+            // save to viphf
+            for (String name : game.getTmA().keySet()) {
+                map.put(new StringBuilder("viph/").append(CommonUtils.escapeKey(name)).append(slash).append(gameId).toString(), null);
+                map.put(new StringBuilder("vihh/").append(game.getTmA().get(name)).append(slash).append(gameId).toString(), null);
+                map.put(new StringBuilder("viphh/").append(CommonUtils.escapeKey(name)).append(slash).append(game.getTmA().get(name)).append(slash).append(gameId).toString(), null);
+            }
+            for (String name : game.getTmB().keySet()) {
+                map.put(new StringBuilder("viph/").append(CommonUtils.escapeKey(name)).append(slash).append(gameId).toString(), null);
+                map.put(new StringBuilder("vihh/").append(game.getTmB().get(name)).append(slash).append(gameId).toString(), null);
+                map.put(new StringBuilder("viphh/").append(CommonUtils.escapeKey(name)).append(slash).append(game.getTmB().get(name)).append(slash).append(gameId).toString(), null);
+            }
         }
     }
 }
