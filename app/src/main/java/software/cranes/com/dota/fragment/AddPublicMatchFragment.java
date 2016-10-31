@@ -5,6 +5,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -20,7 +21,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import software.cranes.com.dota.R;
 import software.cranes.com.dota.adapter.AutoCompleteAdapter;
@@ -30,6 +33,7 @@ import software.cranes.com.dota.dialog.SuggestDialogFragment;
 import software.cranes.com.dota.interfa.Constant;
 import software.cranes.com.dota.model.PubGameModel;
 
+import static android.R.attr.data;
 import static android.R.attr.type;
 
 
@@ -55,6 +59,7 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
     private PubGameModel model;
     private int TYPE;
     private String gameId;
+    private Button btnReset;
 
     public AddPublicMatchFragment() {
         // Required empty public constructor
@@ -66,9 +71,11 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         suggestPlayer = new ArrayList<>();
         suggestHeroes = new ArrayList<>();
-        if (getArguments() != null && getArguments().get(Constant.DATA) != null) {
-            gameId = (String) getArguments().get(Constant.DATA);
-            TYPE = Constant.LOAD_DATA;
+        if (getArguments() != null) {
+            gameId = getArguments().getString(Constant.DATA);
+            if (gameId != null && !gameId.equals(Constant.NO_IMAGE)) {
+                TYPE = Constant.LOAD_DATA;
+            }
         }
     }
 
@@ -99,10 +106,11 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
         btnSave = (Button) view.findViewById(R.id.btnSave);
         edtLoadGame = (EditText) view.findViewById(R.id.edtLoadGame);
         btnLoadGame = (Button) view.findViewById(R.id.btnLoadGame);
+        btnReset = (Button) view.findViewById(R.id.btnReset);
 
         btnAddTime.setOnClickListener(this);
         btnChoicePlayer.setOnClickListener(this);
-
+        btnReset.setOnClickListener(this);
         btnBack.setOnClickListener(this);
         btnDelete.setOnClickListener(this);
         btnSave.setOnClickListener(this);
@@ -134,14 +142,19 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
                 getFragmentManager().popBackStack();
                 break;
             case R.id.btnDelete:
-                handleDeleteGame();
+                executeDelete();
+//                handleDeleteGame();
                 break;
             case R.id.btnSave:
+                executeSave();
 //                test();
-                handleSaveGame();
+//                handleSaveGame();
                 break;
             case R.id.btnLoadGame:
-                loadGameFollowId(edtLoadGame.getText().toString());
+                loadGameFollowId(CommonUtils.extractVideoIdFromUrl(edtLoadGame.getText().toString().trim()));
+                break;
+            case R.id.btnReset:
+                resetUi();
                 break;
         }
     }
@@ -153,8 +166,8 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
             public void onDataChange(DataSnapshot dataSnapshot) {
                 suggestPlayer = (ArrayList<String>) dataSnapshot.getValue();
                 if (suggestPlayer != null && suggestPlayer.size() > 0) {
-                        AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, suggestPlayer);
-                        actPlayer.setAdapter(adapter);
+                    AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, suggestPlayer);
+                    actPlayer.setAdapter(adapter);
                 }
 
                 hideCircleDialogOnly();
@@ -174,8 +187,8 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 suggestHeroes = (List<String>) dataSnapshot.getValue();
-                    AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, suggestHeroes);
-                    actHeroes.setAdapter(adapter);
+                AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, suggestHeroes);
+                actHeroes.setAdapter(adapter);
                 hideCircleDialogOnly();
             }
 
@@ -186,7 +199,6 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
             }
         });
     }
-
 
 
     private void setTime() {
@@ -214,32 +226,32 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
         }
     }
 
-    private void handleDeleteGame() {
-        if (model == null || model.getId() == null) {
-            getFragmentManager().popBackStack();
-            return;
-        }
-        executeDeleteGame(model);
-    }
+//    private void handleDeleteGame() {
+//        if (model == null || model.getId() == null) {
+//            getFragmentManager().popBackStack();
+//            return;
+//        }
+//        executeDeleteGame(model);
+//    }
 
-    private void handleSaveGame() {
-        showCircleDialogOnly();
-        if (!validateInput()) {
-            hideCircleDialogOnly();
-            return;
-        }
-
-        if (type == Constant.CREATE_DATA || (type == Constant.LOAD_DATA && model == null)) {
-            // type create new
-            model = new PubGameModel(CommonUtils.extractVideoIdFromUrl(edtLink.getText().toString()), actPlayer.getText().toString(), actHeroes.getText().toString(), getTitle(), time);
-            // save data
-            saveDataToFirebase(model);
-        } else {
-            // type update
-            handleUpdateData();
-        }
-
-    }
+//    private void handleSaveGame() {
+//        showCircleDialogOnly();
+//        if (!validateInput()) {
+//            hideCircleDialogOnly();
+//            return;
+//        }
+//
+//        if (type == Constant.CREATE_DATA || (type == Constant.LOAD_DATA && model == null)) {
+//            // type create new
+//            model = new PubGameModel(CommonUtils.extractVideoIdFromUrl(edtLink.getText().toString()), actPlayer.getText().toString(), actHeroes.getText().toString(), getTitle(), time);
+//            // save data
+//            saveDataToFirebase(model);
+//        } else {
+//            // type update
+//            handleUpdateData();
+//        }
+//
+//    }
 
     /*
      true -> all ok
@@ -287,7 +299,9 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
                         actPlayer.setText(model.getPlayer());
                         actHeroes.setText(model.getHero());
                         edtTitleGame.setText(model.getTitle());
-                        edtLink.setText("https://www.youtube.com/watch?v=" + model.getId());
+                        edtLoadGame.setText("https://www.youtube.com/watch?v=" + dataSnapshot.getKey());
+                        edtLoadGame.setEnabled(false);
+                        edtLink.setText("https://www.youtube.com/watch?v=" + dataSnapshot.getKey());
                     }
                 }
                 hideCircleDialogOnly();
@@ -308,110 +322,109 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
         4.save id to -> "pub/player_heroes/playerName/heroName" : id:model
         5.save playerName -> "pub/suggest"
      */
-    private void saveDataToFirebase(PubGameModel model) {
-        // 1 save model
-        mFirebaseDatabase.getReference("pub/game/" + model.getId()).setValue(model).addOnCompleteListener(new OnCompleteListenerCustom("pub/game/ falied"));
-        showCircleDialogOnly();
-        // 2.save id to -> "pub/heroes/heroName" : id: model
-        PubGameModel model2 = new PubGameModel();
-        model2.setTime(model.getTime());
-        model2.setTitle(model.getTitle());
-        model2.setPlayer(model.getPlayer());
-        mFirebaseDatabase.getReference("/pub/heroes/" + model.getHero() + "/" + model.getId()).setValue(model2).addOnCompleteListener(new OnCompleteListenerCustom("/pub/heroes/ falied"));
-        showCircleDialogOnly();
-        // 3."pub/player/playerName" : id: model
-        PubGameModel model3 = new PubGameModel();
-        model3.setTime(model.getTime());
-        model3.setTitle(model.getTitle());
-        model3.setHero(model.getHero());
-        mFirebaseDatabase.getReference("/pub/player/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getId()).setValue(model3).addOnCompleteListener(new OnCompleteListenerCustom("/pub/player/ failed"));
-        showCircleDialogOnly();
-        //.4.save id to -> "pub/player_heroes/playerName/heroName" : id:model
-        PubGameModel model4 = new PubGameModel();
-        model4.setTime(model.getTime());
-        model4.setTitle(model.getTitle());
-        mFirebaseDatabase.getReference("pub/player_heroes/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getHero() + "/" + model.getId()).setValue(model4).addOnCompleteListener(new OnCompleteListenerCustom("pub/player_heroes/ failed"));
-        showCircleDialogOnly();
-        //5.save playerName -> "pub/suggest"
-        if (!checkPlayerSuggest(model.getPlayer())) {
-            mFirebaseDatabase.getReference("pub/suggest/" + suggestPlayer.size()).setValue(model.getPlayer()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    hideCircleDialogOnly();
-                    if (!task.isSuccessful()) {
-                        Toast.makeText(getContext(), "pub/suggest/ failed", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), "Save completed", Toast.LENGTH_SHORT).show();
-//                        getFragmentManager().popBackStack();
-                    }
-                }
-            });
-        }
+//    private void saveDataToFirebase(PubGameModel model) {
+//        // 1 save model
+//        mFirebaseDatabase.getReference("pub/game/" + model.getId()).setValue(model).addOnCompleteListener(new OnCompleteListenerCustom("pub/game/ falied"));
+//        showCircleDialogOnly();
+//        // 2.save id to -> "pub/heroes/heroName" : id: model
+//        PubGameModel model2 = new PubGameModel();
+//        model2.setTime(model.getTime());
+//        model2.setTitle(model.getTitle());
+//        model2.setPlayer(model.getPlayer());
+//        mFirebaseDatabase.getReference("/pub/heroes/" + model.getHero() + "/" + model.getId()).setValue(model2).addOnCompleteListener(new OnCompleteListenerCustom("/pub/heroes/ falied"));
+//        showCircleDialogOnly();
+//        // 3."pub/player/playerName" : id: model
+//        PubGameModel model3 = new PubGameModel();
+//        model3.setTime(model.getTime());
+//        model3.setTitle(model.getTitle());
+//        model3.setHero(model.getHero());
+//        mFirebaseDatabase.getReference("/pub/player/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getId()).setValue(model3).addOnCompleteListener(new OnCompleteListenerCustom("/pub/player/ failed"));
+//        showCircleDialogOnly();
+//        //.4.save id to -> "pub/player_heroes/playerName/heroName" : id:model
+//        PubGameModel model4 = new PubGameModel();
+//        model4.setTime(model.getTime());
+//        model4.setTitle(model.getTitle());
+//        mFirebaseDatabase.getReference("pub/player_heroes/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getHero() + "/" + model.getId()).setValue(model4).addOnCompleteListener(new OnCompleteListenerCustom("pub/player_heroes/ failed"));
+//        showCircleDialogOnly();
+//        //5.save playerName -> "pub/suggest"
+//        if (!checkPlayerSuggest(model.getPlayer())) {
+//            mFirebaseDatabase.getReference("pub/suggest/" + suggestPlayer.size()).setValue(model.getPlayer()).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                @Override
+//                public void onComplete(@NonNull Task<Void> task) {
+//                    hideCircleDialogOnly();
+//                    if (!task.isSuccessful()) {
+//                        Toast.makeText(getContext(), "pub/suggest/ failed", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        Toast.makeText(getContext(), "Save completed", Toast.LENGTH_SHORT).show();
+////                        getFragmentManager().popBackStack();
+//                    }
+//                }
+//            });
+//        }
+//
+//    }
 
-    }
+//    // check name player is haven in suggestPlayer
+//    private boolean checkPlayerSuggest(String name) {
+//        boolean result = false;
+//        if (suggestPlayer != null) {
+//            for (String str : suggestPlayer) {
+//                if (name.equals(str)) {
+//                    result = true;
+//                }
+//            }
+//        } else {
+//            suggestPlayer = new ArrayList<>();
+//        }
+//        return result;
+//    }
 
-    // check name player is haven in suggestPlayer
-    private boolean checkPlayerSuggest(String name) {
-        boolean result = false;
-        if (suggestPlayer != null) {
-            for (String str : suggestPlayer) {
-                if (name.equals(str)) {
-                    result = true;
-                }
-            }
-        } else {
-            suggestPlayer = new ArrayList<>();
-        }
-        return result;
-    }
+//    /*
+//        1. delete follow id : "pub/game"
+//        2. delete follow id : "pub/heroes/heroName"
+//        3. delete follow id : "pub/player/playerName"
+//        4. delete follow id : "pub/player_hero/playerName/heroName"
+//     */
+//    private void executeDeleteGame(PubGameModel model) {
+//        // 1. delete follow id : "pub/game"
+//        mFirebaseDatabase.getReference("pub/game/" + model.getId()).removeValue().addOnCompleteListener(new OnCompleteListenerCustom("pub/game/ failed"));
+//        // 2. delete follow id : "pub/heroes/heroName"
+//        showCircleDialogOnly();
+//        mFirebaseDatabase.getReference("pub/heroes/" + model.getHero() + "/" + model.getId()).removeValue().addOnCompleteListener(new OnCompleteListenerCustom("pub/heroes/ failed"));
+//        // 3. delete follow id : "pub/player/playerName"
+//        showCircleDialogOnly();
+//        mFirebaseDatabase.getReference("pub/player/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getId()).removeValue().addOnCompleteListener(new OnCompleteListenerCustom("pub/player/ failed"));
+//        //4. delete follow id : "pub/player_hero/playerName/heroName"
+//        showCircleDialogOnly();
+//        mFirebaseDatabase.getReference("pub/player_heroes/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getHero() + "/" + model.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//                hideCircleDialogOnly();
+//                if (!task.isSuccessful()) {
+//                    Toast.makeText(getContext(), "pub/player_heroes/ failed", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(getContext(), "Delete Ok", Toast.LENGTH_SHORT).show();
+//                    getFragmentManager().popBackStack();
+//                }
+//            }
+//        });
+//    }
 
-    /*
-        1. delete follow id : "pub/game"
-        2. delete follow id : "pub/heroes/heroName"
-        3. delete follow id : "pub/player/playerName"
-        4. delete follow id : "pub/player_hero/playerName/heroName"
-     */
-    private void executeDeleteGame(PubGameModel model) {
-        // 1. delete follow id : "pub/game"
-        mFirebaseDatabase.getReference("pub/game/" + model.getId()).removeValue().addOnCompleteListener(new OnCompleteListenerCustom("pub/game/ failed"));
-        // 2. delete follow id : "pub/heroes/heroName"
-        showCircleDialogOnly();
-        mFirebaseDatabase.getReference("pub/heroes/" + model.getHero() + "/" + model.getId()).removeValue().addOnCompleteListener(new OnCompleteListenerCustom("pub/heroes/ failed"));
-        // 3. delete follow id : "pub/player/playerName"
-        showCircleDialogOnly();
-        mFirebaseDatabase.getReference("pub/player/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getId()).removeValue().addOnCompleteListener(new OnCompleteListenerCustom("pub/player/ failed"));
-        //4. delete follow id : "pub/player_hero/playerName/heroName"
-        showCircleDialogOnly();
-        mFirebaseDatabase.getReference("pub/player_heroes/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getHero() + "/" + model.getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                hideCircleDialogOnly();
-                if (!task.isSuccessful()) {
-                    Toast.makeText(getContext(), "pub/player_heroes/ failed", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getContext(), "Delete Ok", Toast.LENGTH_SHORT).show();
-                    getFragmentManager().popBackStack();
-                }
-            }
-        });
-    }
-
-
-    private class OnCompleteListenerCustom implements OnCompleteListener {
-        String status;
-
-        public OnCompleteListenerCustom(String status) {
-            this.status = status;
-        }
-
-        @Override
-        public void onComplete(@NonNull Task task) {
-            hideCircleDialogOnly();
-            if (!task.isSuccessful()) {
-                Toast.makeText(getContext(), status, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
+//    private class OnCompleteListenerCustom implements OnCompleteListener {
+//        String status;
+//
+//        public OnCompleteListenerCustom(String status) {
+//            this.status = status;
+//        }
+//
+//        @Override
+//        public void onComplete(@NonNull Task task) {
+//            hideCircleDialogOnly();
+//            if (!task.isSuccessful()) {
+//                Toast.makeText(getContext(), status, Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//    }
 
     /*
         1.change data follow id: "pub/game"
@@ -425,44 +438,44 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
         6.save id to -> "pub/player/playerName" : id: model
         7.save id to -> "pub/player_heroes/playerName/heroName" : id:model
      */
-    private void handleUpdateData() {
-        // model -> old data
+//    private void handleUpdateData() {
+//        // model -> old data
+//
+//        // newGame - > new data
+//        PubGameModel newGame = new PubGameModel(CommonUtils.extractVideoIdFromUrl(edtLink.getText().toString()), actPlayer.getText().toString(), actHeroes.getText().toString(), getTitle(), time);
+//
+//        // 1. save again "pub/game/"
+//        mFirebaseDatabase.getReference("pub/game/" + model.getId()).setValue(newGame).addOnCompleteListener(new OnCompleteListenerCustom("pub/game/ failed"));
+//        showCircleDialogOnly();
+//        // 2.delete follow id : "pub/heroes/heroName"
+//        mFirebaseDatabase.getReference("pub/palyer/" + model.getPlayer() + "/" + model.getId()).removeValue();
+//        // 3. delete follow id : "pub/player/playerName"
+//        mFirebaseDatabase.getReference("pub/player/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getId()).removeValue();
+//        // 4. delete follow id : "pub/player_hero/playerName/heroName"
+//        mFirebaseDatabase.getReference("pub/player_hero/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getHero() + "/" + model.getId()).removeValue();
+//
+//        // 5.save id to -> "pub/heroes/heroName" : id: model
+//        PubGameModel newGame5 = new PubGameModel(null, newGame.getPlayer(), null, newGame.getTitle(), newGame.getTime());
+//        mFirebaseDatabase.getReference("pub/heroes/" + newGame.getHero() + "/" + newGame.getId()).setValue(newGame5);
+//        // 6.save id to -> "pub/player/playerName" : id: model
+//        PubGameModel newGame6 = new PubGameModel(null, null, newGame.getHero(), newGame.getTitle(), newGame.getTime());
+//        mFirebaseDatabase.getReference("pub/player/" + CommonUtils.escapeKey(newGame.getPlayer()) + "/" + newGame.getId()).setValue(newGame6);
+//        // 7.save id to -> "pub/player_heroes/playerName/heroName" : id:model
+//        PubGameModel newGame7 = new PubGameModel(null, null, null, newGame.getTitle(), newGame.getTime());
+//        mFirebaseDatabase.getReference("pub/player_heroes/" + CommonUtils.escapeKey(newGame.getPlayer()) + "/" + newGame.getHero() + "/" + newGame.getId()).setValue(newGame7).addOnCompleteListener(new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//                if (task.isSuccessful()) {
+//                    hideCircleDialogOnly();
+//                    getFragmentManager().popBackStack();
+//                }
+//            }
+//        });
+//    }
 
-        // newGame - > new data
-        PubGameModel newGame = new PubGameModel(CommonUtils.extractVideoIdFromUrl(edtLink.getText().toString()), actPlayer.getText().toString(), actHeroes.getText().toString(), getTitle(), time);
-
-        // 1. save again "pub/game/"
-        mFirebaseDatabase.getReference("pub/game/" + model.getId()).setValue(newGame).addOnCompleteListener(new OnCompleteListenerCustom("pub/game/ failed"));
-        showCircleDialogOnly();
-        // 2.delete follow id : "pub/heroes/heroName"
-        mFirebaseDatabase.getReference("pub/palyer/" + model.getPlayer() + "/" + model.getId()).removeValue();
-        // 3. delete follow id : "pub/player/playerName"
-        mFirebaseDatabase.getReference("pub/player/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getId()).removeValue();
-        // 4. delete follow id : "pub/player_hero/playerName/heroName"
-        mFirebaseDatabase.getReference("pub/player_hero/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getHero() + "/" + model.getId()).removeValue();
-
-        // 5.save id to -> "pub/heroes/heroName" : id: model
-        PubGameModel newGame5 = new PubGameModel(null, newGame.getPlayer(), null, newGame.getTitle(), newGame.getTime());
-        mFirebaseDatabase.getReference("pub/heroes/" + newGame.getHero() + "/" + newGame.getId()).setValue(newGame5);
-        // 6.save id to -> "pub/player/playerName" : id: model
-        PubGameModel newGame6 = new PubGameModel(null, null, newGame.getHero(), newGame.getTitle(), newGame.getTime());
-        mFirebaseDatabase.getReference("pub/player/" + CommonUtils.escapeKey(newGame.getPlayer()) + "/" + newGame.getId()).setValue(newGame6);
-        // 7.save id to -> "pub/player_heroes/playerName/heroName" : id:model
-        PubGameModel newGame7 = new PubGameModel(null, null, null, newGame.getTitle(), newGame.getTime());
-        mFirebaseDatabase.getReference("pub/player_heroes/" + CommonUtils.escapeKey(newGame.getPlayer()) + "/" + newGame.getHero() + "/" + newGame.getId()).setValue(newGame7).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    hideCircleDialogOnly();
-                    getFragmentManager().popBackStack();
-                }
-            }
-        });
-    }
-
-    private String getTitle() {
-        return edtTitleGame.getText().toString().trim().equals(Constant.NO_IMAGE) ? null : edtTitleGame.getText().toString().trim();
-    }
+//    private String getTitle() {
+//        return edtTitleGame.getText().toString().trim().equals(Constant.NO_IMAGE) ? null : edtTitleGame.getText().toString().trim();
+//    }
 
     /*
     {
@@ -499,4 +512,95 @@ public class AddPublicMatchFragment extends BaseFragment implements View.OnClick
 //        });
 //
 //    }
+    private PubGameModel createPubGameModel() {
+        PubGameModel result = new PubGameModel();
+        result.setTime(time);
+        result.setHero(actHeroes.getText().toString().trim());
+        result.setPlayer(actPlayer.getText().toString().trim());
+        result.setTitle(edtTitleGame.getText().toString().trim().equals(Constant.NO_IMAGE) ? null : edtTitleGame.getText().toString().trim());
+        return result;
+    }
+
+    private void resetUi() {
+        TYPE = Constant.CREATE_DATA;
+        time = 0L;
+        btnAddTime.setText("TIME");
+        actHeroes.setText(Constant.NO_IMAGE);
+        actPlayer.setText(Constant.NO_IMAGE);
+        edtTitleGame.setText(Constant.NO_IMAGE);
+        edtLink.setText(Constant.NO_IMAGE);
+        edtLoadGame.setText(Constant.NO_IMAGE);
+        edtLoadGame.setEnabled(true);
+        gameId = null;
+        model = null;
+    }
+
+    private void executeDelete() {
+        if (TYPE == Constant.LOAD_DATA && model != null) {
+            showCircleDialogOnly();
+            Map<String, Object> data = new HashMap<>();
+            String oldId = CommonUtils.extractVideoIdFromUrl(edtLoadGame.getText().toString().trim());
+            data.put("game/" + oldId, null);
+            data.put("heroes/" + model.getHero() + "/" + oldId, null);
+            data.put("player/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + oldId, null);
+            data.put("player_heroes/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getHero() + "/" + oldId, null);
+            mFirebaseDatabase.getReference("pub").updateChildren(data, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    hideCircleDialogOnly();
+                    if (databaseError != null) {
+                        Toast.makeText(getContext(), "SAVE FAIL", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "SAVE OK", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+        resetUi();
+    }
+
+    private void executeSave() {
+        if (!validateInput()) {
+            return;
+        }
+        showCircleDialogOnly();
+        String newId = CommonUtils.extractVideoIdFromUrl(edtLink.getText().toString().trim());
+        Map<String, Object> data = new HashMap<>();
+        PubGameModel modelSave = createPubGameModel();
+        if (TYPE == Constant.LOAD_DATA) {
+            String oldId = CommonUtils.extractVideoIdFromUrl(edtLoadGame.getText().toString().trim());
+            if (oldId.equals(newId)) {
+                if (!model.getHero().equals(modelSave.getHero()) || !model.getPlayer().equals(modelSave.getPlayer())) {
+                    data.put("player_heroes/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getHero() + "/" + oldId, null);
+                    if (!model.getHero().equals(modelSave.getHero())) {
+                        data.put("heroes/" + model.getHero() + "/" + oldId, null);
+                    }
+                    if (!model.getPlayer().equals(modelSave.getHero())) {
+                        data.put("player/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + oldId, null);
+                    }
+                }
+            } else {
+                data.put("game/" + oldId, null);
+                data.put("heroes/" + model.getHero() + "/" + oldId, null);
+                data.put("player/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + oldId, null);
+                data.put("player_heroes/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getHero() + "/" + oldId, null);
+            }
+        }
+        data.put("game/" + newId, modelSave);
+        data.put("heroes/" + model.getHero() + "/" + newId, modelSave);
+        data.put("player/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + newId, modelSave);
+        data.put("player_heroes/" + CommonUtils.escapeKey(model.getPlayer()) + "/" + model.getHero() + "/" + newId, modelSave);
+        mFirebaseDatabase.getReference("pub").updateChildren(data, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                hideCircleDialogOnly();
+                if (databaseError != null) {
+                    Toast.makeText(getContext(), "SAVE FAILED", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "SAVE OK", Toast.LENGTH_SHORT).show();
+                    resetUi();
+                }
+            }
+        });
+    }
 }

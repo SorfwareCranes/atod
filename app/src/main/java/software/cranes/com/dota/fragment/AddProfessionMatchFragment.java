@@ -99,9 +99,11 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null && getArguments().get(Constant.DATA) != null) {
-            matchId = (String) getArguments().get(Constant.DATA);
-            TYPE = Constant.LOAD_DATA;
+        if (getArguments() != null) {
+            matchId = getArguments().getString(Constant.DATA);
+            if (matchId != null && !matchId.equals(Constant.NO_IMAGE)) {
+                TYPE = Constant.LOAD_DATA;
+            }
         }
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
@@ -1063,7 +1065,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
 //        }
 //    }
 
-//    private void executeDelete() {
+    //    private void executeDelete() {
 //        if (TYPE == Constant.LOAD_DATA && matchModel != null) {
 //            showCircleDialogOnly();
 //            if (matchModel.getSt() == Constant.LIVE) {
@@ -1587,7 +1589,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                     mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), null);
                 }
                 // save to "pro/upcoming"
-                mapData.put(new StringBuilder("pro/upcoming/").append(matchModel.getId()).toString() , matchModelSave);
+                mapData.put(new StringBuilder("pro/upcoming/").append(matchModel.getId()).toString(), matchModelSave);
                 // save to "pro/tour"
                 mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModelSave.getTo())).append(slash).append(matchModel.getId()).toString(), matchModelSave);
             } else if (rbLive.isChecked()) {
@@ -1595,10 +1597,10 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                 // create model
                 matchModelSave = createMatchModel(Constant.LIVE, null);
                 if (matchModel.getSt() == Constant.UPCOMING) {
-                    mapData.put(new StringBuilder("pro/upcoming/").append( matchModel.getId()).toString(), null);
+                    mapData.put(new StringBuilder("pro/upcoming/").append(matchModel.getId()).toString(), null);
                 } else if (matchModel.getSt() == Constant.END || matchModel.getSt() == Constant.LIVE) {
                     if (matchModel.getSt() == Constant.END) {
-                        mapData.put(new StringBuilder("pro/match/").append( matchModel.getId()).toString(), null);
+                        mapData.put(new StringBuilder("pro/match/").append(matchModel.getId()).toString(), null);
                         mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModel.getTa().getNa())).append(slash).append(matchModel.getId()).toString(), null);
                         mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModel.getTb().getNa())).append(slash).append(matchModel.getId()).toString(), null);
                     }
@@ -1726,7 +1728,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
             listRo = new ArrayList<>();
         }
         if (!model.getRo().equals(Constant.NO_IMAGE) && !listRo.contains(model.getRo())) {
-            mapData.put(new StringBuilder("pro/suggest/round/").append(listRo.size()).toString() , model.getRo());
+            mapData.put(new StringBuilder("pro/suggest/round/").append(listRo.size()).toString(), model.getRo());
         }
         // save suggest player
         if (listPl == null) {

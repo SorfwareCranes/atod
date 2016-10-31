@@ -5,7 +5,6 @@ package software.cranes.com.dota.model;
  */
 
 public class PubGameModel {
-    private String id;
     private String player;
     private String hero;
     private String title;
@@ -14,8 +13,7 @@ public class PubGameModel {
     public PubGameModel() {
     }
 
-    public PubGameModel(String id, String playerName, String heroName, String title, long time) {
-        this.id = id;
+    public PubGameModel(String playerName, String heroName, String title, long time) {
         this.player = playerName;
         this.hero = heroName;
         this.title = title;
@@ -54,13 +52,5 @@ public class PubGameModel {
 
     public void setTime(long time) {
         this.time = time;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

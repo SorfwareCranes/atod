@@ -85,7 +85,6 @@
         </LinearLayout>
 
 
-
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -105,31 +104,46 @@
                     android:id="@+id/btnAddAmateurMatch"/>
         </LinearLayout>
 
-        <TextView
-                android:padding="5dp"
-                android:textSize="@dimen/large_text"
-                android:textStyle="bold"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Add Profession Match :"/>
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
+            <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Add Funny Video :"/>
+
+            <Button
+                    android:text="Funny Video"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnAddFunnyVideo"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <TextView
+                    android:padding="5dp"
+                    android:textSize="@dimen/large_text"
+                    android:textStyle="bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Add Profession Match :"/>
+
             <Button
                     android:text="Match"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:id="@+id/btnAddProfessionMatch"/>
-            <Button
-                    android:layout_marginLeft="10dp"
-                    android:text="Game"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/btnAddProfessionGame"/>
         </LinearLayout>
+
         <TextView
                 android:padding="5dp"
                 android:textSize="@dimen/large_text"

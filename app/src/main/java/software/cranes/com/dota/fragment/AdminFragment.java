@@ -33,6 +33,8 @@ import software.cranes.com.dota.interfa.Constant;
 import software.cranes.com.dota.model.GosuGamerTeamRankModel;
 import software.cranes.com.dota.model.JoindotaTeamRankModel;
 
+import static software.cranes.com.dota.R.id.btnAddProfessionGame;
+
 
 public class AdminFragment extends BaseFragment implements View.OnClickListener {
     private Button btnGetTeamRank;
@@ -40,7 +42,7 @@ public class AdminFragment extends BaseFragment implements View.OnClickListener 
     private Button btnSave;
     private Button btnAddProfessionMatch;
     private Button btnAddAmateurMatch;
-    private Button btnLoadHeroes, btnSaveHeroes, btnAddProfessionGame;
+    private Button btnLoadHeroes, btnSaveHeroes, btnAddFunnyVideo;
     private Button btnGetTeamSuggest, btnGetPlayerSuggest, btnSaveDataSuggest;
     private Map<String, GosuGamerTeamRankModel> teamRankWorldMap;
     private Map<String, Map<String, String>> teamPlayerMap;
@@ -95,9 +97,9 @@ public class AdminFragment extends BaseFragment implements View.OnClickListener 
         btnGetTeamSuggest = (Button) view.findViewById(R.id.btnGetTeamSuggest);
         btnGetPlayerSuggest = (Button) view.findViewById(R.id.btnGetPlayerSuggest);
         btnSaveDataSuggest = (Button) view.findViewById(R.id.btnSaveDataSuggest);
-        btnAddProfessionGame = (Button) view.findViewById(R.id.btnAddProfessionGame);
+        btnAddFunnyVideo = (Button) view.findViewById(R.id.btnAddFunnyVideo);
 
-        btnAddProfessionGame.setOnClickListener(this);
+        btnAddFunnyVideo.setOnClickListener(this);
         btnGetTeamRank.setOnClickListener(this);
         btnGetTeamPlayer.setOnClickListener(this);
         btnSave.setOnClickListener(this);
@@ -155,8 +157,8 @@ public class AdminFragment extends BaseFragment implements View.OnClickListener 
             case R.id.btnAddAmateurMatch:
                 replaceFragment(R.id.aboutFrame, new AddPublicMatchFragment(), true);
                 break;
-            case R.id.btnAddProfessionGame:
-
+            case R.id.btnAddFunnyVideo:
+                replaceFragment(R.id.aboutFrame, new AddFunnyVideoFragment(), true);
                 break;
             default:
                 break;
