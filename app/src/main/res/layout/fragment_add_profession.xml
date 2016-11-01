@@ -185,17 +185,22 @@
                     />
         </LinearLayout>
 
+        <AutoCompleteTextView
+                android:hint="Tournament"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/actTournament"/>
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
             <AutoCompleteTextView
-                    android:hint="Tournament"
+                    android:hint="Location"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:id="@+id/actTournament"/>
+                    android:id="@+id/actLocal"/>
 
             <AutoCompleteTextView
                     android:hint="Quarterfinal"

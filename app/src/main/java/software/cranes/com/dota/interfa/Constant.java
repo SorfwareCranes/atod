@@ -35,4 +35,8 @@ public interface Constant {
     int A_WIN = 1;
     int B_WIN = 2;
     int DRAW = 0;
+    String TAB_LIVE = "LIVE";
+    String TAB_RECENTS = "RECENT";
+    String TAB_VIDEO = "VIDEO";
+    String TAB_RELAX = "RELAX";
 }

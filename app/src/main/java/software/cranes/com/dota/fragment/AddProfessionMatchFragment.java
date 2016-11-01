@@ -47,7 +47,9 @@ import software.cranes.com.dota.interfa.Constant;
 import software.cranes.com.dota.model.GameModel;
 import software.cranes.com.dota.model.LiveChanelModel;
 import software.cranes.com.dota.model.MatchModel;
+import software.cranes.com.dota.model.MatchTeamModel;
 import software.cranes.com.dota.model.TeamModel;
+import software.cranes.com.dota.model.TourModel;
 import software.cranes.com.dota.model.VideoModel;
 
 import static com.google.android.gms.internal.zzams.d;
@@ -58,7 +60,7 @@ import static com.google.android.gms.internal.zzams.d;
 public class AddProfessionMatchFragment extends BaseFragment implements View.OnClickListener {
     private EditText edtMatchId;
     private Button btnLoadGame;
-    private AutoCompleteTextView actTeamA, actTeamB, actTournament, actRound;
+    private AutoCompleteTextView actTeamA, actTeamB, actTournament, actRound, actLocal;
     private Button btnSuggestTeamA;
     private Button btnSuggestTeamB;
     private EditText edtOddsTeamA;
@@ -90,7 +92,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
     private MatchModel matchModel;
     private HashMap<String, String> nameImageHeroesMap;
     private TextView tvSumGames;
-    private List<String> listTour, listRo, listPl;
+    private List<String> listTour, listRo, listPl, listLo;
 
     public AddProfessionMatchFragment() {
         // Required empty public constructor
@@ -150,6 +152,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         llListGames = (LinearLayout) view.findViewById(R.id.llListGames);
         tvSumGames = (TextView) view.findViewById(R.id.tvSumGames);
         btnReset = (Button) view.findViewById(R.id.btnReset);
+        actLocal = (AutoCompleteTextView) view.findViewById(R.id.actLocal);
 
         edtPhotoA = (EditText) view.findViewById(R.id.edtPhotoA);
         edtPhotoB = (EditText) view.findViewById(R.id.edtPhotoB);
@@ -179,8 +182,11 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
     private void setupUi() {
         // for actTournament
         loadDataAutoCompleteText(actTournament, "pro/suggest/tour", 1);
+        // for actLocal
+        loadDataAutoCompleteText(actLocal, "pro/suggest/local", 3);
         // for actRound
         loadDataAutoCompleteText(actRound, "pro/suggest/round", 2);
+
         if (TYPE == Constant.LOAD_DATA) {
             edtMatchId.setText(matchId);
             edtMatchId.setEnabled(false);
@@ -281,8 +287,10 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                 if (teamList != null && getActivity() != null) {
                     if (type == 1) {
                         listTour = teamList;
-                    } else {
+                    } else if (type == 2) {
                         listRo = teamList;
+                    } else if (type == 3) {
+                        listLo = teamList;
                     }
                     AutoCompleteAdapter adapter = new AutoCompleteAdapter(getActivity(), android.R.layout.simple_list_item_1, teamList);
                     actText.setAdapter(adapter);
@@ -639,6 +647,9 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         }
         if (model.getRo() != null) {
             actRound.setText(model.getRo());
+        }
+        if (model.getLo() != null) {
+            actLocal.setText(model.getLo());
         }
         if (model.getTime() > 0) {
             time = model.getTime();
@@ -1150,18 +1161,20 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         //5
         model.setRo(actRound.getText().toString().trim());
         //6
+        model.setLo(actLocal.getText().toString().trim());
+        //8
         model.setSt(type);
-        //7
+        //9
         model.setTime(time);
         TeamModel teamAModel = new TeamModel(actTeamA.getText().toString(), edtPhotoA.getText().toString().equals(Constant.NO_IMAGE) ? null : edtPhotoA.getText().toString());
         TeamModel teamBModel = new TeamModel(actTeamB.getText().toString(), edtPhotoB.getText().toString().equals(Constant.NO_IMAGE) ? null : edtPhotoB.getText().toString());
-        //8
+        //10
         model.setTa(teamAModel);
-        //9
+        //11
         model.setTb(teamBModel);
         if (type == Constant.UPCOMING) {
             model.setSum(0);
-            //11
+            //12
             if (TYPE == Constant.CREATE_DATA) {
                 model.setId(matchNewId);
             } else {
@@ -1170,19 +1183,19 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
 
             return model;
         } else if (type == Constant.LIVE || type == Constant.END) {
-            //10
+            //13
             if (!tvSumGames.getText().toString().equals(Constant.NO_IMAGE)) {
                 model.setSum(Integer.valueOf(tvSumGames.getText().toString()));
             }
-            //11
+            //14
             if (TYPE == Constant.CREATE_DATA) {
                 model.setId(matchNewId);
             } else {
                 model.setId(matchModel.getId());
             }
-            //12
+            //15
             model.setRa(Integer.valueOf(edtResultA.getText().toString()));
-            //13
+            //16
             model.setRb(Integer.valueOf(edtResultB.getText().toString()));
             if (llChanelLive.getChildCount() > 0 || type == Constant.LIVE) {
                 List<LiveChanelModel> list = new ArrayList<>();
@@ -1200,7 +1213,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                         list.add(liveModel);
                     }
                 }
-                //14
+                //17
                 model.setLl(list);
             }
             if (model.getSum() > 0 && gameModelMapNew != null && gameModelMapNew.size() > 0) {
@@ -1438,6 +1451,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         edtPhotoA.setText("Photo Id");
         edtPhotoB.setText("Photo Id");
         actRound.setText(Constant.NO_IMAGE);
+        actLocal.setText(Constant.NO_IMAGE);
         actTournament.setText(Constant.NO_IMAGE);
         edtBo.setText(Constant.NO_IMAGE);
         btnAddTime.setText("TIME");
@@ -1504,7 +1518,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                 // save to "pro/upcoming"
                 mapData.put(new StringBuilder("pro/upcoming/").append(matchModel.getId()).toString(), matchModel);
                 // save to "pro/tour"
-                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), matchModel);
+                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), createTourModel(matchModel));
 
             } else if (rbLive.isChecked()) {
                 showCircleDialogOnly();
@@ -1527,7 +1541,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                 // save matchModel to live
                 mapData.put(new StringBuilder("pro/live/").append(matchModel.getId()).toString(), matchModel);
                 // save matchModel to tour
-                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), matchModel);
+                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), createTourModel(matchModel));
             } else if (rbEnd.isChecked()) {
                 if (!validateInputTeamName()) {
                     actTeamA.setError("requried");
@@ -1555,7 +1569,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                 mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModel.getTa().getNa())).append(slash).append(matchModel.getId()).toString(), matchModel);
                 mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModel.getTb().getNa())).append(slash).append(matchModel.getId()).toString(), matchModel);
                 // save to tour
-                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), matchModel);
+                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), createTourModel(matchModel));
             }
         } else if (TYPE == Constant.LOAD_DATA) {
             MatchModel matchModelSave;
@@ -1591,7 +1605,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                 // save to "pro/upcoming"
                 mapData.put(new StringBuilder("pro/upcoming/").append(matchModel.getId()).toString(), matchModelSave);
                 // save to "pro/tour"
-                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModelSave.getTo())).append(slash).append(matchModel.getId()).toString(), matchModelSave);
+                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModelSave.getTo())).append(slash).append(matchModel.getId()).toString(), createTourModel(matchModelSave));
             } else if (rbLive.isChecked()) {
                 showCircleDialogOnly();
                 // create model
@@ -1630,7 +1644,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                 // save matchModel to live
                 mapData.put(new StringBuilder("pro/live/").append(matchModel.getId()).toString(), matchModelSave);
                 // save matchModel to tour
-                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModelSave.getTo())).append(slash).append(matchModel.getId()).toString(), matchModelSave);
+                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModelSave.getTo())).append(slash).append(matchModel.getId()).toString(), createTourModel(matchModelSave));
             } else if (rbEnd.isChecked()) {
                 if (!validateInputTeamName()) {
                     actTeamA.setError("requried");
@@ -1674,12 +1688,12 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                 // save to match
                 mapData.put(new StringBuilder("pro/match/").append(matchModelSave.getId()).toString(), matchModelSave);
                 // save to team
-                mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModelSave.getTa().getNa())).append(slash).append(matchModelSave.getId()).toString(), matchModelSave);
-                mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModelSave.getTb().getNa())).append(slash).append(matchModelSave.getId()).toString(), matchModelSave);
+                mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModelSave.getTa().getNa())).append(slash).append(matchModelSave.getId()).toString(), createMatchTeamModel(matchModelSave));
+                mapData.put(new StringBuilder("pro/team/").append(CommonUtils.escapeKey(matchModelSave.getTb().getNa())).append(slash).append(matchModelSave.getId()).toString(), createMatchTeamModel(matchModelSave));
                 if (!matchModel.getTo().equals(matchModelSave.getTo())) {
                     mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModel.getTo())).append(slash).append(matchModel.getId()).toString(), null);
                 }
-                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModelSave.getTo())).append(slash).append(matchModel.getId()).toString(), matchModelSave);
+                mapData.put(new StringBuilder("pro/tour/").append(CommonUtils.escapeKey(matchModelSave.getTo())).append(slash).append(matchModel.getId()).toString(), createTourModel(matchModelSave));
             }
 
         }
@@ -1706,11 +1720,11 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         if (suggestTeam == null) {
             suggestTeam = new ArrayList<>();
         }
-        if (!model.getTa().getNa().equals(Constant.TBD) && !suggestTeam.contains(model.getTa().getNa().equals(Constant.TBD))) {
+        if (!model.getTa().getNa().equals(Constant.TBD) && !suggestTeam.contains(model.getTa().getNa())) {
             mapData.put(new StringBuilder("pro/suggest/team/").append(suggestTeam.size()).toString(), model.getTa().getNa());
             suggestTeam.add(model.getTa().getNa());
         }
-        if (!model.getTb().getNa().equals(Constant.TBD) && !suggestTeam.contains(model.getTb().getNa().equals(Constant.TBD))) {
+        if (!model.getTb().getNa().equals(Constant.TBD) && !suggestTeam.contains(model.getTb().getNa())) {
             mapData.put(new StringBuilder("pro/suggest/team/").append(suggestTeam.size()).toString(), model.getTb().getNa());
             suggestTeam.add(model.getTb().getNa());
         }
@@ -1721,6 +1735,7 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         }
         if (!model.getTo().equals(Constant.NO_IMAGE) && !listTour.contains(model.getTo())) {
             mapData.put(new StringBuilder("pro/suggest/tour/").append(listTour.size()).toString(), model.getTo());
+            listTour.add(model.getTo());
         }
 
         // save suggest ro
@@ -1729,6 +1744,15 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
         }
         if (!model.getRo().equals(Constant.NO_IMAGE) && !listRo.contains(model.getRo())) {
             mapData.put(new StringBuilder("pro/suggest/round/").append(listRo.size()).toString(), model.getRo());
+            listLo.add(model.getRo());
+        }
+        // save suggest lo
+        if (listLo == null) {
+            listLo = new ArrayList<>();
+        }
+        if (!model.getLo().equals(Constant.NO_IMAGE) && !listLo.contains(model.getLo())) {
+            mapData.put(new StringBuilder("pro/suggest/local/").append(listLo.size()).toString(), model.getLo());
+            listLo.add(model.getLo());
         }
         // save suggest player
         if (listPl == null) {
@@ -1841,5 +1865,36 @@ public class AddProfessionMatchFragment extends BaseFragment implements View.OnC
                 map.put(new StringBuilder("viphh/").append(CommonUtils.escapeKey(name)).append(slash).append(game.getTmB().get(name)).append(slash).append(gameId).toString(), null);
             }
         }
+    }
+
+    private MatchTeamModel createMatchTeamModel(MatchModel matchModel) {
+        if (matchModel == null) {
+            return null;
+        }
+        MatchTeamModel result = new MatchTeamModel();
+        result.setRa(matchModel.getRa());
+        result.setRb(matchModel.getRb());
+        result.setSum(matchModel.getSum());
+        result.setTime(matchModel.getTime());
+        result.setTa(matchModel.getTa());
+        result.setTb(matchModel.getTb());
+        return result;
+    }
+
+    private TourModel createTourModel(MatchModel matchModel) {
+        if (matchModel == null) {
+            return null;
+        }
+        TourModel result = new TourModel();
+        result.setTime(matchModel.getTime());
+        result.setRa(matchModel.getRa());
+        result.setRb(matchModel.getRb());
+        result.setLo(matchModel.getLo());
+        result.setRo(matchModel.getRo());
+        result.setSt(matchModel.getSt());
+        result.setSum(matchModel.getSum());
+        result.setTeamA(matchModel.getTa());
+        result.setTeamB(matchModel.getTb());
+        return result;
     }
 }

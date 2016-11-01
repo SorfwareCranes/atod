@@ -8,6 +8,7 @@ import java.util.List;
 
 public class MatchModel {
     private String to;
+    private String lo;
     private String ro;
     private String id;
     private int bo;
@@ -22,8 +23,9 @@ public class MatchModel {
     public MatchModel() {
     }
 
-    public MatchModel(String to, String ro, String id, int bo, int st, long time, int ba, int bb, int ra, int rb, TeamModel ta, TeamModel tb, List<LiveChanelModel> ll, int sum) {
+    public MatchModel(String to, String lo, String ro, String id, int bo, int st, long time, int ba, int bb, int ra, int rb, TeamModel ta, TeamModel tb, List<LiveChanelModel> ll, int sum) {
         this.to = to;
+        this.lo = lo;
         this.ro = ro;
         this.id = id;
         this.bo = bo;
@@ -149,5 +151,13 @@ public class MatchModel {
 
     public void setSum(int sum) {
         this.sum = sum;
+    }
+
+    public String getLo() {
+        return lo;
+    }
+
+    public void setLo(String lo) {
+        this.lo = lo;
     }
 }

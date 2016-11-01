@@ -33,7 +33,6 @@ import software.cranes.com.dota.interfa.Constant;
 import software.cranes.com.dota.model.GosuGamerTeamRankModel;
 import software.cranes.com.dota.model.JoindotaTeamRankModel;
 
-import static software.cranes.com.dota.R.id.btnAddProfessionGame;
 
 
 public class AdminFragment extends BaseFragment implements View.OnClickListener {

@@ -18,6 +18,7 @@ import software.cranes.com.dota.fragment.AboutUsFragment;
 import software.cranes.com.dota.fragment.AddProfessionMatchFragment;
 import software.cranes.com.dota.fragment.BaseFragment;
 import software.cranes.com.dota.fragment.MMR_ScreenSlidePagerFragment;
+import software.cranes.com.dota.fragment.MainScreenFragment;
 import software.cranes.com.dota.fragment.RankTeam_ScreenSlidePagerFragment;
 
 public class MainActivity extends BaseActivity
@@ -93,7 +94,7 @@ public class MainActivity extends BaseActivity
     }
 
     private void setupView() {
-        BaseFragment fragmentTest = new AddProfessionMatchFragment();
+        BaseFragment fragmentTest = new MainScreenFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.containerActivity, fragmentTest);
         fragmentTransaction.commit();
