@@ -19,6 +19,7 @@ public interface Constant {
     int AMERICAS_RANK = 5;
     String NO_IMAGE = "";
     String DATA = "data";
+    String OBJECT = "object";
     String TITLE_EURO_RANK = "Europe & CIS Rank";
     String TITLE_AMERICAS_RANK = "Americas Rank";
     String TITLE_SEA_RANK = "SEA & Oceania Rank";
@@ -36,7 +37,9 @@ public interface Constant {
     int B_WIN = 2;
     int DRAW = 0;
     String TAB_LIVE = "LIVE";
+    String TAB_UPCOMING = "UPCOMING";
     String TAB_RECENTS = "RECENT";
     String TAB_VIDEO = "VIDEO";
     String TAB_RELAX = "RELAX";
+
 }

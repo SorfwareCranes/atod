@@ -32,6 +32,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile files('libs/YouTubeAndroidPlayerApi.jar')
     compile files('libs/jackson-all-1.9.11.jar')
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:design:25.0.0'

@@ -1,11 +1,14 @@
 package software.cranes.com.dota.fragment;
 
 
+import com.google.firebase.database.FirebaseDatabase;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,8 +31,9 @@ public class BaseFragment extends Fragment implements ConfirmDialog.HandleConfir
     private ConfirmDialog confirmDialog;
     private WarningDialog warningDialog;
     private CircleDialog circleDialog;
-    private Context mContext;
-    private MainActivity activity;
+    protected Context mContext;
+    protected MainActivity activity;
+    protected FirebaseDatabase mFirebaseDatabase;
 
     public BaseFragment() {
         // Required empty public constructor
@@ -60,10 +64,15 @@ public class BaseFragment extends Fragment implements ConfirmDialog.HandleConfir
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
-
 
 
     // show WarningDialog
@@ -152,6 +161,15 @@ public class BaseFragment extends Fragment implements ConfirmDialog.HandleConfir
     public void replaceFragment(int layoutId, BaseFragment fragment, boolean isAddBackTrack) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(layoutId, fragment, null);
+        if (isAddBackTrack) {
+            transaction.addToBackStack(null);
+        }
+        transaction.commit();
+    }
+
+    public void replaceFragment(int layoutId, BaseFragment fragment, String tab, boolean isAddBackTrack) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(layoutId, fragment, tab);
         if (isAddBackTrack) {
             transaction.addToBackStack(null);
         }

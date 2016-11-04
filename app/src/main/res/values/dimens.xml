@@ -25,4 +25,6 @@
     <dimen name="large_text">16sp</dimen>
     <dimen name="huge_text">18sp</dimen>
     <dimen name="ginetic_text">22sp</dimen>
+
+    <dimen name="logo_team">65dp</dimen>
 </resources>
