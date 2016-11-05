@@ -1,10 +1,13 @@
 package software.cranes.com.dota.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by GiangNT - PC on 01/11/2016.
  */
 
-public class TourModel {
+public class TourModel implements Parcelable {
     private int ra;
     private int rb;
     private int st;
@@ -12,13 +15,13 @@ public class TourModel {
     private long time;
     private String lo;
     private String ro;
-    private TeamModel teamA;
-    private TeamModel teamB;
+    private TeamModel ta;
+    private TeamModel tb;
 
     public TourModel() {
     }
 
-    public TourModel(int ra, int rb, int st, int sum, long time, String lo, String ro, TeamModel teamA, TeamModel teamB) {
+    public TourModel(int ra, int rb, int st, int sum, long time, String lo, String ro, TeamModel ta, TeamModel tb) {
         this.ra = ra;
         this.rb = rb;
         this.st = st;
@@ -26,8 +29,8 @@ public class TourModel {
         this.time = time;
         this.lo = lo;
         this.ro = ro;
-        this.teamA = teamA;
-        this.teamB = teamB;
+        this.ta = ta;
+        this.tb = tb;
     }
 
     public int getRa() {
@@ -86,19 +89,61 @@ public class TourModel {
         this.ro = ro;
     }
 
-    public TeamModel getTeamA() {
-        return teamA;
+    public TeamModel getTa() {
+        return ta;
     }
 
-    public void setTeamA(TeamModel teamA) {
-        this.teamA = teamA;
+    public void setTa(TeamModel ta) {
+        this.ta = ta;
     }
 
-    public TeamModel getTeamB() {
-        return teamB;
+    public TeamModel getTb() {
+        return tb;
     }
 
-    public void setTeamB(TeamModel teamB) {
-        this.teamB = teamB;
+    public void setTb(TeamModel tb) {
+        this.tb = tb;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.ra);
+        dest.writeInt(this.rb);
+        dest.writeInt(this.st);
+        dest.writeInt(this.sum);
+        dest.writeLong(this.time);
+        dest.writeString(this.lo);
+        dest.writeString(this.ro);
+        dest.writeParcelable(this.ta, flags);
+        dest.writeParcelable(this.tb, flags);
+    }
+
+    protected TourModel(Parcel in) {
+        this.ra = in.readInt();
+        this.rb = in.readInt();
+        this.st = in.readInt();
+        this.sum = in.readInt();
+        this.time = in.readLong();
+        this.lo = in.readString();
+        this.ro = in.readString();
+        this.ta = in.readParcelable(TeamModel.class.getClassLoader());
+        this.tb = in.readParcelable(TeamModel.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<TourModel> CREATOR = new Parcelable.Creator<TourModel>() {
+        @Override
+        public TourModel createFromParcel(Parcel source) {
+            return new TourModel(source);
+        }
+
+        @Override
+        public TourModel[] newArray(int size) {
+            return new TourModel[size];
+        }
+    };
 }

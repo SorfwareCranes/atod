@@ -38,20 +38,18 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:orientation="vertical">
-
-                <ImageView
-                        android:src="@drawable/no_image_team"
-                        android:id="@+id/imgTeamA"
-                        android:layout_width="@dimen/logo_team"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_height="@dimen/logo_team"/>
-
                 <TextView
                         android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/tvNameTeamA"
                         android:gravity="center"/>
+                <ImageView
+                        android:src="@drawable/no_image_team"
+                        android:id="@+id/imgTeamA"
+                        android:layout_width="@dimen/logo_team_list"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_height="@dimen/logo_team_list"/>
             </LinearLayout>
 
             <LinearLayout
@@ -63,17 +61,17 @@
 
                 <TextView
                         android:textStyle="bold"
-                        android:gravity="center_horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/tvResult"/>
-
-                <TextView
-                        android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
                         android:id="@+id/tvBo"/>
+
+                <TextView
+                        android:textStyle="bold"
+                        android:gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvResult"/>
 
                 <TextView
                         android:textStyle="italic"
@@ -97,20 +95,18 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:orientation="vertical">
-
-                <ImageView
-                        android:src="@drawable/no_image_team"
-                        android:layout_width="@dimen/logo_team"
-                        android:layout_gravity="center_horizontal"
-                        android:id="@+id/imgTeamB"
-                        android:layout_height="@dimen/logo_team"/>
-
                 <TextView
                         android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/tvNameTeamB"
                         android:gravity="center"/>
+                <ImageView
+                        android:src="@drawable/no_image_team"
+                        android:layout_width="@dimen/logo_team_list"
+                        android:layout_gravity="center_horizontal"
+                        android:id="@+id/imgTeamB"
+                        android:layout_height="@dimen/logo_team_list"/>
             </LinearLayout>
         </LinearLayout>
 

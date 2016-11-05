@@ -21,6 +21,8 @@ import software.cranes.com.dota.fragment.MMR_ScreenSlidePagerFragment;
 import software.cranes.com.dota.fragment.MainScreenFragment;
 import software.cranes.com.dota.fragment.RankTeam_ScreenSlidePagerFragment;
 
+import static android.R.attr.fragment;
+
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private boolean isAdmin;
@@ -60,7 +62,13 @@ public class MainActivity extends BaseActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            BaseFragment fragment = (BaseFragment) getSupportFragmentManager().findFragmentById(R.id.containerActivity).getChildFragmentManager().findFragmentById(R.id.contentfragment);
+            if (fragment != null && fragment.onBackPress()) {
+                fragment.getFragmentManager().popBackStack();
+            } else {
+                super.onBackPressed();
+            }
+
         }
     }
 

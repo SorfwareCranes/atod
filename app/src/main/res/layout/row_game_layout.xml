@@ -23,7 +23,7 @@
 
             <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="5"
+                    android:layout_weight="4"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgHeroA1"/>
 
@@ -31,7 +31,7 @@
                     android:layout_gravity="center"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:id="@+id/tvPlayerA1"/>
 
             <TextView
@@ -39,12 +39,12 @@
                     android:layout_gravity="center"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:id="@+id/tvPlayerB1"/>
 
             <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="5"
+                    android:layout_weight="4"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgHeroB1"/>
 
@@ -59,7 +59,7 @@
 
             <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="5"
+                    android:layout_weight="4"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgHeroA2"/>
 
@@ -67,7 +67,7 @@
                     android:layout_gravity="center"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:id="@+id/tvPlayerA2"/>
 
             <TextView
@@ -75,12 +75,12 @@
                     android:layout_gravity="center"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:id="@+id/tvPlayerB2"/>
 
             <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="5"
+                    android:layout_weight="4"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgHeroB2"/>
         </LinearLayout>
@@ -93,7 +93,7 @@
 
             <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="5"
+                    android:layout_weight="4"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgHeroA3"/>
 
@@ -101,7 +101,7 @@
                     android:layout_gravity="center"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:id="@+id/tvPlayerA3"/>
 
 
@@ -110,12 +110,12 @@
                     android:layout_gravity="center"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:id="@+id/tvPlayerB3"/>
 
             <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="5"
+                    android:layout_weight="4"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgHeroB3"/>
         </LinearLayout>
@@ -128,7 +128,7 @@
 
             <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="5"
+                    android:layout_weight="4"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgHeroA4"/>
 
@@ -136,7 +136,7 @@
                     android:layout_gravity="center"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:id="@+id/tvPlayerA4"/>
 
 
@@ -145,12 +145,12 @@
                     android:layout_gravity="center"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:id="@+id/tvPlayerB4"/>
 
             <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="5"
+                    android:layout_weight="4"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgHeroB4"/>
         </LinearLayout>
@@ -163,7 +163,7 @@
 
             <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="5"
+                    android:layout_weight="4"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgHeroA5"/>
 
@@ -171,7 +171,7 @@
                     android:layout_gravity="center"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:id="@+id/tvPlayerA5"/>
 
             <TextView
@@ -179,12 +179,12 @@
                     android:layout_gravity="center"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="6"
+                    android:layout_weight="5"
                     android:id="@+id/tvPlayerB5"/>
 
             <ImageView
                     android:layout_width="0dp"
-                    android:layout_weight="5"
+                    android:layout_weight="4"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgHeroB5"/>
         </LinearLayout>

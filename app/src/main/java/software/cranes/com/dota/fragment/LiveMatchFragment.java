@@ -29,13 +29,14 @@ import software.cranes.com.dota.common.ImageRequestCustom;
 import software.cranes.com.dota.interfa.Constant;
 import software.cranes.com.dota.model.MatchModel;
 
+import static java.security.AccessController.getContext;
 import static software.cranes.com.dota.R.id.tvLive1;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LiveMatchFragment extends BaseFragment {
+public class LiveMatchFragment extends BaseTabFragment {
 
     private LinearLayout llLive, llUpcoming;
     private FirebaseDatabase mFirebaseDatabase;
@@ -45,6 +46,7 @@ public class LiveMatchFragment extends BaseFragment {
     String url;
     StringBuilder builder;
     private int sizeImage;
+
     public LiveMatchFragment() {
         // Required empty public constructor
     }
@@ -53,8 +55,7 @@ public class LiveMatchFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        sizeImage = getResources().getDimensionPixelSize(R.dimen.logo_team);
-        bitmapRes = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.no_image_team);
+        sizeImage = getResources().getDimensionPixelSize(R.dimen.logo_team_list);
     }
 
     @Override
@@ -103,7 +104,10 @@ public class LiveMatchFragment extends BaseFragment {
                         tvUpcomingStatus.setText("UPCOMING GAMES");
                     }
                     for (String id : map.keySet()) {
-                        ll.addView(createMatchView(type, id, map.get(id)));
+                        View view = createMatchView(type, id, map.get(id));
+                        if (view != null) {
+                            ll.addView(view);
+                        }
                     }
                 } else {
                     if (type == Constant.LIVE) {
@@ -112,22 +116,21 @@ public class LiveMatchFragment extends BaseFragment {
                         tvUpcomingStatus.setText("NO GAMES UPCOMING");
                     }
                 }
-                if (showLoading) {
-                    hideCircleDialogOnly();
-                }
+                hideCircleDialogOnly();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                if (showLoading) {
-                    hideCircleDialogOnly();
-                }
+                hideCircleDialogOnly();
             }
         });
     }
 
     private View createMatchView(int type, String idMatch, MatchModel model) {
-        View resultView = getLayoutInflater(null).inflate(R.layout.live_match_layout, null, false);
+        if (activity == null) {
+            return null;
+        }
+        View resultView = activity.getLayoutInflater().inflate(R.layout.live_match_layout, null, false);
         TextView tvTour = (TextView) resultView.findViewById(R.id.tvTour);
         TextView tvTime = (TextView) resultView.findViewById(R.id.tvTime);
         TextView tvNameTeamA = (TextView) resultView.findViewById(R.id.tvNameTeamA);
@@ -159,11 +162,11 @@ public class LiveMatchFragment extends BaseFragment {
         tvBo.setText("BO" + model.getBo());
         if (model.getTa().getPt() != null && !model.getTa().getPt().equals(Constant.NO_IMAGE)) {
             url = new StringBuilder("https://cdn0.gamesports.net/edb_team_logos/").append(model.getTa().getPt()).toString();
-            new ImageRequestCustom(getContext(), imgTeamA, url, sizeImage, sizeImage, R.drawable.no_image_team, bitmapRes).execute(imgTeamA);
+            new ImageRequestCustom(mContext, imgTeamA, url, sizeImage, sizeImage, R.drawable.no_image_team, bitmapRes).execute(imgTeamA);
         }
         if (model.getTb().getPt() != null && !model.getTb().getPt().equals(Constant.NO_IMAGE)) {
             url = new StringBuilder("https://cdn0.gamesports.net/edb_team_logos/").append(model.getTb().getPt()).toString();
-            new ImageRequestCustom(getContext(), imgTeamB, url, sizeImage, sizeImage, R.drawable.no_image_team, bitmapRes).execute(imgTeamB);
+            new ImageRequestCustom(mContext, imgTeamB, url, sizeImage, sizeImage, R.drawable.no_image_team, bitmapRes).execute(imgTeamB);
         }
         if (model.getLl() != null && model.getLl().size() > 0) {
             ((TextView) resultView.findViewById(tvLive1)).setText(model.getLl().get(0).getLa());
@@ -184,5 +187,6 @@ public class LiveMatchFragment extends BaseFragment {
             resultView.findViewById(R.id.llBetTeam).setVisibility(View.GONE);
         }
         return resultView;
+
     }
 }

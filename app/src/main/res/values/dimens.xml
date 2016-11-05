@@ -27,4 +27,8 @@
     <dimen name="ginetic_text">22sp</dimen>
 
     <dimen name="logo_team">65dp</dimen>
+    <dimen name="logo_team_tour">40dp</dimen>
+    <dimen name="logo_team_detail">75dp</dimen>
+    <dimen name="logo_team_list">50dp</dimen>
+    <dimen name="heroes_detail">50dp</dimen>
 </resources>

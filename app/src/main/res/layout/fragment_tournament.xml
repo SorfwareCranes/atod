@@ -5,10 +5,15 @@
               android:orientation="vertical"
               tools:context="software.cranes.com.dota.fragment.RecentMatchFragment">
 
-    <android.support.v7.widget.RecyclerView
-            android:scrollbars="vertical"
-            android:id="@+id/rcvRecentMatch"
+    <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:id="@+id/tvTitle"/>
+
+    <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rcvTour"/>
 
 </LinearLayout>

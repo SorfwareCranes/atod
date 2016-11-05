@@ -2,7 +2,7 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="software.cranes.com.dota.fragment.DetailEndMatchFragment">
+            tools:context="software.cranes.com.dota.fragment.ShowMatchWithModelFragment">
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -36,20 +36,20 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:orientation="vertical">
-
-                <ImageView
-                        android:src="@drawable/no_image_team"
-                        android:id="@+id/imgTeamA"
-                        android:layout_width="@dimen/logo_team"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_height="@dimen/logo_team"/>
-
                 <TextView
                         android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/tvNameTeamA"
                         android:gravity="center"/>
+                <ImageView
+                        android:src="@drawable/no_image_team"
+                        android:id="@+id/imgTeamA"
+                        android:layout_width="@dimen/logo_team_detail"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_height="@dimen/logo_team_detail"/>
+
+
             </LinearLayout>
 
             <LinearLayout
@@ -86,20 +86,18 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:orientation="vertical">
-
-                <ImageView
-                        android:src="@drawable/no_image_team"
-                        android:layout_width="@dimen/logo_team"
-                        android:layout_gravity="center_horizontal"
-                        android:id="@+id/imgTeamB"
-                        android:layout_height="@dimen/logo_team"/>
-
                 <TextView
                         android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/tvNameTeamB"
                         android:gravity="center"/>
+                <ImageView
+                        android:src="@drawable/no_image_team"
+                        android:layout_width="@dimen/logo_team_detail"
+                        android:layout_gravity="center_horizontal"
+                        android:id="@+id/imgTeamB"
+                        android:layout_height="@dimen/logo_team_detail"/>
             </LinearLayout>
         </LinearLayout>
 

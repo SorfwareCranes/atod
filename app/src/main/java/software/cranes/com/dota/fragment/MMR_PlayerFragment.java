@@ -98,6 +98,6 @@ public class MMR_PlayerFragment extends BaseFragment {
     private String convertTime(long time) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time * 1000);
-        return "Last Updated :" + (calendar.get(Calendar.DAY_OF_MONTH) + 1) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR);
+        return "Last Updated :" + (calendar.get(Calendar.DAY_OF_MONTH) ) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR);
     }
 }

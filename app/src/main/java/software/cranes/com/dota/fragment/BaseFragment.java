@@ -47,21 +47,12 @@ public class BaseFragment extends Fragment implements ConfirmDialog.HandleConfir
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-    }
-
-    /**
-     * Called when a fragment is first attached to its activity. {@link #onCreate(Bundle)} will be
-     * called after this.
-     *
-     * @deprecated See {@link #onAttach(Context)}.
-     */
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof MainActivity) {
-            this.activity = (MainActivity) activity;
+        if (context instanceof MainActivity) {
+            activity = (MainActivity) context;
         }
     }
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -167,14 +158,14 @@ public class BaseFragment extends Fragment implements ConfirmDialog.HandleConfir
         transaction.commit();
     }
 
-    public void replaceFragment(int layoutId, BaseFragment fragment, String tab, boolean isAddBackTrack) {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(layoutId, fragment, tab);
-        if (isAddBackTrack) {
-            transaction.addToBackStack(null);
-        }
-        transaction.commit();
-    }
+//    public void replaceFragment(int layoutId, BaseFragment fragment, String tab, boolean isAddBackTrack) {
+//        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//        transaction.replace(layoutId, fragment, tab);
+//        if (isAddBackTrack) {
+//            transaction.addToBackStack(null);
+//        }
+//        transaction.commit();
+//    }
 
     public ArrayList<String> unEscapeList(List<String> list) {
         ArrayList<String> result = new ArrayList<>();
@@ -184,5 +175,9 @@ public class BaseFragment extends Fragment implements ConfirmDialog.HandleConfir
             }
         }
         return result;
+    }
+
+    public boolean onBackPress() {
+        return false;
     }
 }

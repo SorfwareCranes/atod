@@ -5,12 +5,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,9 +34,11 @@ import software.cranes.com.dota.screen.VideoYoutubeActivity;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DetailEndMatchFragment extends BaseFragment {
+public class ShowMatchWithModelFragment extends BaseTabFragment implements View.OnClickListener {
     private MatchModel model;
     private String matchId;
+    private BaseFragment fragment;
+    private Bundle bundle;
     //
     private TextView tvTour;
     private TextView tvTime;
@@ -45,19 +50,19 @@ public class DetailEndMatchFragment extends BaseFragment {
     private ImageView imgTeamB;
     private TextView tvNameTeamB;
     private LinearLayout llDetailGames;
-    private int sizeImage;
-    private Bitmap bitmapRes;
+    private int sizeImageTeams;
+    private int sizeImageHeroes;
     String url;
 
-    public DetailEndMatchFragment() {
+    public ShowMatchWithModelFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sizeImage = getResources().getDimensionPixelSize(R.dimen.logo_team);
-        bitmapRes = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.no_image_team);
+        sizeImage = getResources().getDimensionPixelSize(R.dimen.logo_team_detail);
+        sizeImageHeroes = getResources().getDimensionPixelSize(R.dimen.heroes_detail);
         if (getArguments() != null) {
             model = getArguments().getParcelable(Constant.OBJECT);
             matchId = getArguments().getString(Constant.DATA);
@@ -69,6 +74,7 @@ public class DetailEndMatchFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_detail_match, container, false);
+
     }
 
 
@@ -76,10 +82,14 @@ public class DetailEndMatchFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         findViews(view);
+        tvTour.setOnClickListener(this);
+        imgTeamA.setOnClickListener(this);
+        imgTeamB.setOnClickListener(this);
     }
 
     private void findViews(View view) {
         tvTour = (TextView) view.findViewById(R.id.tvTour);
+        tvTour.setPaintFlags(tvTour.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         tvTime = (TextView) view.findViewById(R.id.tvTime);
         imgTeamA = (ImageView) view.findViewById(R.id.imgTeamA);
         tvNameTeamA = (TextView) view.findViewById(R.id.tvNameTeamA);
@@ -90,7 +100,7 @@ public class DetailEndMatchFragment extends BaseFragment {
         tvNameTeamB = (TextView) view.findViewById(R.id.tvNameTeamB);
         llDetailGames = (LinearLayout) view.findViewById(R.id.llDetailGames);
         if (model != null) {
-            tvTour.setText(model.getTo() + " " + model.getLo() != null ? model.getLo() : Constant.NO_IMAGE);
+            tvTour.setText(model.getTo() + " " + (model.getLo() != null ? model.getLo() : Constant.NO_IMAGE));
             tvTime.setText(CommonUtils.convertintDateTimeToString(model.getTime()));
             tvNameTeamA.setText(model.getTa().getNa());
             tvNameTeamB.setText(model.getTb().getNa());
@@ -114,6 +124,9 @@ public class DetailEndMatchFragment extends BaseFragment {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             GameModel game = dataSnapshot.getValue(GameModel.class);
                             if (game != null) {
+                                if (llDetailGames.getChildCount() > 0) {
+                                    llDetailGames.removeAllViews();
+                                }
                                 llDetailGames.addView(createViewForGame(finalI, game));
                             }
                             hideCircleDialogOnly();
@@ -133,7 +146,7 @@ public class DetailEndMatchFragment extends BaseFragment {
 
     private View createViewForGame(int number, final GameModel game) {
         String url;
-        View resultView = getLayoutInflater(null).inflate(R.layout.row_game_layout, null, false);
+        View resultView = ((LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.row_game_layout, null, false);
         TextView tvGameResult = (TextView) resultView.findViewById(R.id.tvGameResult);
         ImageView imgHeroA1 = (ImageView) resultView.findViewById(R.id.imgHeroA1);
         TextView tvPlayerA1 = (TextView) resultView.findViewById(R.id.tvPlayerA1);
@@ -171,27 +184,27 @@ public class DetailEndMatchFragment extends BaseFragment {
                     case 1:
                         tvPlayerA1.setText(CommonUtils.unescapeKey(name));
                         url = new StringBuilder("http://cdn.dota2.com/apps/dota2/images/heroes/").append(game.getTmA().get(name)).append("_hphover.png").toString();
-                        new ImageRequestCustom(getContext(), imgHeroA1, url, sizeImage, (int) sizeImage / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroA1);
+                        new ImageRequestCustom(mContext, imgHeroA1, url, sizeImageHeroes, (int) sizeImageHeroes / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroA1);
                         break;
                     case 2:
                         tvPlayerA2.setText(CommonUtils.unescapeKey(name));
                         url = new StringBuilder("http://cdn.dota2.com/apps/dota2/images/heroes/").append(game.getTmA().get(name)).append("_hphover.png").toString();
-                        new ImageRequestCustom(getContext(), imgHeroA2, url, sizeImage, (int) sizeImage / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroA2);
+                        new ImageRequestCustom(mContext, imgHeroA2, url, sizeImageHeroes, (int) sizeImageHeroes / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroA2);
                         break;
                     case 3:
                         tvPlayerA3.setText(CommonUtils.unescapeKey(name));
                         url = new StringBuilder("http://cdn.dota2.com/apps/dota2/images/heroes/").append(game.getTmA().get(name)).append("_hphover.png").toString();
-                        new ImageRequestCustom(getContext(), imgHeroA3, url, sizeImage, (int) sizeImage / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroA3);
+                        new ImageRequestCustom(mContext, imgHeroA3, url, sizeImageHeroes, (int) sizeImageHeroes / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroA3);
                         break;
                     case 4:
                         tvPlayerA4.setText(CommonUtils.unescapeKey(name));
                         url = new StringBuilder("http://cdn.dota2.com/apps/dota2/images/heroes/").append(game.getTmA().get(name)).append("_hphover.png").toString();
-                        new ImageRequestCustom(getContext(), imgHeroA4, url, sizeImage, (int) sizeImage / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroA4);
+                        new ImageRequestCustom(mContext, imgHeroA4, url, sizeImageHeroes, (int) sizeImageHeroes / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroA4);
                         break;
                     case 5:
                         tvPlayerA5.setText(CommonUtils.unescapeKey(name));
                         url = new StringBuilder("http://cdn.dota2.com/apps/dota2/images/heroes/").append(game.getTmA().get(name)).append("_hphover.png").toString();
-                        new ImageRequestCustom(getContext(), imgHeroA5, url, sizeImage, (int) sizeImage / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroA5);
+                        new ImageRequestCustom(mContext, imgHeroA5, url, sizeImageHeroes, (int) sizeImageHeroes / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroA5);
                         break;
                 }
                 i++;
@@ -204,27 +217,27 @@ public class DetailEndMatchFragment extends BaseFragment {
                     case 1:
                         tvPlayerB1.setText(CommonUtils.unescapeKey(name));
                         url = new StringBuilder("http://cdn.dota2.com/apps/dota2/images/heroes/").append(game.getTmB().get(name)).append("_hphover.png").toString();
-                        new ImageRequestCustom(getContext(), imgHeroB1, url, sizeImage, (int) sizeImage / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroB1);
+                        new ImageRequestCustom(mContext, imgHeroB1, url, sizeImageHeroes, (int) sizeImageHeroes / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroB1);
                         break;
                     case 2:
                         tvPlayerB2.setText(CommonUtils.unescapeKey(name));
                         url = new StringBuilder("http://cdn.dota2.com/apps/dota2/images/heroes/").append(game.getTmB().get(name)).append("_hphover.png").toString();
-                        new ImageRequestCustom(getContext(), imgHeroB2, url, sizeImage, (int) sizeImage / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroB2);
+                        new ImageRequestCustom(mContext, imgHeroB2, url, sizeImageHeroes, (int) sizeImageHeroes / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroB2);
                         break;
                     case 3:
                         tvPlayerB3.setText(CommonUtils.unescapeKey(name));
                         url = new StringBuilder("http://cdn.dota2.com/apps/dota2/images/heroes/").append(game.getTmB().get(name)).append("_hphover.png").toString();
-                        new ImageRequestCustom(getContext(), imgHeroB3, url, sizeImage, (int) sizeImage / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroB3);
+                        new ImageRequestCustom(mContext, imgHeroB3, url, sizeImageHeroes, (int) sizeImageHeroes / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroB3);
                         break;
                     case 4:
                         tvPlayerB4.setText(CommonUtils.unescapeKey(name));
                         url = new StringBuilder("http://cdn.dota2.com/apps/dota2/images/heroes/").append(game.getTmB().get(name)).append("_hphover.png").toString();
-                        new ImageRequestCustom(getContext(), imgHeroB4, url, sizeImage, (int) sizeImage / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroB4);
+                        new ImageRequestCustom(mContext, imgHeroB4, url, sizeImageHeroes, (int) sizeImageHeroes / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroB4);
                         break;
                     case 5:
                         tvPlayerB5.setText(CommonUtils.unescapeKey(name));
                         url = new StringBuilder("http://cdn.dota2.com/apps/dota2/images/heroes/").append(game.getTmB().get(name)).append("_hphover.png").toString();
-                        new ImageRequestCustom(getContext(), imgHeroB5, url, sizeImage, (int) sizeImage / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroB5);
+                        new ImageRequestCustom(mContext, imgHeroB5, url, sizeImageHeroes, (int) sizeImageHeroes / 127 * 71, R.drawable.no_image_team, bitmapRes).execute(imgHeroB5);
                         break;
                 }
                 i++;
@@ -242,10 +255,9 @@ public class DetailEndMatchFragment extends BaseFragment {
             btnFullGame.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    replaceFragment(R.id.contentfragment, new AdminFragment(), true);
-//                    Intent intent = new Intent(getActivity(), VideoYoutubeActivity.class);
-//                    intent.putExtra(Constant.DATA, game.getLf());
-//                    startActivity(intent);
+                    Intent intent = new Intent(getActivity(), VideoYoutubeActivity.class);
+                    intent.putExtra(Constant.DATA, game.getLf());
+                    startActivity(intent);
                 }
             });
             btnHighGame.setOnClickListener(new View.OnClickListener() {
@@ -261,4 +273,37 @@ public class DetailEndMatchFragment extends BaseFragment {
         return resultView;
     }
 
+    @Override
+    public boolean onBackPress() {
+        return true;
+    }
+
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.tvTour:
+                bundle = new Bundle();
+                bundle.putString(Constant.DATA, model.getTo());
+                bundle.putString(Constant.DETAIL_DATA, model.getLo());
+                fragment = new TournamentFragment();
+                fragment.setArguments(bundle);
+                replaceFragment(R.id.contentfragment, fragment, true);
+                break;
+            case R.id.imgTeamA:
+                bundle = new Bundle();
+                bundle.putString(Constant.DATA, model.getTa().getNa());
+                fragment = new TeamFragment();
+                fragment.setArguments(bundle);
+                replaceFragment(R.id.contentfragment, fragment, true);
+                break;
+            case R.id.imgTeamB:
+                bundle = new Bundle();
+                bundle.putString(Constant.DATA, model.getTb().getNa());
+                fragment = new TeamFragment();
+                fragment.setArguments(bundle);
+                replaceFragment(R.id.contentfragment, fragment, true);
+                break;
+        }
+    }
 }
