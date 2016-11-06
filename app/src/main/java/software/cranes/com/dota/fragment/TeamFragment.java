@@ -86,7 +86,7 @@ public class TeamFragment extends BaseTabFragment {
                     viewHolder.tvResult.setText(String.valueOf(model.getRa()) + "-" + model.getRb());
                     viewHolder.tvNameTeamA.setText(model.getTa().getNa());
                     viewHolder.tvNameTeamB.setText(model.getTb().getNa());
-
+                    viewHolder.tvTime.setText(CommonUtils.convertintDateTimeToString(model.getTime()));
                     if (model.getTa().getPt() != null && !model.getTa().getPt().equals(Constant.NO_IMAGE)) {
                         url = new StringBuilder("https://cdn0.gamesports.net/edb_team_logos/").append(model.getTa().getPt()).toString();
                         new ImageRequestCustom(mContext, viewHolder.imgTeamA, url, sizeImage, sizeImage, R.drawable.no_image_team, bitmapRes).execute(viewHolder.imgTeamA);

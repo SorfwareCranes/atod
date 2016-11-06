@@ -18,6 +18,7 @@ public class ViewHolderMatchTeamModel extends RecyclerView.ViewHolder {
     public TextView tvResult;
     public ImageView imgTeamB;
     public TextView tvNameTeamB;
+    public TextView tvTime;
     public ViewHolderMatchTeamModel(View itemView) {
         super(itemView);
         imgTeamA = (ImageView) itemView.findViewById(R.id.imgTeamA);
@@ -25,5 +26,6 @@ public class ViewHolderMatchTeamModel extends RecyclerView.ViewHolder {
         tvResult = (TextView) itemView.findViewById(R.id.tvResult);
         imgTeamB = (ImageView) itemView.findViewById(R.id.imgTeamB);
         tvNameTeamB = (TextView) itemView.findViewById(R.id.tvNameTeamB);
+        tvTime = (TextView) itemView.findViewById(R.id.tvTime);
     }
 }

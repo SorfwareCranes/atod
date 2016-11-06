@@ -6,62 +6,78 @@
 
     <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:id="@+id/tvTime"/>
 
         <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="5"
-                android:orientation="vertical">
-            <TextView
-                    android:textStyle="bold"
-                    android:layout_width="match_parent"
+                android:orientation="horizontal">
+
+            <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvNameTeamA"
-                    android:gravity="center"/>
-            <ImageView
-                    android:src="@drawable/no_image_team"
-                    android:id="@+id/imgTeamA"
-                    android:layout_width="@dimen/logo_team_tour"
+                    android:layout_weight="5"
+                    android:orientation="vertical">
+
+                <TextView
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvNameTeamA"
+                        android:gravity="center"/>
+
+                <ImageView
+                        android:src="@drawable/no_image_team"
+                        android:id="@+id/imgTeamA"
+                        android:layout_width="@dimen/logo_team_tour"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_height="@dimen/logo_team_tour"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
                     android:layout_gravity="center_horizontal"
-                    android:layout_height="@dimen/logo_team_tour"/>
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
+                <TextView
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/tvResult"/>
 
-        </LinearLayout>
+            </LinearLayout>
 
-        <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_gravity="center_horizontal"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-            <TextView
-                    android:gravity="center_horizontal"
-                    android:layout_width="match_parent"
+            <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvResult"/>
+                    android:layout_weight="5"
+                    android:orientation="vertical">
 
-        </LinearLayout>
+                <TextView
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/tvNameTeamB"
+                        android:gravity="center"/>
 
-        <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="5"
-                android:orientation="vertical">
-            <TextView
-                    android:textStyle="bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvNameTeamB"
-                    android:gravity="center"/>
-            <ImageView
-                    android:src="@drawable/no_image_team"
-                    android:layout_width="@dimen/logo_team_tour"
-                    android:layout_gravity="center_horizontal"
-                    android:id="@+id/imgTeamB"
-                    android:layout_height="@dimen/logo_team_tour"/>
+                <ImageView
+                        android:src="@drawable/no_image_team"
+                        android:layout_width="@dimen/logo_team_tour"
+                        android:layout_gravity="center_horizontal"
+                        android:id="@+id/imgTeamB"
+                        android:layout_height="@dimen/logo_team_tour"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

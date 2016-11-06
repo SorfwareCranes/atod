@@ -91,6 +91,7 @@ public class TournamentFragment extends BaseTabFragment {
                     viewHolder.tvNameTeamA.setText(model.getTa().getNa());
                     viewHolder.tvNameTeamB.setText(model.getTb().getNa());
                     viewHolder.tvRound.setText(model.getRo());
+                    viewHolder.tvTime.setText(CommonUtils.convertintDateTimeToString(model.getTime()));
                     switch (model.getSt()) {
                         case Constant.LIVE:
                             viewHolder.tvStatus.setText("LIVE");

@@ -41,7 +41,6 @@ public class LiveMatchFragment extends BaseTabFragment {
     private LinearLayout llLive, llUpcoming;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference ref;
-    private Bitmap bitmapRes;
     private TextView tvLiveStatus, tvUpcomingStatus;
     String url;
     StringBuilder builder;
@@ -126,7 +125,7 @@ public class LiveMatchFragment extends BaseTabFragment {
         });
     }
 
-    private View createMatchView(int type, String idMatch, MatchModel model) {
+    private View createMatchView(int type, final String idMatch, final MatchModel model) {
         if (activity == null) {
             return null;
         }
@@ -185,6 +184,19 @@ public class LiveMatchFragment extends BaseTabFragment {
             ((TextView) resultView.findViewById(R.id.tvBetB)).setText(String.valueOf(model.getBb()));
         } else {
             resultView.findViewById(R.id.llBetTeam).setVisibility(View.GONE);
+        }
+        if (type == Constant.LIVE) {
+            resultView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle argument = new Bundle();
+                    argument.putParcelable(Constant.OBJECT, model);
+                    argument.putString(Constant.DATA, idMatch);
+                    BaseFragment fragment = new ShowMatchWithModelFragment();
+                    fragment.setArguments(argument);
+                    replaceFragment(R.id.contentfragment, fragment, true);
+                }
+            });
         }
         return resultView;
 
