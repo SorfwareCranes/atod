@@ -8,14 +8,14 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  * Created by GiangNT - PC on 22/10/2016.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DefaultUrl {
+public class Maxres {
     @PropertyName(value = "url")
     private String url;
 
-    public DefaultUrl() {
+    public Maxres() {
     }
 
-    public DefaultUrl(String url) {
+    public Maxres(String url) {
         this.url = url;
     }
 

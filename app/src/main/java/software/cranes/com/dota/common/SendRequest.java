@@ -200,7 +200,7 @@ public class SendRequest {
     public static void requestYoutubeTitleAndUrlImage(Context context, String videoId, final HandleYoutubeVideoId handle) {
         // if get duration add the end :  &part=snippet,contentDetails&fields=items/snippet(title,thumbnails/default/url),items/contentDetails/duration
         // time : PT1H41M22S
-        StringRequest mRequest = new StringRequest(StringRequest.Method.GET, new StringBuilder("https://www.googleapis.com/youtube/v3/videos?id=").append(videoId).append("&key=AIzaSyC-2J8Rwoe5ppVp6FemxwwqSuEn3ZxDofE&part=snippet&fields=items/snippet(title,thumbnails/default/url)").toString(), new Response.Listener<String>() {
+        StringRequest mRequest = new StringRequest(StringRequest.Method.GET, new StringBuilder("https://www.googleapis.com/youtube/v3/videos?id=").append(videoId).append("&key=AIzaSyC-2J8Rwoe5ppVp6FemxwwqSuEn3ZxDofE&part=snippet&fields=items/snippet(title,thumbnails/maxres/url)").toString(), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 if (response != null && handle != null) {
@@ -218,5 +218,29 @@ public class SendRequest {
                 }
             }
         });
+        SingletonRequestQueue.getInstance(context).addToRequestQueue(mRequest);
+    }
+    public static void requestYoutubeTitle(Context context, String videoId, final HandleYoutubeVideoId handle) {
+        // if get duration add the end :  &part=snippet,contentDetails&fields=items/snippet(title,thumbnails/default/url),items/contentDetails/duration
+        // time : PT1H41M22S
+        StringRequest mRequest = new StringRequest(StringRequest.Method.GET, new StringBuilder("https://www.googleapis.com/youtube/v3/videos?id=").append(videoId).append("&key=AIzaSyC-2J8Rwoe5ppVp6FemxwwqSuEn3ZxDofE&part=snippet&fields=items/snippet/title").toString(), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response != null && handle != null) {
+                    Items items = JsonUtil.convertObjectFromJsonString(response, Items.class);
+                    if (items != null) {
+                        handle.onSuccess(items.getTitle(), null);
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (handle != null) {
+                    handle.onFail(VolleyErrorHandling.getMessage(error));
+                }
+            }
+        });
+        SingletonRequestQueue.getInstance(context).addToRequestQueue(mRequest);
     }
 }

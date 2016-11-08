@@ -43,7 +43,6 @@ public class TeamFragment extends BaseTabFragment {
     private LinearLayoutManager mLinearLayoutManager;
     private Query query;
     private int sizeImage;
-    private Bitmap bitmapRes;
     private String url;
 
     public TeamFragment() {

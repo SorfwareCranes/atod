@@ -9,21 +9,21 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Thumbnails {
-    @PropertyName(value = "default")
-    private DefaultUrl defaultUrl;
+    @PropertyName(value = "maxres")
+    private Maxres maxres;
 
-    public Thumbnails(DefaultUrl defaultUrl) {
-        this.defaultUrl = defaultUrl;
+    public Thumbnails(Maxres maxres) {
+        this.maxres = maxres;
     }
 
     public Thumbnails() {
     }
 
-    public DefaultUrl getDefaultUrl() {
-        return defaultUrl;
+    public Maxres getMaxres() {
+        return maxres;
     }
 
-    public void setDefaultUrl(DefaultUrl defaultUrl) {
-        this.defaultUrl = defaultUrl;
+    public void setMaxres(Maxres maxres) {
+        this.maxres = maxres;
     }
 }

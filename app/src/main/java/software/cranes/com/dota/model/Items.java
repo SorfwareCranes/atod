@@ -40,8 +40,8 @@ public class Items {
     public String getUrl() {
         if (list != null && list.size() > 0) {
             Snippet snippet = list.get(0).getSnippet();
-            if (snippet != null && snippet.getThumbnails() != null && snippet.getThumbnails().getDefaultUrl() != null) {
-                return snippet.getThumbnails().getDefaultUrl().getUrl();
+            if (snippet != null && snippet.getThumbnails() != null && snippet.getThumbnails().getMaxres() != null) {
+                return snippet.getThumbnails().getMaxres().getUrl();
             }
         }
         return null;
