@@ -1,11 +1,9 @@
 package software.cranes.com.dota.fragment;
 
 
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubeThumbnailLoader;
-import com.google.android.youtube.player.YouTubeThumbnailView;
 import com.google.firebase.database.Query;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -19,23 +17,15 @@ import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import software.cranes.com.dota.R;
 import software.cranes.com.dota.common.CommonUtils;
 import software.cranes.com.dota.common.ImageRequestCustom;
-import software.cranes.com.dota.common.JsonUtil;
 import software.cranes.com.dota.common.SendRequest;
-import software.cranes.com.dota.model.Maxres;
-import software.cranes.com.dota.model.Items;
-import software.cranes.com.dota.model.Snippet;
-import software.cranes.com.dota.model.SnitppetModel;
-import software.cranes.com.dota.model.Thumbnails;
+
+import software.cranes.com.dota.interfa.Constant;
 import software.cranes.com.dota.model.VideoModel;
 import software.cranes.com.dota.model.ViewHolderVideoModel;
+import software.cranes.com.dota.screen.VideoYoutubeActivity;
 
 
 /**
@@ -51,7 +41,7 @@ public class SyntheticVideoFragment extends BaseFragment {
     private String time;
     protected int sizeImage;
     protected Bitmap bitmapRes;
-    private Map<String, YouTubeThumbnailLoader> loaderMap;
+    private String url;
     public SyntheticVideoFragment() {
         // Required empty public constructor
     }
@@ -59,10 +49,9 @@ public class SyntheticVideoFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sizeImage = CommonUtils.getWidthScreenDevice(mContext);
+        sizeImage = (int)CommonUtils.getWidthScreenDevice(mContext)/5*4;
         bitmapRes = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.no_image);
         path = "vih";
-        loaderMap = new HashMap<>();
     }
 
     @Override
@@ -85,8 +74,6 @@ public class SyntheticVideoFragment extends BaseFragment {
         FirebaseRecyclerAdapter<VideoModel, ViewHolderVideoModel> adatper = new FirebaseRecyclerAdapter<VideoModel, ViewHolderVideoModel>(VideoModel.class, R.layout.video_row_layout, ViewHolderVideoModel.class, query) {
             @Override
             protected void populateViewHolder(final ViewHolderVideoModel viewHolder, VideoModel model, int position) {
-                String gameId = getRef(position).getKey();
-                // matchId = gameId.subString(0, gameId.length)
                 videoId = model.getLv();
                 time = CommonUtils.convertintDateTimeToString(model.getTime());
                 // set time
@@ -106,8 +93,10 @@ public class SyntheticVideoFragment extends BaseFragment {
                         viewHolder.tvVideoTitle.setVisibility(View.GONE);
                     }
                 });
-                String url = new StringBuilder("https://i.ytimg.com/vi/").append(videoId).append("/mqdefault.jpg").toString();
+                url = new StringBuilder("https://i.ytimg.com/vi/").append(videoId).append("/hqdefault.jpg").toString();
                 new ImageRequestCustom(mContext, viewHolder.youtubeThumbnailView, url, sizeImage, (int)sizeImage/16*9, R.drawable.no_image, bitmapRes).execute(viewHolder.youtubeThumbnailView);
+//                Glide.with(mContext).load(url).centerCrop().placeholder(R.drawable.no_image).crossFade().into(viewHolder.youtubeThumbnailView);
+//                Picasso.with(mContext).load(url).resize(sizeImage, (int) sizeImage/16*9).placeholder(R.drawable.no_image).error(R.drawable.no_image).into(viewHolder.youtubeThumbnailView);
 //                if (!loaderMap.containsKey(videoId)) {
 //                    viewHolder.youtubeThumbnailView.setTag(videoId);
 //                    viewHolder.youtubeThumbnailView.initialize(getString(R.string.api_key_android), new YouTubeThumbnailView.OnInitializedListener() {
@@ -132,22 +121,19 @@ public class SyntheticVideoFragment extends BaseFragment {
 //                        loader.setVideo(videoId);
 //                    }
 //                }
-
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity(), VideoYoutubeActivity.class);
+                        intent.putExtra(Constant.DATA, videoId);
+                        startActivity(intent);
+                    }
+                });
             }
         };
         rcvSynthetic.setAdapter(adatper);
     }
 
-    private String test() {
-        String url = "https://www.youtube.com/watch?v=pNS3ykTurVg";
-        Maxres aDefault = new Maxres(url);
-        Thumbnails thumbnails = new Thumbnails(aDefault);
-        Snippet snippet = new Snippet("here is title", thumbnails);
-        SnitppetModel snitppetModel = new SnitppetModel(snippet);
-        List<SnitppetModel> list = new ArrayList<>();
-        list.add(snitppetModel);
-        Items items = new Items(list);
-        return JsonUtil.convertObjectToString(items);
-    }
+
 
 }

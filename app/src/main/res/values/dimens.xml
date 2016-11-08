@@ -31,4 +31,6 @@
     <dimen name="logo_team_detail">75dp</dimen>
     <dimen name="logo_team_list">50dp</dimen>
     <dimen name="heroes_detail">50dp</dimen>
+    <dimen name="youtube_with">320dp</dimen>
+    <dimen name="youtube_height">180dp</dimen>
 </resources>

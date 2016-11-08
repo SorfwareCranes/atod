@@ -13,22 +13,21 @@
 
         <com.google.android.youtube.player.YouTubeThumbnailView
                 android:src="@drawable/no_image"
-                android:layout_marginRight="30dp"
-                android:layout_marginLeft="30dp"
+                android:layout_gravity="center"
                 android:id="@+id/youtubeThumbnailView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/youtube_with"
+                android:layout_height="@dimen/youtube_height"
                 android:scaleType="centerCrop"
                 android:visibility="visible"/>
         <!--<ImageView-->
-                <!--android:src="@drawable/no_image"-->
-                <!--android:layout_marginRight="20dp"-->
-                <!--android:layout_marginLeft="20dp"-->
-                <!--android:id="@+id/youtubeThumbnailView"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:scaleType="centerCrop"-->
-                <!--/>-->
+        <!--android:src="@drawable/no_image"-->
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:layout_marginLeft="20dp"-->
+        <!--android:id="@+id/youtubeThumbnailView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--/>-->
         <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
