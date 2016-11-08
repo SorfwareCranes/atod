@@ -106,8 +106,8 @@ public class SyntheticVideoFragment extends BaseFragment {
                         viewHolder.tvVideoTitle.setVisibility(View.GONE);
                     }
                 });
-//                String url = new StringBuilder("https://i.ytimg.com/vi/").append(videoId).append("/mqdefault.jpg").toString();
-//                new ImageRequestCustom(mContext, viewHolder.youtubeThumbnailView, url, sizeImage, (int)sizeImage/16*9, R.drawable.no_image, bitmapRes).execute(viewHolder.youtubeThumbnailView);
+                String url = new StringBuilder("https://i.ytimg.com/vi/").append(videoId).append("/mqdefault.jpg").toString();
+                new ImageRequestCustom(mContext, viewHolder.youtubeThumbnailView, url, sizeImage, (int)sizeImage/16*9, R.drawable.no_image, bitmapRes).execute(viewHolder.youtubeThumbnailView);
 //                if (!loaderMap.containsKey(videoId)) {
 //                    viewHolder.youtubeThumbnailView.setTag(videoId);
 //                    viewHolder.youtubeThumbnailView.initialize(getString(R.string.api_key_android), new YouTubeThumbnailView.OnInitializedListener() {
