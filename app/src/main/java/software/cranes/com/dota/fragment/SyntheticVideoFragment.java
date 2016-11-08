@@ -108,30 +108,30 @@ public class SyntheticVideoFragment extends BaseFragment {
                 });
 //                String url = new StringBuilder("https://i.ytimg.com/vi/").append(videoId).append("/mqdefault.jpg").toString();
 //                new ImageRequestCustom(mContext, viewHolder.youtubeThumbnailView, url, sizeImage, (int)sizeImage/16*9, R.drawable.no_image, bitmapRes).execute(viewHolder.youtubeThumbnailView);
-                if (!loaderMap.containsKey(videoId)) {
-                    viewHolder.youtubeThumbnailView.setTag(videoId);
-                    viewHolder.youtubeThumbnailView.initialize(getString(R.string.api_key_android), new YouTubeThumbnailView.OnInitializedListener() {
-                        @Override
-                        public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, final YouTubeThumbnailLoader youTubeThumbnailLoader) {
-                            loaderMap.put(videoId, youTubeThumbnailLoader);
-                            viewHolder.youtubeThumbnailView.setImageResource(R.drawable.no_image);
-                            youTubeThumbnailLoader.setVideo(videoId);
-                        }
-
-                        @Override
-                        public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
-
-                        }
-                    });
-                } else {
-                    YouTubeThumbnailLoader loader = loaderMap.get(videoId);
-                    if (loader == null) {
-
-                    } else {
-                        viewHolder.youtubeThumbnailView.setImageResource(R.drawable.no_image);
-                        loader.setVideo(videoId);
-                    }
-                }
+//                if (!loaderMap.containsKey(videoId)) {
+//                    viewHolder.youtubeThumbnailView.setTag(videoId);
+//                    viewHolder.youtubeThumbnailView.initialize(getString(R.string.api_key_android), new YouTubeThumbnailView.OnInitializedListener() {
+//                        @Override
+//                        public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, final YouTubeThumbnailLoader youTubeThumbnailLoader) {
+//                            loaderMap.put(videoId, youTubeThumbnailLoader);
+//                            viewHolder.youtubeThumbnailView.setImageResource(R.drawable.no_image);
+//                            youTubeThumbnailLoader.setVideo(videoId);
+//                        }
+//
+//                        @Override
+//                        public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
+//
+//                        }
+//                    });
+//                } else {
+//                    YouTubeThumbnailLoader loader = loaderMap.get(videoId);
+//                    if (loader == null) {
+//
+//                    } else {
+//                        viewHolder.youtubeThumbnailView.setImageResource(R.drawable.no_image);
+//                        loader.setVideo(videoId);
+//                    }
+//                }
 
             }
         };
