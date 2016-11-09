@@ -1,13 +1,14 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="software.cranes.com.dota.fragment.RelaxVideoFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context="software.cranes.com.dota.fragment.SyntheticVideoFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.v7.widget.RecyclerView
+            android:scrollbars="vertical"
+            android:id="@+id/rcvRelax"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="RELAX VIDEO"/>
+            android:layout_height="match_parent"/>
 
-</FrameLayout>
+</LinearLayout>

@@ -5,10 +5,51 @@
               android:orientation="vertical"
               tools:context="software.cranes.com.dota.fragment.SyntheticVideoFragment">
 
+    <RelativeLayout
+            android:id="@+id/llFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <Button
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To Full"
+                android:id="@+id/btnFull"/>
+
+        <Button
+                android:layout_toRightOf="@id/btnFull"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To Player"
+                android:id="@+id/btnPlayer"/>
+
+        <Button
+                android:layout_toRightOf="@id/btnPlayer"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To Heros"
+                android:id="@+id/btnHeroes"/>
+
+        <ImageButton
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:scaleType="centerInside"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/filter"
+                android:id="@+id/btnFilter"
+                />
+    </RelativeLayout>
+
     <android.support.v7.widget.RecyclerView
             android:scrollbars="vertical"
             android:id="@+id/rcvSynthetic"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 </LinearLayout>

@@ -1,0 +1,105 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:elevation="@dimen/dialog_elevation"
+              tools:context="software.cranes.com.dota.dialog.FilterDialog">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filter Video"
+            android:paddingLeft="@dimen/dialog_padding"
+            android:paddingRight="@dimen/dialog_padding"
+            android:paddingTop="10dp"
+            android:textColor="#85000000"
+            android:textSize="@dimen/text_size_big"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Player :"/>
+
+        <AutoCompleteTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:id="@+id/actPlayer"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+        <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Hero :"/>
+
+        <AutoCompleteTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:id="@+id/actHeroes"/>
+    </LinearLayout>
+
+    <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:orientation="horizontal">
+
+        <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="HighLight"
+                android:id="@+id/rbHighLight"/>
+
+        <RadioButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Full"
+                android:id="@+id/rbFull"/>
+    </RadioGroup>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialog_action_height"
+            android:layout_marginTop="@dimen/dialog_padding"
+            android:gravity="right"
+            android:orientation="horizontal"
+            android:padding="@dimen/padding_around_button">
+
+        <TextView
+                android:id="@+id/tvCancel"
+                android:layout_width="@dimen/dialog_button_width"
+                android:layout_height="match_parent"
+                android:padding="@dimen/padding_around_button"
+                android:text="Cancel"
+                android:textColor="@color/holo_blue_light"/>
+
+        <TextView
+                android:id="@+id/tvOK"
+                android:layout_width="@dimen/dialog_button_width"
+                android:gravity="center_horizontal"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/padding_around_button"
+                android:padding="@dimen/padding_around_button"
+                android:text="OK"
+                android:textColor="@color/holo_blue_light"/>
+    </LinearLayout>
+</LinearLayout>

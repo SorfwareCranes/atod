@@ -165,6 +165,7 @@ public class MatchModel implements Parcelable {
         this.lo = lo;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -185,7 +186,7 @@ public class MatchModel implements Parcelable {
         dest.writeInt(this.rb);
         dest.writeParcelable(this.ta, flags);
         dest.writeParcelable(this.tb, flags);
-        dest.writeList(this.ll);
+        dest.writeTypedList(this.ll);
         dest.writeInt(this.sum);
     }
 
@@ -203,12 +204,11 @@ public class MatchModel implements Parcelable {
         this.rb = in.readInt();
         this.ta = in.readParcelable(TeamModel.class.getClassLoader());
         this.tb = in.readParcelable(TeamModel.class.getClassLoader());
-        this.ll = new ArrayList<LiveChanelModel>();
-        in.readList(this.ll, LiveChanelModel.class.getClassLoader());
+        this.ll = in.createTypedArrayList(LiveChanelModel.CREATOR);
         this.sum = in.readInt();
     }
 
-    public static final Parcelable.Creator<MatchModel> CREATOR = new Parcelable.Creator<MatchModel>() {
+    public static final Creator<MatchModel> CREATOR = new Creator<MatchModel>() {
         @Override
         public MatchModel createFromParcel(Parcel source) {
             return new MatchModel(source);
