@@ -7,7 +7,6 @@ package software.cranes.com.dota.interfa;
 public interface Constant {
     String google = "google";
     String facebook = "facebook";
-    String twitter = "twitter";
     String anonymous = "anonymous";
     String TAG = "dota";
     int TYPE_RESPONSE_OBJECT = 0;
@@ -42,5 +41,7 @@ public interface Constant {
     String TAB_RECENTS = "RECENT";
     String TAB_VIDEO = "VIDEO";
     String TAB_RELAX = "RELAX";
-
+    String VIDEO = "type_video";
+    String PLAYER = "player";
+    String HEROES = "hero";
 }

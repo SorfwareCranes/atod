@@ -4,11 +4,8 @@ package software.cranes.com.dota.fragment;
 import com.google.firebase.database.Query;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +16,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import software.cranes.com.dota.R;
 import software.cranes.com.dota.common.CommonUtils;
@@ -31,13 +31,11 @@ import software.cranes.com.dota.model.VideoModel;
 import software.cranes.com.dota.model.ViewHolderVideoModel;
 import software.cranes.com.dota.screen.VideoYoutubeActivity;
 
-import static software.cranes.com.dota.R.id.recyclerView;
-
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SyntheticVideoFragment extends BaseVideoFragment implements View.OnClickListener {
+public class SyntheticVideoFragment extends BaseVideoFragment implements View.OnClickListener, FilterDialog.HandleFilter {
     protected LinearLayoutManager mLinearLayoutManager;
     protected Query query;
     protected String videoId;
@@ -52,6 +50,10 @@ public class SyntheticVideoFragment extends BaseVideoFragment implements View.On
     private Button btnHeroes;
     private ImageButton btnFilter;
     private FilterDialog dialog;
+    private Map<String, String> filterMap;
+    private String type = "1";
+    private String player = Constant.PLAYER;
+    private String hero = Constant.HEROES;
 
     public SyntheticVideoFragment() {
         // Required empty public constructor
@@ -60,6 +62,10 @@ public class SyntheticVideoFragment extends BaseVideoFragment implements View.On
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        filterMap = new HashMap<>();
+        filterMap.put(Constant.VIDEO, "1");
+        filterMap.put(Constant.PLAYER, Constant.NO_IMAGE);
+        filterMap.put(Constant.HEROES, Constant.NO_IMAGE);
         path = "vih";
     }
 
@@ -74,14 +80,14 @@ public class SyntheticVideoFragment extends BaseVideoFragment implements View.On
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rcvSynthetic = (RecyclerView) view.findViewById(R.id.rcvSynthetic);
+        findViews(view);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mLinearLayoutManager.setReverseLayout(true);
         mLinearLayoutManager.setStackFromEnd(true);
         rcvSynthetic.setLayoutManager(mLinearLayoutManager);
         query = mFirebaseDatabase.getReference(path).orderByChild("time").limitToLast(150);
         setupRecyclerView(query, rcvSynthetic);
-        findViews(view);
+
     }
 
     private void setupRecyclerView(Query qwert, RecyclerView rcv) {
@@ -148,6 +154,7 @@ public class SyntheticVideoFragment extends BaseVideoFragment implements View.On
     }
 
     private void findViews(View view) {
+        rcvSynthetic = (RecyclerView) view.findViewById(R.id.rcvSynthetic);
         btnFull = (Button) view.findViewById(R.id.btnFull);
         btnPlayer = (Button) view.findViewById(R.id.btnPlayer);
         btnHeroes = (Button) view.findViewById(R.id.btnHeroes);
@@ -156,26 +163,108 @@ public class SyntheticVideoFragment extends BaseVideoFragment implements View.On
         btnPlayer.setOnClickListener(this);
         btnHeroes.setOnClickListener(this);
         btnFilter.setOnClickListener(this);
+        if (filterMap.get(Constant.VIDEO).equals("1")) {
+            btnFull.setText("Full");
+        } else {
+            btnFull.setText("HighLight");
+        }
+        if (filterMap.get(Constant.PLAYER).equals(Constant.NO_IMAGE)) {
+            btnPlayer.setVisibility(View.INVISIBLE);
+        }
+        if (filterMap.get(Constant.HEROES).equals(Constant.NO_IMAGE)) {
+            btnHeroes.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
+        int id = v.getId();
+        switch (id) {
             case R.id.btnFull:
-                query = mFirebaseDatabase.getReference("vif").orderByChild("time").limitToLast(100);
+                if (type.equals("1")) {
+                    type = "2";
+                } else {
+                    type = "1";
+                }
+                filterMap.put(Constant.VIDEO, type);
                 break;
             case R.id.btnPlayer:
-                query = mFirebaseDatabase.getReference("viph/Miracle-").orderByChild("time").limitToLast(100);
+                if (!player.equals(Constant.NO_IMAGE)) {
+                    player = Constant.NO_IMAGE;
+                    filterMap.put(Constant.PLAYER, player);
+                }
                 break;
             case R.id.btnHeroes:
-                query = mFirebaseDatabase.getReference("vihh/Dark_Seer").orderByChild("time").limitToLast(100);
+                if (!hero.equals(Constant.NO_IMAGE)) {
+                    hero = Constant.NO_IMAGE;
+                    filterMap.put(Constant.HEROES, hero);
+                }
                 break;
             case R.id.btnFilter:
-                dialog = new FilterDialog();
+                dialog = new FilterDialog(filterMap, this);
                 dialog.show(getFragmentManager(), null);
                 break;
         }
+        if (id != R.id.btnFilter) {
+            path = createPathForllowFilter(filterMap);
+            query = mFirebaseDatabase.getReference(path).orderByChild("time").limitToLast(150);
+            rcvSynthetic.removeAllViews();
+            setupRecyclerView(query, rcvSynthetic);
+        }
+    }
+
+    @Override
+    public void handle(Map<String, String> result) {
+        // set up path
+        path = createPathForllowFilter(result);
+        query = mFirebaseDatabase.getReference(path).orderByChild("time").limitToLast(150);
         rcvSynthetic.removeAllViews();
         setupRecyclerView(query, rcvSynthetic);
+    }
+
+    private String createPathForllowFilter(Map<String, String> filterMap) {
+        type = filterMap.get(Constant.VIDEO);
+        player = filterMap.get(Constant.PLAYER);
+        hero = filterMap.get(Constant.HEROES);
+        if (type.equals("1")) {
+            btnFull.setText("Full");
+        } else {
+            btnFull.setText("HighLight");
+        }
+        btnPlayer.setText(player);
+        btnHeroes.setText(hero);
+        if (player.equals(Constant.NO_IMAGE) && hero.equals(Constant.NO_IMAGE)) {
+            btnPlayer.setVisibility(View.INVISIBLE);
+            btnHeroes.setVisibility(View.INVISIBLE);
+            if (type.equals("1")) {
+                return path = "vih";
+            } else {
+                return path = "vif";
+            }
+        } else if ((!player.equals(Constant.NO_IMAGE)) && (!hero.equals(Constant.NO_IMAGE))) {
+            btnPlayer.setVisibility(View.VISIBLE);
+            btnHeroes.setVisibility(View.VISIBLE);
+            if (type.equals("1")) {
+                return path = "viphh/" + CommonUtils.escapeKey(player) + "/" + hero;
+            } else {
+                return path = "viphf/" + CommonUtils.escapeKey(player) + "/" + hero;
+            }
+        } else if (!player.equals(Constant.NO_IMAGE)) {
+            btnPlayer.setVisibility(View.VISIBLE);
+            btnHeroes.setVisibility(View.INVISIBLE);
+            if (type.equals("1")) {
+                return path = "viph/" + CommonUtils.escapeKey(player);
+            } else {
+                return path = "vipf/" + CommonUtils.escapeKey(player);
+            }
+        } else {
+            btnPlayer.setVisibility(View.INVISIBLE);
+            btnHeroes.setVisibility(View.VISIBLE);
+            if (type.equals("1")) {
+                return path = "vihh/" + hero;
+            } else {
+                return path = "vihf/" + hero;
+            }
+        }
     }
 }
